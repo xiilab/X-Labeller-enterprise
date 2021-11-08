@@ -596,6 +596,7 @@
 						return "zip";
 					}
 				} else if(files[i].type.match("video")){
+					console.log('checkFiles(), video')
 // 					if(files.length>1){
 // 						alert("단일 VideoFile 만 사용 가능합니다");
 // 						return false;
@@ -623,7 +624,6 @@
 		fileList : new Array(),
 		selectFile : function(files){
 			var that = this;
-		
 			var fileList = that.fileList;
 			var chk = that.checkFiles(files);
 			var len = String(files.length);
@@ -644,14 +644,9 @@
 				
 				
 			} else if(chk == "video"){	//videoFile tab active
-				if(fileList.length>0){
-					fileList.length = 0;
-					that.pt.find(".c_wrap li").remove();
-				}
 				that.pt.find(".tab").removeClass("active");
 				that.pt.find(".video_file").addClass("active");
-				
-				
+						
 				// 200MB 제한
 // 				if(files && files[0].size > (200 * 1024 * 1024)) {			// 50mb는 테스트용, 실제 200mb 제한 
 // 					alert("비디오 파일은 200MB 이하 등록 가능합니다\n선택한 파일 : "+ size);
