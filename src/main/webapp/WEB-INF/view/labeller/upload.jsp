@@ -173,10 +173,12 @@
 			that.pt.find("textarea[name='contents']").val("");
 			that.pt.find(".c_wrap").empty();
 			that.pt.find(".checkBox").removeClass("selected");
-			that.pt.find(".fileTab_wrap .tab").removeClass("active")
-				.first().addClass("active");
+			that.pt.find(".fileTab_wrap .tab").removeClass("active").first().addClass("active");
 			
 			// media_type, label_type reset
+			if(type_image.hasClass("selected")) {
+				$(".fileTab_wrap .video_file").hide();
+			}
 			if(type_poly.hasClass("selected")){
 				type_poly.removeClass("selected");		
 				type_box.addClass("selected");
@@ -541,6 +543,7 @@
 					$(".label_type_wrap .radioBtn[data-value='polygon']").next().hide();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").hide();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").next().hide();
+					$(".fileTab_wrap .video_file").show();
 					$(".fileTab_wrap .img_file").hide();
 					$(".fileTab_wrap .zip_file").hide();
 // 					$(".fileTab_wrap .tab").removeClass("active");
@@ -553,6 +556,7 @@
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").next().show();
 					$(".fileTab_wrap .img_file.tab").show().trigger("click");
 					$(".fileTab_wrap .zip_file").show();
+					$(".fileTab_wrap .video_file").hide();
 					$(".fileTab_wrap .video_file").removeClass("active");
 					files.setAttribute('accept','image/jpg, image/jpeg, image/png')
 				}
