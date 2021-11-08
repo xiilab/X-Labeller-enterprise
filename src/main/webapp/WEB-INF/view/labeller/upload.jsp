@@ -499,16 +499,23 @@
 				e.stopPropagation();
 				if(e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
 					var files = e.originalEvent.dataTransfer.files;
-					var media_video = $("#upload .media_type_wrap .radioBtn.selected").data("value");
-					if(media_video == "video"){
-						var type = files[0].type;
-						if(type.split("/")[0] != "video"){
-							alert("Video 형태의 파일만 업로드 가능합니다");
-							that.pt.find(".total_file_count").html("");
-							that.pt.find(".total_file_size").html("");	
-							return false;
-						} 
-					}					
+					var media_type = !$(".fileTab_wrap .tab.active").hasClass('zip_file') ? 
+						$("#upload .media_type_wrap .radioBtn.selected").data("value") :
+						'zip';
+					console.log('드롭 파일리스트', files, media_type)
+					console.log('media_type', media_type)
+					files = [...files].filter( o => o.type.includes(media_type));
+					console.log('필터링한 파일리스트', files)
+					
+					// if(media_type == "video"){
+					// 	var type = files[0].type;
+					// 	if(type.split("/")[0] != "video"){
+					// 		alert("Video 형태의 파일만 업로드 가능합니다");
+					// 		that.pt.find(".total_file_count").html("");
+					// 		that.pt.find(".total_file_size").html("");	
+					// 		return false;
+					// 	} 
+					// } 			
 					that.selectFile(files);
 		        }
 				
