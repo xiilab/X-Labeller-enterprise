@@ -95,11 +95,11 @@
 						<span class="radioBtn selected" data-value="box"></span>
 						<span class="radio_label">Bounding Box</span>
 						
-						<span class="radioBtn" data-value="polygon"></span>
+						<!-- <span class="radioBtn" data-value="polygon"></span>
 						<span class="radio_label">Segmentation</span>
 						
 						<span class="radioBtn" data-value="polyLine"></span>
-						<span class="radio_label">Poly Line</span>
+						<span class="radio_label">Poly Line</span> -->
 					</div>
 				</div>					
 				<div class="title_wrap flex">
