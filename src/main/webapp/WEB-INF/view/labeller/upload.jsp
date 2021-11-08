@@ -21,8 +21,9 @@
 		#upload .fileTab_wrap .blank { width: 100%; height: 30px; border-bottom: 1px solid #dedcde; border-left: 1px solid #dedcde; }
 		
 		#upload .file_wrap { width: 100%;height: 260px; margin-bottom: 10px; border: 1px solid #dedcde; border-top: 0; position: relative; }
+		#upload .file_wrap .h_wrap { justify-content: space-between; }
 		#upload .file_wrap .h_wrap:after{ content: ''; width: 100%; border-bottom: 1px solid #dedcde; position: absolute; top:30px; left: 0; }
-		#upload .file_wrap .h_wrap div { line-height: 30px; font-size: 11px; font-weight: 400; color: #555555; }
+		#upload .file_wrap .h_wrap div { width: fit-content; margin: 0 2px; line-height: 30px; font-size: 11px; font-weight: 400; color: #555555; }
 /* 		#upload .file_wrap .h_wrap div:nth-of-type(1) { display: inline-block; width: 50px; height: 30px; } */
 /* 		#upload .file_wrap .h_wrap div:nth-of-type(2) { display: inline-block; width: 20px; } */
 		#upload .file_wrap .h_wrap div:nth-of-type(3) { display: inline-block; width: 90%; padding-left: 20px; }
@@ -113,19 +114,14 @@
 				</div>
 				<div class="file_wrap">
 					<div class="h_wrap flex">
-<!-- 						<div class="checkBox all"></div> -->
-						<div></div>
-						<div></div>
-						<div>Total file count</div>
-						<div>Total file size</div>
-					</div>
-					
-					<div class="h_wrap flex">
-<!-- 						<div class="checkBox all"></div> -->
-						<div></div>
-						<div></div>
-						<div class="total_file_count"></div>
-						<div class="total_file_size"></div>
+						<div class="flex">
+							<div>Total file count: </div>
+							<div class="total_file_count"></div>
+						</div>
+						<div class="flex">
+							<div>Total file size: </div>
+							<div class="total_file_size"></div>
+						</div>
 					</div>
 					
 					<ul class="c_wrap">
