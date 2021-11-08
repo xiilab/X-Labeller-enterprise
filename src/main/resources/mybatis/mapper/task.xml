@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.task">
+    
+    <insert id="insertTask"  useGeneratedKeys="true" keyProperty="task_id"  parameterType="TaskVO"  >
+	    INSERT INTO TASK(
+	    	PROJECT_ID
+			,TITLE
+			,CONTENTS
+			,CREATED_DATE
+			,USER_ID
+			,ALGORITHM
+			,CONFIG
+			,IS_ENABLE
+			,ALGORITHM_ID
+			,IS_FIXED
+			,BASE_TASK_ID
+			,LABEL_TYPE
+		) VALUES(			
+			 #{project_id}
+			,#{title}
+			,#{contents}
+			,now()
+			,#{user_id}
+			,#{algorithm}
+			,#{config}
+			,1
+			,#{algorithm_id}
+			,#{is_fixed}
+			,#{base_task_id}
+			,#{label_type}
+		)
+	</insert>
+	
+	<delete id="deleteTask" >
+	    DELETE FROM TASK
+	    WHERE TASK_ID = #{task_id}	    	
+	</delete>
+	
+	<delete id="deleteTaskByProject" >
+	    DELETE FROM TASK
+	    WHERE PROJECT_ID = #{project_id}	    	
+	</delete>
+	    
+    <select id="getTaskList" resultType="TaskVO">
+    	SELECT 
+			t.TASK_ID
+			,t.PROJECT_ID
+			,t.TITLE
+			,t.CONTENTS
+			,t.CREATED_DATE
+			,t.USER_ID
+			,t.ALGORITHM
+			,t.CONFIG
+			,t.IS_ENABLE
+			,t.IS_FIXED
+			,t.LABEL_TYPE
+		FROM TASK t 
+		WHERE 1=1
+			<if test='project_id != null and !project_id.equals("")'>AND PROJECT_ID = #{project_id}</if>
+			<if test='is_enable != null and !is_enable.equals("")'>AND IS_ENABLE = #{is_enable}</if>
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
+			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type}</if>
+		ORDER BY t.CREATED_DATE DESC
+		LIMIT ${page_num}, ${page_size}
+	</select>
+	
+	<select id="getTaskTotalCount" resultType="java.lang.Integer">
+    	SELECT 
+			COUNT(t.TASK_ID) AS TOTAL_COUNT
+		FROM TASK t 
+		WHERE 1=1
+			<if test='project_id != null and !project_id.equals("")'>AND PROJECT_ID = #{project_id}</if>
+			<if test='is_enable != null and !is_enable.equals("")'>AND IS_ENABLE = #{is_enable}</if>
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
+			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type]}</if>
+		ORDER BY t.TASK_ID DESC
+	</select>
+	
+	
+	
+	<update id="updateTask" >
+	    UPDATE TASK
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='title != null and !title.equals("")'>,TITLE = #{title}</if>
+		    	<if test='contents != null and !contents.equals("")'>,CONTENTS = #{contents}</if>
+		    	<if test='is_enable != null and !is_enable.equals("")'>,IS_ENABLE = #{is_enable}</if>
+		    	<if test='algorithm != null and !algorithm.equals("")'>,ALGORITHM = #{algorithm}</if>
+		    	<if test='base_task_id != null and !base_task_id.equals("")'>,BASE_TASK_ID = #{base_task_id}</if>
+		    	<if test='config != null and !config.equals("")'>,CONFIG = #{config}</if>
+		    	<if test='label_type != null and !label_type.equals("")'>,LABEL_TYPE = #{label_type}</if>
+			</trim>
+		WHERE TASK_ID = #{task_id}          
+	</update>
+   
+    
+    
+    <select id="getTaskById" resultType="TaskVO">
+    	SELECT 
+			t.TASK_ID
+			,t.PROJECT_ID
+			,t.TITLE
+			,t.CONTENTS
+			,t.CREATED_DATE
+			,t.USER_ID
+			,t.ALGORITHM
+			,t.CONFIG
+			,t.IS_ENABLE
+			,t.ALGORITHM_ID
+			,t.IS_FIXED
+			,t.LABEL_TYPE
+		FROM TASK t 
+		WHERE 1=1
+			AND t.TASK_ID = #{task_id}
+		
+	</select>
+    
+    
+    <select id="getProjectTaskById" resultType="ProjectTaskVO">
+    	SELECT 
+			t.TITLE AS TASK_TITLE
+			,p.TITLE AS PROJECT_TITLE			
+		FROM TASK t LEFT JOIN PROJECT p ON t.PROJECT_ID = p.PROJECT_ID 
+		WHERE 1=1
+			AND t.TASK_ID = #{task_id}
+			AND t.PROJECT_ID = #{project_id}
+			
+		
+	</select>
+	
+   
+   	<select id="getCheckTaskName" resultType="TaskVO">
+    	SELECT 
+			t.TASK_ID
+			,t.TITLE				
+		FROM TASK t
+		WHERE 1=1
+			AND TITLE = #{title}
+			AND PROJECT_ID = #{project_id} 
+	</select>
+	
+	<select id="getTaskListByBaseTaskId" resultType="TaskVO">
+		SELECT 
+			t.TASK_ID
+			,t.BASE_TASK_ID
+		FROM TASK t
+		WHERE 1=1 
+			AND t.BASE_TASK_ID = #{base_task_id}
+	</select>
+	
+	<update id="updateTaskBaseTaskId">
+		UPDATE TASK t
+		<trim prefix="SET" prefixOverrides=",">
+				,t.BASE_TASK_ID = NULL
+		</trim>
+		WHERE t.TASK_ID = #{task_id}
+	</update>
+	
+   
+</mapper>

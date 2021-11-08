@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.project">
+    
+    <insert id="insertProject" useGeneratedKeys="true" keyProperty="project_id" parameterType="ProjectVO"  >
+	    INSERT INTO PROJECT(
+	    	TITLE
+			,CONTENTS
+			,CREATED_DATE
+			,USER_ID
+			,SOLUTION_TYPE
+			,IS_FIXED
+		) VALUES(			
+			#{title}
+			,#{contents}
+			,now()
+			,#{user_id}
+			,#{solution_type}
+			,#{is_fixed}		
+		)
+	</insert>
+	
+	<delete id="deleteProject" >
+	    DELETE FROM PROJECT
+	    WHERE PROJECT_ID = #{project_id}	    	
+	</delete>
+	    
+    <select id="getProjectList" resultType="ProjectVO">
+    	SELECT 
+			 p.PROJECT_ID
+			,p.TITLE
+			,p.CONTENTS
+			,p.CREATED_DATE
+			,p.USER_ID
+			,p.SOLUTION_TYPE
+			,p.IS_FIXED
+		FROM PROJECT p 
+		WHERE 1=1
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
+			<if test='solution_type != null and !solution_type.equals("")'>AND SOLUTION_TYPE = #{solution_type}</if>
+		ORDER BY p.PROJECT_ID DESC
+		LIMIT ${page_num}, ${page_size}
+	</select>
+	
+	<select id="getProjectById" resultType="ProjectVO">
+    	SELECT 
+			 p.PROJECT_ID
+			,p.TITLE
+			,p.CONTENTS
+			,p.CREATED_DATE
+			,p.USER_ID
+			,p.SOLUTION_TYPE
+			,p.IS_FIXED
+		FROM PROJECT p 
+		WHERE 1=1
+			AND p.PROJECT_ID = #{project_id} 
+		
+	</select>
+	
+	<select id="getProjectTotalCount" resultType="java.lang.Integer">
+    	SELECT 
+			COUNT(p.PROJECT_ID) AS TOTAL_COUNT
+		FROM PROJECT p 
+		WHERE 1=1
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
+			<if test='solution_type != null and !solution_type.equals("")'>AND SOLUTION_TYPE = #{solution_type}</if>
+		ORDER BY p.PROJECT_ID DESC
+	</select>
+	
+	
+	
+	<update id="updateProject" >
+	    UPDATE PROJECT
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='title != null and !title.equals("")'>,TITLE = #{title}</if>
+		    	<if test='contents != null and !contents.equals("")'>,CONTENTS = #{contents}</if>
+		    	<if test='solution_type != null and !solution_type.equals("")'>,SOLUTION_TYPE = #{solution_type}</if>		    			    	
+			</trim>
+		WHERE 1=1
+			AND PROJECT_ID = #{project_id}          
+	</update>
+   
+    
+    
+    
+    
+   
+   
+    
+</mapper>

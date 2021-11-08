@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.data">
+    
+<!--     <insert id="insertDataset"  useGeneratedKeys="true" keyProperty="dataset_id"  parameterType="DatasetVO"  > -->
+<!-- 	    INSERT INTO DATASET( -->
+<!-- 	    	TITLE -->
+<!-- 			,CONTENTS -->
+<!-- 			,CREATED_DATE -->
+<!-- 			,USER_ID -->
+<!-- 			,MEDIA_TYPE -->
+<!-- 			,STATUS -->
+<!-- 			,LABEL_TYPE -->
+<!-- 		) VALUES(			 -->
+<!-- 			#{title} -->
+<!-- 			,#{contents} -->
+<!-- 			,now() -->
+<!-- 			,#{user_id} -->
+<!-- 			,#{media_type} -->
+<!-- 			,1 -->
+<!-- 			,#{label_type}		 -->
+<!-- 		) -->
+<!-- 	</insert> -->
+<!--  수정됨 -->
+	<insert id="insertDataset"  useGeneratedKeys="true" keyProperty="dataset_id"  parameterType="DatasetVO"  >
+	    INSERT INTO DATASET(
+	    	TITLE
+			,CONTENTS
+			,CREATED_DATE
+			,USER_ID
+			,MEDIA_TYPE
+			,LABEL_TYPE
+			,STATUS
+		) VALUES(			
+			 #{title}
+			,#{contents}
+			,now()
+			,#{user_id}			
+			,#{media_type}
+			,#{label_type}
+			,#{status}		
+		)
+	</insert>
+
+
+	<!-- 추가됨 -->
+	<select id="getMyDatasetById" resultType="DatasetVO">
+    	SELECT 
+			 d.DATASET_ID
+			,d.TITLE
+			,d.CONTENTS
+			,d.CREATED_DATE
+			,d.USER_ID
+			,d.LABEL_TYPE
+			,d.MEDIA_TYPE
+			,d.STATUS
+			,d.SAVE_DATA_ID
+		FROM DATASET d 
+		WHERE 1=1
+			AND d.DATASET_ID = #{dataset_id}
+			<if test = 'user_id != null and !user_id.equals("")'>
+				AND d.USER_ID = #{user_id}
+			</if>
+	</select>
+	
+	
+
+
+	
+	<delete id="deleteDataset" >
+	    DELETE FROM DATASET
+	    WHERE 1=1 
+	    	AND DATASET_ID = #{dataset_id}	    	
+	</delete>
+	
+	<delete id ="deleteData">
+		DELETE FROM DATA
+		WHERE 1=1
+			AND DATA_ID = #{data_id}
+	</delete>
+	
+	<delete id ="deleteDataInId">
+		DELETE FROM DATA
+		WHERE 1=1
+			AND DATA_ID IN (#{data_id})
+	</delete>
+	
+	
+	<!-- <delete id ="deleteDataByDatasetID">
+		DELETE FROM DATA
+		WHERE 1=1
+			AND DATASET_ID = #{dataset_id}
+	</delete> -->
+	
+	<delete id ="deleteDataByDatasetId">
+		DELETE FROM DATA
+		WHERE 1=1
+			AND DATASET_ID IN (#{dataset_id})
+	</delete>
+	    
+<!--     <select id="getDatasetList" resultType="DatasetVO"> -->
+<!--     	SELECT  -->
+<!-- 			 d.DATASET_ID -->
+<!-- 			,d.TITLE -->
+<!-- 			,d.CONTENTS -->
+<!-- 			,d.CREATED_DATE -->
+<!-- 			,d.USER_ID -->
+<!-- 			,d.MEDIA_TYPE -->
+<!-- 			,d.LABEL_TYPE -->
+<!-- 			,d.STATUS -->
+<!-- 			,d.SAVE_DATA_ID -->
+<!-- 		FROM DATASET d  -->
+<!-- 		WHERE 1=1 -->
+<!-- 			<if test='status != null and !status.equals("")'>AND STATUS = #{status}</if> -->
+<!-- 			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if> -->
+<!-- 			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if> -->
+<!-- 			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if> -->
+<!-- 			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type}</if> -->
+<!-- 		ORDER BY d.DATASET_ID DESC -->
+<!-- 		LIMIT ${page_num}, ${page_size} -->
+<!-- 	</select> -->
+	<!--  수정됨 -->
+	<select id="getDatasetList" resultType="DatasetVO">
+    	SELECT 
+			 d.DATASET_ID
+			,d.TITLE
+			,d.CONTENTS
+			,d.CREATED_DATE
+			,d.USER_ID
+			,d.LABEL_TYPE
+			,d.MEDIA_TYPE
+			,d.STATUS
+			,d.SAVE_DATA_ID			
+		FROM DATASET d 
+		WHERE 1=1
+			AND d.STATUS != 0
+			<!-- <if test='status != null and !status.equals("")'>AND STATUS = #{status}</if> -->
+			<if test='user_id != null and !user_id.equals("")'>AND d.USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND d.TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='contents != null and !contents.equals("")'>AND d.CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
+			<if test='label_type != null and !label_type.equals("")'>AND d.LABEL_TYPE = #{label_type}</if>
+			<if test='media_type != null and !media_type.equals("")'>AND d.MEDIA_TYPE = #{media_type}</if>
+		ORDER BY d.DATASET_ID DESC
+		LIMIT ${page_num}, ${page_size}
+	</select>
+
+
+	
+	
+	<select id="getDatasetById" resultType="DatasetVO">
+    	SELECT 
+			 d.DATASET_ID
+			,d.TITLE
+			,d.CONTENTS
+			,d.CREATED_DATE
+			,d.USER_ID
+			,d.MEDIA_TYPE
+			,d.LABEL_TYPE
+			,d.STATUS
+			,d.SAVE_DATA_ID
+		FROM DATASET d 
+		WHERE 1=1
+			AND d.DATASET_ID = #{dataset_id}		
+	</select>
+	
+	
+<!-- 	<select id="getDatasetTotalCount" resultType="java.lang.Integer"> -->
+<!--     	SELECT  -->
+<!-- 			COUNT(d.DATASET_ID) AS TOTAL_COUNT -->
+<!-- 		FROM DATASET d  -->
+<!-- 		WHERE 1=1 -->
+<!-- 			<if test='status != null and !status.equals("")'>AND STATUS = #{status}</if> -->
+<!-- 			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if> -->
+<!-- 			<if test='title != null and !title.equals("")'>AND TITLE = #{title}</if> -->
+<!-- 			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if> -->
+<!-- 		ORDER BY d.DATASET_ID DESC -->
+<!-- 	</select> -->
+	<!-- 수정됨 -->
+	<select id="getDatasetTotalCount" resultType="java.lang.Integer">
+    	SELECT 
+			COUNT(d.DATASET_ID) AS TOTAL_COUNT
+		FROM DATASET d 
+		WHERE 1=1
+			<if test='status != null and !status.equals("")'>AND STATUS = #{status}</if>
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
+			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type}</if>
+			<if test='media_type != null and !media_type.equals("")'>AND MEDIA_TYPE = #{media_type}</if>
+		ORDER BY d.DATASET_ID DESC
+	</select>
+	
+	
+<!-- 	<update id="updateDataset" > -->
+<!-- 	    UPDATE DATASET -->
+<!-- 	    	<trim prefix="SET" prefixOverrides=","> -->
+<!-- 				<if test='title != null and !title.equals("")'>,TITLE = #{title}</if> -->
+<!-- 		    	<if test='contents != null and !contents.equals("")'>,CONTENTS = #{contents}</if>		 -->
+<!-- 		    	<if test='status != null and !status.equals("")'>,STATUS = #{status}</if>	 -->
+<!-- 		    	<if test='save_data_id != null and !save_data_id.equals("")'>,SAVE_DATA_ID = #{save_data_id}</if> -->
+<!-- 		    	<if test='label_type != null and !label_type.equals("")'>,LABEL_TYPE = #{label_type}</if>	    			    	 -->
+<!-- 			</trim> -->
+<!-- 		WHERE 1=1 -->
+<!-- 			AND DATASET_ID = #{dataset_id}           -->
+<!-- 	</update> -->
+	<!-- 수정됨 -->
+	<update id="updateDataset" >
+	    UPDATE DATASET
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='title != null and !title.equals("")'>,TITLE = #{title}</if>
+		    	<if test='contents != null and !contents.equals("")'>,CONTENTS = #{contents}</if>		
+		    	<if test='status != null and !status.equals("")'>,STATUS = #{status}</if>	
+		    	<if test='save_data_id != null and !save_data_id.equals("")'>,SAVE_DATA_ID = #{save_data_id}</if>
+		    	<if test='label_type != null and !label_type.equals("")'>,LABEL_TYPE = #{label_type}</if>
+		    </trim>
+		WHERE 1=1
+			AND DATASET_ID = #{dataset_id}          
+	</update>
+	
+	
+
+   <update id="updateDatasetAvailable" >
+	    UPDATE DATASET
+	    	<trim prefix="SET" prefixOverrides=",">
+				,STATUS = 3
+		    </trim>
+		WHERE 1=1
+			AND DATASET_ID = #{dataset_id}
+			AND STATUS = 2          
+	</update>
+   
+   
+    
+<!--     <insert id="insertData"  parameterType="HashMap" useGeneratedKeys="true" keyProperty="data_id" > -->
+<!-- 	    INSERT INTO DATA( -->
+<!-- 	    	DATASET_ID -->
+<!-- 			,PATH -->
+<!-- 			,USER_ID -->
+<!-- 			,CREATED_DATE -->
+<!-- 			,MEDIA_TYPE -->
+<!-- 			,WIDTH -->
+<!-- 			,HEIGHT -->
+<!-- 			,FPS -->
+<!-- 			,STATUS -->
+<!-- 			,CONFIRM_STATUS -->
+<!-- 			,FILENAME -->
+<!-- 			,FRAME -->
+<!-- 			,DURATION -->
+<!-- 		) VALUES -->
+<!-- 		<foreach collection="dataList" item="item" separator=" , "> -->
+<!--             (#{item.dataset_id}, #{item.path}, #{item.user_id}, now(), #{item.media_type}, #{item.width}, #{item.height}, #{item.fps}, 1, 0, #{item.filename}, #{item.frame}, #{item.duration}) -->
+<!--         </foreach> -->
+		
+<!-- 	</insert> -->
+	
+	<!-- 수정됨 -->
+    <insert id="insertData" parameterType="HashMap" useGeneratedKeys="true" keyProperty="data_id" >
+	    INSERT INTO DATA(
+	    	DATASET_ID
+			,PATH
+			,STATUS
+			,CREATED_DATE
+			,MEDIA_TYPE
+			,WIDTH
+			,HEIGHT
+			,FPS
+			,CONFIRM_STATUS
+			,FILENAME
+			,FRAME
+			,DURATION
+		) VALUES
+		<foreach collection="dataList" item="item" separator=" , ">
+            (#{item.dataset_id}, #{item.path}, 1, now(), #{item.media_type}, #{item.width}, #{item.height}, #{item.fps}, 0, #{item.filename}, #{item.frame}, #{item.duration})
+        </foreach>		
+	</insert>
+	
+	<insert id="insertDataInId" parameterType="DataVO" useGeneratedKeys="true" keyProperty="data_id" >
+	    INSERT INTO DATA(
+	    	DATASET_ID
+			,PATH
+			,USER_ID
+			,CREATED_DATE
+			,MEDIA_TYPE
+			,WIDTH
+			,HEIGHT
+			,FPS
+			,STATUS
+			,CONFIRM_STATUS
+			,FILENAME
+			,FRAME
+			,DURATION) 
+		SELECT 
+			#{dataset_id},
+			PATH,
+			#{user_id},
+			NOW(),
+			MEDIA_TYPE,
+			WIDTH,
+			HEIGHT,
+			FPS,
+			STATUS,
+			CONFIRM_STATUS,
+			FILENAME,
+			FRAME,
+			DURATION
+		FROM DATA 
+		WHERE DATA_ID IN (${data_id})
+	</insert>
+	
+	
+	
+	<delete id="deleteDataList" >
+	    DELETE FROM DATA
+	    WHERE 1=1 
+	    	AND DATASET_ID = #{dataset_id}	    	
+	</delete>
+	    
+<!--     <select id="getDataList" resultType="DataVO"> -->
+<!--     	SELECT  -->
+<!--     		d.DATA_ID -->
+<!-- 			,d.DATASET_ID -->
+<!-- 			,d.PATH -->
+<!-- 			,d.USER_ID -->
+<!-- 			,d.CREATED_DATE -->
+<!-- 			,d.MEDIA_TYPE -->
+<!-- 			,d.WIDTH -->
+<!-- 			,d.HEIGHT -->
+<!-- 			,d.FPS -->
+<!-- 			,d.STATUS -->
+<!-- 			,d.CONFIRM_STATUS -->
+<!-- 			,d.FILENAME -->
+<!-- 			,d.FRAME -->
+<!-- 			,d.DURATION -->
+<!-- 			,s.LABEL_TYPE -->
+<!-- 		FROM DATA d JOIN DATASET s ON d.DATASET_ID = s.DATASET_ID  -->
+<!-- 		WHERE 1=1 -->
+<!-- 			<if test='status != null and !status.equals("")'>AND d.STATUS = #{status}</if> -->
+<!-- 			AND d.DATASET_ID = #{dataset_id}  -->
+<!-- 		ORDER BY d.DATA_ID ASC -->
+<!-- 	</select> -->
+	<!-- 수정됨 -->
+	<select id="getDataList" resultType="DataVO">
+    	SELECT 
+    		d.DATA_ID
+			,d.DATASET_ID
+			,d.PATH
+			,d.USER_ID
+			,d.CREATED_DATE
+			,d.MEDIA_TYPE
+			,d.WIDTH
+			,d.HEIGHT
+			,d.FPS
+			,d.STATUS
+			,d.CONFIRM_STATUS
+			,d.FILENAME
+			,d.FRAME
+			,d.DURATION
+			,(SELECT COUNT(*) FROM META m WHERE 1=1 AND m.DATA_ID = d.DATA_ID) AS META_CNT			
+		FROM DATA d 
+		WHERE 1=1
+			<if test='status != null and !status.equals("")'>AND d.STATUS = #{status}</if>
+			AND d.DATASET_ID = #{dataset_id} 
+		ORDER BY d.DATA_ID ASC
+		LIMIT ${page_num}, ${page_size}
+	</select>
+
+
+	<select id="getDataByNum" resultType="DataVO">
+    	SELECT 
+    		d.DATA_ID
+			,d.DATASET_ID
+			,d.PATH
+			,d.USER_ID
+			,d.CREATED_DATE
+			,d.MEDIA_TYPE
+			,d.WIDTH
+			,d.HEIGHT
+			,d.FPS
+			,d.STATUS
+			,d.CONFIRM_STATUS
+			,d.FILENAME
+			,d.FRAME
+			,d.DURATION
+			,(SELECT COUNT(*) FROM META m WHERE 1=1 AND m.DATA_ID = d.DATA_ID) AS META_CNT			
+		FROM DATA d
+		WHERE 1=1
+			<if test='status != null and !status.equals("")'>AND d.STATUS = #{status}</if>
+			AND d.DATASET_ID = #{dataset_id} 
+		ORDER BY d.DATA_ID ASC
+		LIMIT ${data_num}, 1
+	</select>
+
+
+	
+<!-- 	<select id="getDataById" resultType="DataVO"> -->
+<!--     	SELECT  -->
+<!--     		d.DATA_ID -->
+<!-- 			,d.DATASET_ID -->
+<!-- 			,d.PATH -->
+<!-- 			,d.USER_ID -->
+<!-- 			,d.CREATED_DATE -->
+<!-- 			,d.MEDIA_TYPE -->
+<!-- 			,d.WIDTH -->
+<!-- 			,d.HEIGHT -->
+<!-- 			,d.FPS -->
+<!-- 			,d.STATUS -->
+<!-- 			,d.CONFIRM_STATUS -->
+<!-- 			,d.FILENAME -->
+<!-- 			,d.FRAME -->
+<!-- 			,d.DURATION -->
+<!-- 		FROM DATA d  -->
+<!-- 		WHERE 1=1 -->
+<!-- 			AND d.DATA_ID = #{data_id} -->
+<!-- 	</select> -->
+	<!-- 수정됨 -->
+	<select id="getDataById" resultType="DataVO">
+    	SELECT 
+    		d.DATA_ID
+			,d.DATASET_ID
+			,d.PATH
+			,d.USER_ID
+			,d.CREATED_DATE
+			,d.MEDIA_TYPE
+			,d.WIDTH
+			,d.HEIGHT
+			,d.FPS
+			,d.STATUS
+			,d.CONFIRM_STATUS
+			,d.FILENAME
+			,d.FRAME
+			,d.DURATION	
+		FROM DATA d 
+		WHERE 1=1
+			<if test='status != null and !status.equals("")'>AND d.STATUS = #{status}</if>
+			AND d.DATA_ID = #{data_id}
+	</select>
+	
+	<!-- 추가됨 -->
+	<select id="getDataTotalCount" resultType="java.lang.Integer">
+    	SELECT 
+			COUNT(d.DATA_ID) AS TOTAL_COUNT
+		FROM DATA d 
+		WHERE 1=1
+			<if test='status != null and !status.equals("")'>AND d.STATUS = #{status}</if>
+			AND d.DATASET_ID = #{dataset_id}
+	</select>
+	
+	<select id="getDataByDatasetId" resultType="DataVO">
+    	SELECT 
+    		d.DATA_ID
+			,d.DATASET_ID
+			,d.PATH
+			,d.USER_ID
+			,d.CREATED_DATE
+			,d.MEDIA_TYPE
+			,d.WIDTH
+			,d.HEIGHT
+			,d.FPS
+			,d.STATUS
+			,d.CONFIRM_STATUS
+			,d.FILENAME
+			,d.FRAME
+			,d.DURATION	
+		FROM DATA d 
+		WHERE 1=1
+			<if test='status != null and !status.equals("")'>AND d.STATUS = #{status}</if>
+			AND d.DATASET_ID = #{dataset_id}
+	</select>
+	
+	<!-- 백그라운드 업로드용 추가됨 -->	
+	<select id="getUploadRequestDatasetList" resultType="DatasetVO">
+		SELECT 
+			 d.DATASET_ID
+			,d.USER_ID
+			,d.LABEL_TYPE
+			,d.MEDIA_TYPE
+			,d.STATUS						
+		FROM DATASET d 
+		WHERE 1=1
+			AND STATUS = 2
+		ORDER BY d.DATASET_ID DESC
+		LIMIT 5
+	</select>
+	
+	
+	
+	<select id="getDataInId" resultType="DataVO">
+    	SELECT 
+    		d.DATA_ID
+			,d.DATASET_ID
+			,d.PATH
+			,d.USER_ID
+			,d.CREATED_DATE
+			,d.MEDIA_TYPE
+			,d.WIDTH
+			,d.HEIGHT
+			,d.FPS
+			,d.STATUS
+			,d.CONFIRM_STATUS
+			,d.FILENAME
+			,d.FRAME
+			,d.DURATION
+		FROM DATA d 
+		WHERE 1=1
+			AND d.DATA_ID IN (${data_id})
+		ORDER BY d.DATA_ID ASC
+	</select>
+	
+	
+	<update id="updateDataInId" >
+		UPDATE DATA 
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='dataset_id != null and !dataset_id.equals("")'>,DATASET_ID = #{dataset_id}</if>
+				<if test='status != null and !status.equals("")'>,status = #{status}</if>
+		    </trim>
+		WHERE 1=1
+			AND DATA_ID IN (${data_id})          
+	</update>
+	
+	<update id="updateDataByDatasetId" >
+		UPDATE DATA 
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='status != null and !status.equals("")'>,STATUS = #{status}</if>
+				<if test='target_dataset_id != null and !target_dataset_id.equals("")'>,DATASET_ID = #{target_dataset_id}</if>
+			</trim>
+		WHERE 1=1
+			AND DATASET_ID = #{dataset_id}          
+	</update>
+	
+	
+	<update id="updateData" >
+		UPDATE DATA 
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='status != null and !status.equals("")'>,STATUS = #{status}</if>
+		    </trim>
+		WHERE 1=1
+			AND DATA_ID = #{data_id}          
+	</update>
+	
+
+<!-- 	<update id="updateDataByDatasetId" >
+		UPDATE DATA 
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='status != null and !status.equals("")'>,STATUS = #{status}</if>
+			</trim>
+		WHERE 1=1
+			AND DATASET_ID = #{dataset_id}          
+	</update> -->
+	
+	
+	
+	
+	<insert id="insertMeta" parameterType="HashMap">
+	    INSERT INTO META(
+	    	DATA_ID
+			,LABEL
+			,INFO
+			,USER_ID
+			,LABEL_TYPE
+			,CREATED_DATE
+		) VALUES
+		<foreach collection="metaList" item="item" separator=" , ">
+            (#{item.data_id}, #{item.label}, #{item.info}, #{item.user_id}, #{item.label_type}, NOW())
+        </foreach>
+
+	</insert>
+	
+	<insert id="insertMetaBySelectResult">
+	    INSERT INTO META(
+	    	DATA_ID
+			,LABEL
+			,INFO
+			,USER_ID
+			,LABEL_TYPE
+			,CREATED_DATE
+		) 
+		SELECT #{target_data_id}, LABEL, INFO, USER_ID, LABEL_TYPE, NOW()
+		FROM META
+		WHERE 1=1                                                              
+			AND DATA_ID = #{source_data_id}			 
+	</insert>
+	
+	
+	
+	<update id="updateMeta" >
+		UPDATE META 
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='info != null and !info.equals("")'>,INFO = #{info}</if>
+				<!-- <if test='crop_img != null and !crop_img.equals("")'>,CROP_IMG = #{crop_img}</if> -->
+				<if test='label != null and !label.equals("")'>,LABEL = #{label}</if>
+				<!-- <if test='segmentation != null and !segmentation.equals("")'>,SEGMENTATION = #{segmentation}</if> -->
+		    </trim>
+		WHERE 1=1
+			AND META_ID = #{meta_id}          
+	</update>
+	
+	
+	<update id="updateMovelMetaByDataId" >
+		UPDATE META
+		<trim prefix="SET" prefixOverrides=",">
+		 	DATA_ID = #{target}
+		WHERE 1=1	
+			AND DATA_ID = #{source}
+			<if test='label != null and !label.equals("")'>AND LABEL IN (${label})</if>
+		</trim>
+	</update>
+	
+	   
+	<delete id="deleteMetaList" >
+	    DELETE FROM META
+	    WHERE 1=1 
+	    	AND DATA_ID = #{data_id}	    	
+	</delete>
+	
+	
+	<delete id="deleteMeta" >
+	    DELETE FROM META
+	    WHERE 1=1 
+	    	AND META_ID = #{meta_id}	    	
+	</delete>
+	
+	<delete id="deleteMetaByDatasetId" >
+	    DELETE FROM META
+	    WHERE 1=1 
+	    	AND DATA_ID IN (
+	    		SELECT DATA_ID
+	    		FROM DATA
+	    		WHERE 1=1
+	    			AND DATASET_ID = #{dataset_id}  
+	    	)	    	 	    	
+	</delete>
+	
+	<delete id="deleteMetaInDataId" >
+	    DELETE FROM META
+	    WHERE 1=1 
+	    	AND DATA_ID IN (${data_id})
+	</delete>
+	
+	<select id="getMetaInDataIdCount" resultType="java.lang.Integer">
+	    SELECT COUNT(m.META_ID)
+	    FROM META m
+	    WHERE 1=1 
+	    	AND DATA_ID IN (${data_id})
+	</select>
+	
+	<select id="getMetaByDataSetIdCount" resultType="java.lang.Integer">
+		SELECT COUNT(d.DATA_ID)
+		FROM DATA d
+		WHERE 1=1 
+		AND DATASET_ID = ${dataset_id}
+	</select>
+	
+	
+	    
+    <select id="getMetaList" resultType="MetaVO">
+    	SELECT
+    		 m.META_ID
+    		,m.DATA_ID
+			,m.LABEL
+			,m.INFO
+			,m.USER_ID
+			,m.LABEL_TYPE
+			,m.CREATED_DATE
+			,d.PATH
+		FROM META m JOIN DATA d ON m.DATA_ID = d.DATA_ID		
+		WHERE 1=1
+			<if test='data_id != null and !data_id.equals("")'>AND m.DATA_ID = #{data_id}</if>
+			<if test='label != null and !label.equals("")'>AND m.LABEL LIKE CONCAT('%',#{label},'%')</if>	
+		ORDER BY m.META_ID ASC			
+	</select>
+	
+	<select id="getMetaListInId" resultType="MetaVO">
+    	SELECT
+    		 m.META_ID
+    		,m.DATA_ID
+			,m.LABEL
+			,m.INFO
+			,m.USER_ID
+			,m.LABEL_TYPE
+			,m.CREATED_DATE
+<!-- 			,m.CROP_IMG -->
+			,d.PATH
+		FROM META m JOIN DATA d ON m.DATA_ID = d.DATA_ID 
+		WHERE 1=1
+			AND m.META_ID IN (${meta_id})
+		ORDER BY m.Meta_ID ASC
+	</select>
+	
+	
+	<select id="getSearchVisionList" resultType="MetaVO">
+		SELECT
+			m.META_ID
+    		,m.DATA_ID
+			,m.LABEL
+			,m.INFO
+			,m.USER_ID
+			,m.LABEL_TYPE
+			,m.CREATED_DATE
+<!-- 			,m.CROP_IMG -->
+			,d.FPS
+			,d.FRAME
+			,d.PATH
+		FROM META m JOIN DATA d ON m.DATA_ID = d.DATA_ID 
+		WHERE 1=1
+			<if test='label != null and !label.equals("")'>AND m.LABEL LIKE CONCAT('%',#{label},'%')</if>
+			<if test='dataset_id != null and !dataset_id.equals("")'> AND d.DATASET_ID IN (${dataset_id}) </if>
+		ORDER BY m.META_ID ASC	
+		LIMIT ${page_num}, ${page_size}	
+	</select>
+	
+	<select id="getSearchAnnotationVisionList" resultType="MetaVO">
+		SELECT
+			m.META_ID
+    		,m.DATA_ID
+			,m.LABEL
+			,m.INFO
+			,m.USER_ID
+			,m.LABEL_TYPE
+			,m.CREATED_DATE
+<!-- 			,m.CROP_IMG -->
+			,d.FPS
+			,d.PATH
+		FROM META m JOIN DATA d ON m.DATA_ID = d.DATA_ID 
+		WHERE 1=1
+			<if test='label != null and !label.equals("")'>AND m.LABEL LIKE CONCAT('%',#{label},'%')</if>
+			<if test='dataset_id != null and !dataset_id.equals("")'> AND d.DATASET_ID IN (${dataset_id}) </if>
+		ORDER BY m.META_ID ASC	
+						
+	</select>
+	
+	<select id="getSearchVideoAnnotationVisionList" resultType="MetaVO">
+		SELECT
+			m.META_ID
+    		,m.DATA_ID
+			,m.LABEL
+			,m.USER_ID
+			,m.LABEL_TYPE
+			,m.CREATED_DATE
+<!-- 			,m.CROP_IMG -->
+			,d.PATH
+		FROM META m JOIN DATA d ON m.DATA_ID = d.DATA_ID 
+		WHERE 1=1
+			<if test='label != null and !label.equals("")'>AND m.LABEL LIKE CONCAT('%',#{label},'%')</if>
+			<if test='dataset_id != null and !dataset_id.equals("")'> AND d.DATASET_ID IN (${dataset_id}) </if>
+		ORDER BY m.META_ID ASC	
+						
+	</select>
+	
+	<select id="getSearchVisionListTotalCount" resultType="java.lang.Integer">
+    	SELECT 
+			COUNT(m.META_ID) AS TOTAL_COUNT
+		FROM META m JOIN DATA d ON m.DATA_ID = d.DATA_ID 
+		WHERE 1=1
+			<if test='label != null and !label.equals("")'>AND m.LABEL LIKE CONCAT('%',#{label},'%')</if>
+			<if test='dataset_id != null and !dataset_id.equals("")'> AND d.DATASET_ID IN (${dataset_id}) </if>
+		ORDER BY d.DATASET_ID DESC
+	</select>
+   
+   
+   <select id="getDataListInPath" resultType="DataVO">
+    	SELECT
+    		d.DATA_ID
+			,d.PATH
+		FROM DATA d 
+		WHERE 1=1
+			AND d.DATASET_ID = #{dataset_id}
+			AND d.PATH IN (${path})
+		ORDER BY d.DATA_ID ASC
+	</select>
+   
+
+	<select id="getLabelGroup" resultType="MetaVO">
+		SELECT 
+			m.LABEL 
+		FROM DATA d JOIN META m ON d.DATA_ID = m.DATA_ID
+		WHERE 1=1
+			<if test='dataset_id != null and !dataset_id.equals("")'>AND d.DATASET_ID IN (${dataset_id})</if>
+			<if test='data_id != null and !data_id.equals("")'>AND d.DATA_ID IN (${data_id})</if>
+		GROUP BY m.LABEL
+		ORDER BY m.LABEL ASC
+   </select>
+   
+   
+   <insert id="insertDataOne" useGeneratedKeys="true" keyProperty="data_id" >
+	    INSERT INTO DATA(
+	    	DATASET_ID
+			,PATH
+			,USER_ID
+			,CREATED_DATE
+			,MEDIA_TYPE
+			,WIDTH
+			,HEIGHT
+			,FPS
+			,STATUS
+			,CONFIRM_STATUS
+			,FILENAME
+			,FRAME
+			,DURATION
+		) VALUES
+		(#{dataset_id}, #{path}, #{user_id}, now(), #{media_type}, #{width}, #{height}, #{fps}, #{status}, #{confirm_status}, #{filename}, #{frame}, #{duration})   
+	</insert>
+
+	<select id="getCheckOwnerDatasetById" resultType="DatasetVO">
+		SELECT
+			d.DATASET_ID
+			 ,d.TITLE
+			 ,d.CONTENTS
+			 ,d.CREATED_DATE
+			 ,d.USER_ID
+			 ,d.LABEL_TYPE
+			 ,d.MEDIA_TYPE
+			 ,d.STATUS
+			 ,d.SAVE_DATA_ID
+		FROM DATASET d JOIN USERS u ON d.USER_ID = u.USER_ID
+		WHERE 1=1
+		  AND d.DATASET_ID = #{dataset_id}
+		  AND (u.USER_ID = #{user_id} OR u.ROOT_ID = #{user_id})
+	</select>
+
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.annotation">
+    
+    <insert id="insertAnnotation"  useGeneratedKeys="true" keyProperty="annotation_id"  parameterType="AnnotationVO"  >
+	    INSERT INTO ANNOTATION(
+	    	TITLE
+			,CONTENTS
+			,CREATED_DATE
+			,USER_ID
+			,DATA
+			,LABEL_TYPE
+		) VALUES(			
+			#{title}
+			,#{contents}
+			,now()
+			,#{user_id}
+			,#{data}	
+			,#{label_type}
+		)
+	</insert>
+	
+	<delete id="deleteAnnotation" >
+	    DELETE FROM ANNOTATION
+	    WHERE ANNOTATION_ID = #{annotation_id}	    	
+	</delete>
+	    
+    <select id="getAnnotationList" resultType="AnnotationVO">
+    	SELECT 
+			 a.ANNOTATION_ID
+			,a.TITLE
+			,a.CONTENTS
+			,a.CREATED_DATE
+			,a.USER_ID
+			,a.LABEL_TYPE
+		FROM ANNOTATION a 
+		WHERE 1=1
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
+			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type}</if>
+		ORDER BY a.ANNOTATION_ID DESC
+		LIMIT ${page_num}, ${page_size}
+	</select>
+	
+
+	
+	<select id="getAnnotationById" resultType="AnnotationVO">
+    	SELECT 
+			 a.ANNOTATION_ID
+			,a.TITLE
+			,a.CONTENTS
+			,a.CREATED_DATE
+			,a.USER_ID
+			,CONVERT(a.DATA USING utf8) AS DATA
+			,a.LABEL_TYPE
+		FROM ANNOTATION a
+		WHERE 1=1
+			AND a.ANNOTATION_ID = #{annotation_id}
+	</select>
+	
+	<select id="getVideoAnnotationById" resultType="AnnotationVO">
+    	SELECT 
+			 a.ANNOTATION_ID
+			,a.TITLE
+			,a.CONTENTS
+			,a.CREATED_DATE
+			,a.USER_ID
+			,a.LABEL_TYPE
+		FROM ANNOTATION a 
+		WHERE 1=1
+			AND d.ANNOTATION_ID = #{annotation_id}
+	</select>
+	
+	
+	<select id="getAnnotationTotalCount" resultType="java.lang.Integer">
+    	SELECT 
+			COUNT(a.ANNOTATION_ID) AS TOTAL_COUNT
+		FROM ANNOTATION a
+		WHERE 1=1
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
+		ORDER BY a.ANNOTATION_ID DESC
+	</select>
+	
+	
+	
+	<update id="updateAnnotation" >
+	    UPDATE ANNOTATION
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='title != null and !title.equals("")'>,TITLE = #{title}</if>
+		    	<if test='contents != null and !contents.equals("")'>,CONTENTS = #{contents}</if>
+		    	<if test='data != null and !data.equals("")'>,DATA = #{data}</if>
+		    </trim>
+		WHERE ANNOTATION_ID = #{annotation_id}          
+	</update>
+	
+	
+	<select id="getCheckAnnotationName" resultType="AnnotationVO">
+    	SELECT 
+			a.ANNOTATION_ID
+			,a.TITLE				
+		FROM ANNOTATION a
+		WHERE TITLE = #{title} 
+	</select>
+   
+</mapper>

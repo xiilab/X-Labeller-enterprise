@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "HTTP://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<setting name="cacheEnabled" value="false" />
+		<setting name="useGeneratedKeys" value="true" />
+		<setting name="defaultExecutorType" value="REUSE" />
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="java.util.HashMap" alias="HashMap"/>
+		<typeAlias type="com.xlabeller.models.UserVO" alias="UserVO"/>
+		<typeAlias type="com.xlabeller.models.DatasetVO" alias="DatasetVO"/>
+		<typeAlias type="com.xlabeller.models.DataVO" alias="DataVO"/>
+		<typeAlias type="com.xlabeller.models.MetaVO" alias="MetaVO"/>
+		<typeAlias type="com.xlabeller.models.PageVO" alias="PageVO"/>
+		<typeAlias type="com.xlabeller.models.ProjectVO" alias="ProjectVO"/>
+		<typeAlias type="com.xlabeller.models.AnnotationVO" alias="AnnotationVO"/>
+		<typeAlias type="com.xlabeller.models.TaskVO" alias="TaskVO"/>
+		<typeAlias type="com.xlabeller.models.InferenceVO" alias="InferenceVO"/>
+		<typeAlias type="com.xlabeller.models.InferenceResultVO" alias="InferenceResultVO"/>
+		<typeAlias type="com.xlabeller.models.TrainLogVO" alias="TrainLogVO"/>
+		<typeAlias type="com.xlabeller.models.MetaMoveVO" alias="MetaMoveVO"/>
+		<typeAlias type="com.xlabeller.models.GpuNodeVO" alias="GpuNodeVO"/>
+		<typeAlias type="com.xlabeller.models.ReplicaMetaVO" alias="ReplicaMetaVO"/>
+		<typeAlias type="com.xlabeller.models.ProjectTaskVO" alias="ProjectTaskVO"/>
+		<typeAlias type="com.xlabeller.models.AlgorithmVO" alias="AlgorithmVO"/>
+		<typeAlias type="com.xlabeller.models.TableVO" alias="TableVO"/>
+		<typeAlias type="com.xlabeller.models.DatasetLogVO" alias="DatasetLogVO"/>
+		
+		
+		
+	</typeAliases>
+	
+<!-- 	<mappers> -->
+<!-- 		<mapper resource="kr/co/nethru/dao/sql/user-manager.xml" /> -->
+<!-- 	</mappers> -->
+</configuration>

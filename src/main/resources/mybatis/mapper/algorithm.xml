@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.algorithm">
+    
+    <insert id="insertAlgorithm"  useGeneratedKeys="true" keyProperty="algorithm_id"  parameterType="AlgorithmVO"  >
+	    INSERT INTO ALGORITHM(
+	    	TITLE
+			,DESCRIPTION
+			,DOCKER_CMD
+			,TRAIN_PARAM
+			,INFERENCE_PARAM
+			,CREATED_DATE
+			,USER_ID
+			,IS_ENABLE
+			,IS_FIXED
+			,BASE_IMAGE
+			,TRAIN_FUNC_NAME
+			,LOAD_FUNC_NAME
+			,INFERENCE_FUNC_NAME	  
+			,LABEL_TYPE  	
+		) VALUES(			
+			#{title}
+			,#{description}
+			,#{docker_cmd}
+			,#{train_param}
+			,#{inference_param}
+			,NOW()
+			,#{user_id}
+			,#{is_enable}
+			,#{is_fixed}
+			,#{base_image}
+			,#{train_func_name}
+			,#{load_func_name}
+			,#{inference_func_name}			
+			,#{label_type}	
+		)
+	</insert>
+	
+	<delete id="deleteAlgorithm" >
+	    DELETE FROM ALGORITHM
+	    WHERE 1=1 
+	    	AND ALGORITHM_ID = #{algorithm_id}	    	
+	</delete>
+	    
+    <select id="getAlgorithmList" resultType="AlgorithmVO">
+    	SELECT 
+			 d.ALGORITHM_ID
+			,d.TITLE
+			,d.DESCRIPTION
+			,d.DOCKER_CMD
+			,d.TRAIN_PARAM
+			,d.INFERENCE_PARAM
+			,d.CREATED_DATE
+			,d.USER_ID
+			,d.IS_ENABLE
+			,d.IS_FIXED
+			,d.BASE_IMAGE
+			,d.TRAIN_FUNC_NAME
+			,d.LOAD_FUNC_NAME
+			,d.INFERENCE_FUNC_NAME
+			,d.LABEL_TYPE
+		FROM ALGORITHM d 
+		WHERE 1=1
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='description != null and !description.equals("")'>AND DESCRIPTION LIKE CONCAT('%',#{description},'%')</if>
+			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type}</if>
+			<if test='label_type != null and label_type.equals("VIDEO_BBOX")'>OR TITLE = "YOLO"</if>
+			AND IS_ENABLE = 1
+			
+		ORDER BY d.ALGORITHM_ID ASC
+<!-- 		LIMIT ${page_num}, ${page_size} -->
+	</select>
+	
+
+	
+	<select id="getAlgorithmById" resultType="AlgorithmVO">
+    	SELECT 
+			 d.ALGORITHM_ID
+			,d.TITLE
+			,d.DESCRIPTION
+			,d.DOCKER_CMD
+			,d.TRAIN_PARAM
+			,d.INFERENCE_PARAM
+			,d.CREATED_DATE
+			,d.USER_ID
+			,d.IS_ENABLE
+			,d.IS_FIXED
+			,d.BASE_IMAGE
+			,d.TRAIN_FUNC_NAME
+			,d.LOAD_FUNC_NAME
+			,d.INFERENCE_FUNC_NAME
+			,d.LABEL_TYPE			
+		FROM ALGORITHM d 
+		WHERE 1=1
+			AND d.ALGORITHM_ID = #{algorithm_id}
+	</select>
+	
+	
+	<select id="getAlgorithmInId" resultType="AlgorithmVO">
+    	SELECT 
+			 d.ALGORITHM_ID
+			,d.TITLE
+			,d.DESCRIPTION
+			,d.DOCKER_CMD
+			,d.TRAIN_PARAM
+			,d.INFERENCE_PARAM
+			,d.CREATED_DATE
+			,d.USER_ID
+			,d.IS_ENABLE
+			,d.IS_FIXED
+			,d.BASE_IMAGE
+			,d.TRAIN_FUNC_NAME
+			,d.LOAD_FUNC_NAME
+			,d.INFERENCE_FUNC_NAME	
+			,d.LABEL_TYPE			
+		FROM ALGORITHM d 
+		WHERE 1=1
+			AND d.ALGORITHM_ID IN (${algorithm_id})
+	</select>
+	
+	
+	
+	
+	<select id="getAlgorithmTotalCount" resultType="java.lang.Integer">
+    	SELECT 
+			COUNT(d.ALGORITHM_ID) AS TOTAL_COUNT
+		FROM ALGORITHM d 
+		WHERE 1=1
+			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
+			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test='description != null and !description.equals("")'>AND DESCRIPTION LIKE CONCAT('%',#{description},'%')</if>
+			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type}</if>
+			AND IS_ENABLE = 1
+		ORDER BY d.ALGORITHM_ID ASC
+	</select>
+	
+	
+	
+	<update id="updateAlgorithm" >
+	    UPDATE ALGORITHM
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='title != null and !title.equals("")'>,TITLE = #{title}</if>
+				<if test='description != null and !description.equals("")'>,DESCRIPTION = #{description}</if>
+				<if test='docker_cmd != null and !docker_cmd.equals("")'>,DOCKER_CMD = #{docker_cmd}</if>
+				<if test='train_param != null and !train_param.equals("")'>,TRAIN_PARAM = #{train_param}</if>
+				<if test='inference_param != null and !inference_param.equals("")'>,INFERENCE_PARAM = #{inference_param}</if>
+				<if test='user_id != null and !user_id.equals("")'>,USER_ID = #{user_id}</if>
+				<if test='is_enable != null and !is_enable.equals("")'>,IS_ENABLE = #{is_enable}</if>
+				<if test='is_fixed != null and !is_fixed.equals("")'>,IS_FIXED = #{is_fixed}</if>
+				<if test='base_image != null and !base_image.equals("")'>,BASE_IMAGE = #{base_image}</if>
+				<if test='train_func_name != null and !train_func_name.equals("")'>,TRAIN_FUNC_NAME = #{train_func_name}</if>
+				<if test='load_func_name != null and !load_func_name.equals("")'>,LOAD_FUNC_NAME = #{load_func_name}</if>
+				<if test='inference_func_name != null and !inference_func_name.equals("")'>,INFERENCE_FUNC_NAME = #{inference_func_name}</if>		
+				<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type}</if>		
+		    </trim>
+		WHERE 1=1
+			AND ALGORITHM_ID = #{algorithm_id}          
+	</update>
+   
+   
+   	<select id="getTaskListByAlgorithmId" resultType="TaskVO">
+    	SELECT 
+			d.TASK_ID
+			,d.ALGORITHM_ID
+		FROM TASK d 
+		WHERE 1=1
+			AND d.ALGORITHM_ID = #{algorithm_id}
+	</select>
+    
+    
+   
+   
+    
+</mapper>

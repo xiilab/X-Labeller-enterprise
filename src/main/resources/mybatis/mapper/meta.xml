@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.meta">
+	<select id="getMetaByDataId" resultType="MetaVO">
+		SELECT
+			 m.META_ID
+			,m.DATA_ID
+			,m.USER_ID
+			,m.CREATED_DATE
+			,m.INFO
+			,m.LABEL
+			,m.LABEL_TYPE
+		FROM META m
+		WHERE 1=1
+		<if test='data_id != null and !data_id.equals("")'>
+			AND m.DATA_ID = #{data_id}
+		</if>
+		<if test='user_id != null and !user_id.equals("")'>
+			AND m.USER_ID = #{user_id}
+		</if>
+	</select>	
+	
+	<select id="getMetaByMetaId" resultType="MetaVO">
+		SELECT
+			 m.META_ID
+			,m.DATA_ID
+			,m.USER_ID
+			,m.CREATED_DATE
+			,m.INFO
+			,m.LABEL
+			,m.LABEL_TYPE
+		FROM META m
+		WHERE 1=1
+			AND m.META_ID = #{meta_id}
+	</select>
+	
+	<insert id="insertMeta">
+		INSERT INTO META(			 
+			DATA_ID
+			,USER_ID
+			,CREATED_DATE
+			,INFO
+			,LABEL
+			,LABEL_TYPE
+		) VALUES (			 
+			#{data_id}
+			,#{user_id}
+			,now()
+			,#{info}
+			,#{label}
+			,#{label_type}
+		)
+	</insert>
+	
+	<update id="upsertMeta">
+		INSERT INTO META (
+			META_ID
+			,DATA_ID
+			,USER_ID
+			,CREATED_DATE
+			,INFO
+			,LABEL
+			,LABEL_TYPE
+		) VALUES (
+			#{meta_id}
+			,#{data_id}
+			,#{user_id}
+			,now()
+			,#{info}
+			,#{label}
+			,#{label_type}
+		) ON DUPLICATE KEY UPDATE 
+			LABEL = #{label},
+			CREATED_DATE = now(),
+			INFO = #{info}
+	</update>
+	
+	
+	<delete id="deleteMetaById" >
+	    DELETE FROM META
+	    WHERE 1=1 
+    	   	AND META_ID = #{meta_id}
+<!--     	   	AND USER_ID = #{user_id}	    	 -->
+	</delete>
+	
+	
+</mapper>

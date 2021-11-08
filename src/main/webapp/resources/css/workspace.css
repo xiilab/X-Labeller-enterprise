@@ -1,0 +1,51 @@
+#workspace { height: 100%; border-right: 1px solid #e5e5e5; background-color: #ffffff; text-align: center; }
+#workspace #dir_wrap { height: 100%; }
+#workspace #dir_wrap .ztree * { font-family: Open_Sans; font-size: 12px; color: #656668;}
+#workspace #dir_wrap .ztree{ height: calc(100% - 103px) !important; min-height: calc(100% - 103px); padding: 0; overflow-x: hidden; overflow-y: overlay; }
+#workspace #dir_wrap .ztree li{ line-height: 47px; font-size: 13px; color: #333333; background-color: #ffffff; }
+#workspace #dir_wrap .ztree li ul { padding: 0; }
+#workspace #dir_wrap .ztree li a { width: 100%; height: 47px; border-bottom: 1px solid #e5e5e5; }
+#workspace #dir_wrap .ztree li a.level0 span.button[id$=ico] { width: 24px; height: 24px; object-fit: contain; background: url("../images/icon-folder-blue.png");}
+/* #workspace #dir_wrap .ztree li a.level0 span.uploading[id$=loading]{ width: 30px; height: 30px; object-fit: contain; } */
+#workspace #dir_wrap .ztree li a span.button { width: 24px; height: 24px; object-fit: contain; background: url("../images/icon-folder-small.png"); vertical-align: middle; }
+#workspace #dir_wrap .ztree li a span.button[class$=docu] { background: url("../images/icon-tree-image.png"); }
+#workspace #dir_wrap .ztree li a span.button.switch{ width: 24px; height: 24px; padding: 11px 0 11px 10px; object-fit: contain; background: url("../images/icon-tree-arrow-bottom.png") no-repeat center; -webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -ms-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);  }
+#workspace #dir_wrap .ztree li a span.button.switch[class$=close] { -webkit-transform: rotate(270deg); -moz-transform: rotate(270deg); -ms-transform: rotate(270deg); -o-transform: rotate(270deg); transform: rotate(270deg);  }
+#workspace #dir_wrap .ztree li a span.button.switch[class$=docu] { background: url("../images/icon-tree-line.png") no-repeat center; }
+
+/* 기본 */
+#workspace #dir_wrap .ztree li a.hover { background-color: #cde5ff; text-decoration: none; }
+#workspace #dir_wrap .ztree li a.curSelectedNode{ background-color: #4c84ff; color: #ffffff; border: 0; border-bottom: 1px solid #e5e5e5; opacity: 1; } 
+/* 기본 */
+/* 성모안과 */
+/* #workspace #dir_wrap .ztree li a.hover { background-color: #ff9890; text-decoration: none; }
+#workspace #dir_wrap .ztree li a.curSelectedNode{ background-color: #fe5423; color: #ffffff; border: 0; border-bottom: 1px solid #e5e5e5; opacity: 1; } */
+/* 성모안과 */
+/* 위자드랩 */
+/* #workspace #dir_wrap .ztree li a.hover { background-color: #72aaec; text-decoration: none; }
+#workspace #dir_wrap .ztree li a.curSelectedNode{ background-color: #437dc3; color: #ffffff; border: 0; border-bottom: 1px solid #e5e5e5; opacity: 1; } */
+/* 위자드랩 */
+
+#workspace #dir_wrap .ztree li a.curSelectedNode span.node_name { color: #ffffff; }
+#workspace #dir_wrap .ztree li a.curSelectedNode.level0 span.button[id$=ico] {background: url("../images/icon-folder-blue-white.png"); }
+#workspace #dir_wrap .ztree li a.curSelectedNode span.button { background: url("../images/icon-folder-small-white.png"); }
+#workspace #dir_wrap .ztree li a.curSelectedNode span.button[class$=docu] { background: url("../images/icon-tree-image-white.png"); }
+#workspace #dir_wrap .ztree li a.curSelectedNode span.button.switch { background: url("../images/icon-tree-arrow-bottom-white.png") no-repeat center; }
+#workspace #dir_wrap .ztree li a.curSelectedNode span.button.switch[class$=docu] { background: url("../images/icon-tree-line-white.png") no-repeat center; }
+
+#workspace #dir_wrap .btn_wrap{ height: 103px; }
+#workspace #dir_wrap .new_btn { width: 190px; line-height: 36px; margin: 0 auto; border-radius: 5px; background-color: #4c84ff; font-size: 12px; color: #ffffff; cursor: pointer; }
+#workspace #dir_wrap .new_btn:hover { background-color: #3A71E9; }
+#workspace #rMenu, 
+#workspace .lower { width: 120px; position:absolute; top:0; background-color: #ffffff; border: 1px solid #dadada; border-radius: 5px; text-align: left; z-index: 99; }
+#workspace #rMenu { display: none; }
+#workspace #rMenu ul li,
+#workspace .lower li { position: relative; line-height: 28px; text-align: center; cursor: pointer; }
+#workspace #rMenu ul li:hover,
+#workspace .lower li:hover { background-color: #cde5ff; }
+#workspace .ar { position: absolute; right: 2px; top: 1px; }
+
+#workspace .loading { background-image: url("./css/img/loading.gif") !important; }
+
+/* #workspace .filter_color {filter: saturate(200%) hue-rotate(145deg) !important;} */ 
+/* .dragOver { border: 3px dashed #797979; width: calc(100% - 6px); height: calc(100% - 6px); } */

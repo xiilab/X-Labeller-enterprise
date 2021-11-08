@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.gpuNode">
+    
+    
+    
+    <insert id="insertGpuNode"  useGeneratedKeys="true" keyProperty="gpu_node_id"  parameterType="GpuNodeVO"  >
+	    INSERT INTO GPU_NODE(
+	    	ADDRESS
+			,ACCOUNT
+			,PASSWORD
+			,CREATED_DATE
+			,TYPE
+			,PORT
+		) VALUES(			
+			#{address}
+			,#{account}
+			,#{password}
+			,now()
+			,#{type}
+			,#{port}		
+		)
+	</insert>
+	
+	<delete id="deleteGpuNode" >
+	    DELETE FROM GPU_NODE
+	    WHERE GPU_NODE_ID = #{gpu_node_id}	    	
+	</delete>
+	    
+    <select id="getGpuNodeList" resultType="GpuNodeVO">
+    	SELECT 
+			g.GPU_NODE_ID
+			,g.ADDRESS
+			,g.ACCOUNT
+			,g.PASSWORD
+			,g.CREATED_DATE
+			,g.TYPE
+			,g.PORT
+		FROM GPU_NODE g 
+		WHERE 1=1
+		<if test='type != null and !type.equals("")'>AND TYPE = #{type}</if>
+		ORDER BY g.GPU_NODE_ID DESC
+	</select>
+	
+	<select id="getGpuNodeById" resultType="GpuNodeVO">
+    	SELECT 
+			 g.GPU_NODE_ID
+			,g.ADDRESS
+			,g.ACCOUNT
+			,g.PASSWORD
+			,g.CREATED_DATE
+			,g.TYPE
+			,g.PORT
+		FROM GPU_NODE g 
+		WHERE 1=1
+			AND g.GPU_NODE_ID = #{gpu_node_id} 
+		
+	</select>
+	
+	<select id="getGpuNodeTotalCount" resultType="java.lang.Integer">
+    	SELECT 
+			COUNT(g.GPU_NODE_ID) AS TOTAL_COUNT
+		FROM GPU_NODE g 
+		WHERE 1=1
+		<if test='type != null and !type.equals("")'>AND TYPE = #{type}</if>
+		ORDER BY g.GPU_NODE_ID DESC
+	</select>
+	
+	
+	
+	<update id="updateGpuNode" >
+	    UPDATE GPU_NODE
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='address != null and !address.equals("")'>,ADDRESS = #{address}</if>
+				<if test='account != null and !account.equals("")'>,ACCOUNT = #{account}</if>
+				<if test='password != null and !password.equals("")'>,PASSWORD = #{password}</if>
+				<if test='type != null and !type.equals("")'>,TYPE = #{type}</if>
+				<if test='port != null and !port.equals("")'>,PORT = #{port}</if>				
+		    </trim>
+		WHERE GPU_NODE_ID = #{gpu_node_id}          
+	</update>
+   
+    
+    
+    
+    
+   
+   
+    
+</mapper>

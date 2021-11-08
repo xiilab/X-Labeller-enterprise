@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.auth">
+
+	<select id="getUserById" resultType="UserVO">
+	    SELECT 
+			u.USER_ID
+			,u.ACCOUNT
+			,u.CREATED_DATE
+			,u.LEVEL_CD
+			,u.X_KEY		
+			,u.LOGIN_COUNT	
+		FROM USERS u
+		WHERE 1=1 
+			AND u.USER_ID = #{user_id}			
+	</select>
+	
+	<select id="getUserByAccount" resultType="UserVO">
+	    SELECT 
+			u.USER_ID
+			,u.ACCOUNT
+		FROM USERS u
+		WHERE 1=1 
+			AND u.ACCOUNT = #{account} 
+	</select>
+	
+	
+    <select id="getUserByAccountPassword" resultType="UserVO">
+	    SELECT 
+			u.USER_ID
+			,u.ACCOUNT
+			,u.CREATED_DATE
+			,u.LEVEL_CD
+			,u.X_KEY
+		FROM USERS u
+		WHERE 1=1 
+			AND u.ACCOUNT = #{account}
+			AND u.PASSWORD = sha2(sha2(sha2(#{password},512),512),512)
+	</select>
+	
+	<update id="updateLoginCount">
+		UPDATE USERS u
+		SET u.LOGIN_COUNT = u.LOGIN_COUNT + 1
+		WHERE u.USER_ID = #{user_id}
+	</update>
+	
+    <insert id="insertUser"  useGeneratedKeys="true" keyProperty="user_id"  parameterType="UserVO"  >
+        INSERT INTO USERS(
+	    	ACCOUNT
+			,PASSWORD
+			,CREATED_DATE
+			,LEVEL_CD
+			,X_KEY
+		) VALUES(
+	    	#{account}
+	    	,sha2(sha2(sha2(#{password},512),512),512)
+	    	,now()
+	    	,0
+	    	,#{x_key}
+	    )	
+	</insert>
+	
+	
+	<update id="updateUser" >
+	    UPDATE USERS
+	    	<trim prefix="SET" prefixOverrides=",">
+				<if test='password != null and !password.equals("")'>,PASSWORD = sha2(sha2(sha2(#{password},512),512),512)</if>
+				<if test='x_key != null and !x_key.equals("")'>,X_KEY = #{x_key}</if>
+				<if test='login_count != null and !login_count.equals("")'>,LOGIN_COUNT = #{login_count}</if>
+			</trim>
+		WHERE USER_ID = #{user_id}          
+	</update>
+	
+	
+	<select id="getUserByKey" resultType="UserVO">
+	    SELECT 
+			u.USER_ID
+		FROM USERS u
+		WHERE 1=1 
+			AND u.X_KEY = #{x_key}
+			
+	</select>
+	
+	
+    
+</mapper>

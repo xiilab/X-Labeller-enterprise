@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!-- <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
+<!-- 	xmlns:context="http://www.springframework.org/schema/context" -->
+<!-- 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd -->
+<!-- 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> -->
+    
+    <!-- Uncomment and add your base-package here:
+         <context:component-scan
+            base-package="org.springframework.samples.service"/>  -->
+
+
+
+	<bean id="mailSender" class ="org.springframework.mail.javamail.JavaMailSenderImpl" >
+	    <property name="host" value="smtp.gmail.com" />
+	    <property name="port" value="587" />
+		<property name="username" value="dev@xiilab.com" />
+	    <property name="password" value="devxiirocks" />
+	    <property name="defaultEncoding" value="utf-8" />
+	    <property name="javaMailProperties">
+	    <props>
+	    	<prop key="mail.smtp.auth">true</prop>
+	        <prop key="mail.smtp.starttls.enable">true</prop>
+	    </props>
+	    </property>
+	</bean>
+	
+	
+	
+		
+	<bean id="dayTask" class="com.xlabeller.quartz.DayTask"/>
+	<bean id="quartzLock" class="com.xlabeller.quartz.QuartzLock"/>
+ 
+    <bean name="dayJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" p:jobClass="com.xlabeller.quartz.DayJob">
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="dayTask" value-ref="dayTask"/>
+                <entry key="quartzLock" value-ref="quartzLock"/>
+            </map>
+        </property>
+    </bean>
+ 
+    <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" p:jobDetail-ref="dayJob"
+    		p:cronExpression="0/5 * * * * ?"/>
+    		
+
+
+ 
+    <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronTrigger"/>
+            </list>
+        </property>
+    </bean>
+	
+	
+	
+	
+<!-- 	<bean id="chatHandler" class="com.xlabeller.chat.ChatHandler" /> -->
+	
+<!-- 	<bean id="servletServerContainerFactoryBean" class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">  -->
+<!-- 		<property name="maxTextMessageBufferSize" value="1000000" /> -->
+<!-- 		<property name="maxBinaryMessageBufferSize" value="1000000" /> -->
+<!-- 	</bean> -->
+	
+	
+<!-- 	<websocket:handlers> -->
+<!-- 	    <websocket:mapping handler="chatHandler" path="/echo-ws"/> -->
+<!-- 	    <websocket:handshake-interceptors> -->
+<!-- 	   		<bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"/> -->
+<!-- 	    </websocket:handshake-interceptors> -->
+<!-- 	    <websocket:sockjs /> -->
+<!-- 	</websocket:handlers> -->
+	
+	
+</beans>
+
+
+
