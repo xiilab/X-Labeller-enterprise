@@ -985,7 +985,7 @@ public class DataService {
 			}
 			format = format.toLowerCase();
 
-			if(format.equals("mp4") || format.equals("jpg") || format.equals("jpeg") || format.equals("zip") || format.equals("png")) {
+			if(format.equals("mp4") || format.equals("jpg") || format.equals("jpeg") || format.equals("png")) {
 				mfList.add(mfArr[i]);
 			} else {
 				return Output.JsonOutput("4061", "지원하지 않는 형식의 데이터 포맷이 포함되어 있습니다.");
