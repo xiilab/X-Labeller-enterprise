@@ -369,11 +369,20 @@ public class SessionCmdExecute implements Callable<Object> {
 			}
 			JSONObject jsonObj = (JSONObject) obj;
 			batch = String.valueOf(jsonObj.get("batch_size"));
+//			cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=t_" + projectId + "_"
+//					+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " -v /xlabeller:/xlabeller xlabeller_yolov4:2.0 " +
+//					"python3 xlabeller_yolov4_train.py" 
+//					+ " --pid " + projectId
+//					+ " --tid " + taskId
+//					+ " --batch " + batch
+//					+ " --subdivisions " + batch;
 			cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=t_" + projectId + "_"
-					+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " -v /xlabeller:/xlabeller xlabeller_yolov4:2.0 " +
+					+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " -v /xlabeller:/xlabeller xlabeller_yolov4:2.1 " +
 					"python3 xlabeller_yolov4_train.py" 
-					+ " --pid " + projectId
-					+ " --tid " + taskId
+					+" --annotation /xlabeller/workspace/" + projectId + "/" + taskId + "/annotation/" + annotation
+					+ " --modelPath /xlabeller/workspace/" + projectId + "/" + taskId + "/model/"
+					+ " --label /xlabeller/workspace/" + projectId + "/" + taskId + "/class/classes"
+					+ " --log_path /xlabeller/workspace/" + projectId+ "/" + taskId + "/log/run.log" 
 					+ " --batch " + batch
 					+ " --subdivisions " + batch;
 		} else {
