@@ -137,7 +137,7 @@
 					<input type="file" id="files" name="files" class="file" accept="image/jpg, image/jpeg, image/png"  multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
-						<div class="delete hide">Delete</div>
+						<div class="delete">Delete</div>
 						<div class="append">Attach</div>
 					</div>
 					<div class="fps_wrap">
@@ -361,7 +361,7 @@
 			});
 			
 			//선택삭제
-			that.pt.find(".delete").off("click").on("click", function(e){
+			that.pt.find(".delete").off("click").on("click", function(e){		
 				while(true){
 					var seletedList = that.pt.find(".c_wrap .checkBox.selected").parent();
 					var size = that.pt.find(".c_wrap .checkBox").length;
@@ -670,10 +670,9 @@
 			for(var i = 0; i < files.length; i++){
 				// 파일 배열에 넣기
 				fileList.push(files[i]);
-	            
 				
-// 				// 업로드 파일 목록 생성
-// 				that.addFileList(files[i]);
+				// 업로드 파일 목록 생성
+				that.addFileList(files[i]);
 				
 			}
 			
@@ -702,7 +701,7 @@
 			
 			var html = "<li class='file_list flex'><div class='checkBox'></div><div></div><div>"+files.name+"</div><div>"+size+"</div></li>";
 			
-			that.pt.find(".file_wrap .c_wrap").prepend(html);
+			that.pt.find(".file_wrap .c_wrap").append(html);
 			
 			//체크박스
 			that.pt.find(".c_wrap .checkBox").off("click").on("click", function(){
