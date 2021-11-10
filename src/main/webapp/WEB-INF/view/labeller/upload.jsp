@@ -137,7 +137,7 @@
 					<input type="file" id="files" name="files" class="file" accept="image/jpg, image/jpeg, image/png"  multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
-						<div class="delete hide">Delete</div>
+						<div class="delete">Delete</div>
 						<div class="append">Attach</div>
 					</div>
 					<div class="fps_wrap">
@@ -158,8 +158,8 @@
 		pt : $("#upload"),
 		init : function() {
 			var that = this;
+			that.file_selection_list = [];
 			that.reset();
-			
 			that.listener();
 		},
 		reset : function() {
@@ -205,6 +205,7 @@
 		//
 		listener : function() {
 			var that = this;
+
 			that.pt.find("input[name='title'], textarea[name='contents']").off("input").on("input", function(e){
 				var str = $(this).val();	
 				$(this).val(str);
@@ -222,7 +223,7 @@
 				}				
 			});
 		
-			
+
 			that.pt.find("input[name='title']").off("keydown").on("keydown", function(e){
 				if(e.keyCode == 13){
 					e.preventDefault();
@@ -241,7 +242,6 @@
 				} else if(selected_media_type.data("value") == "video"){
 					media_type = "VIDEO";
 				}
-				console.log("이 데이터셋의 미디어 유형은 [", media_type, "] 입니다.");
 				
 				// jh.sa : label type 선택 (IMAGE_BBOX, IMAGE_SEGMENTATION, VIDEO_BBOX)
 				let label_type;
@@ -255,7 +255,6 @@
 				} else if (selected_media_type.data("value") == "video" && selected_type.data("value") == "box"){
 					label_type = "VIDEO_BBOX";
 				}
-				console.log("이 데이터셋의 라벨링 유형은 [", label_type, "] 입니다.");
 				
 				if(that.pt.find("input[name='title']").val()==""){
 					alert("제목을 입력해주세요");
@@ -361,25 +360,26 @@
 			});
 			
 			//선택삭제
-			that.pt.find(".delete").off("click").on("click", function(e){
-				while(true){
-					var seletedList = that.pt.find(".c_wrap .checkBox.selected").parent();
-					var size = that.pt.find(".c_wrap .checkBox").length;
-					var index = seletedList.index();
-					
-					if(seletedList.length <= 0){
-						break;
-					}
-					that.pt.find(".file_list").eq(index).remove();
-					that.deleteFileList( size-(index+1) );
-					
-				}
-				
-				if(that.pt.find(".file_list").length <= 0){
-					that.pt.find(".file_drop_info").show();
-				}
-				
-				that.pt.find(".checkBox.all").removeClass("selected");
+			that.pt.find(".delete").off("click").on("click", function(e){	
+				// 파일 삭제하기 	
+				that.fileList = that.fileList
+					.filter((o, index) => {
+						const willBeDeleted = that.file_selection_list.includes(index); 
+						return !willBeDeleted; 
+					});
+
+				// 삭제한 파일 element 삭제 
+				that.file_selection_list
+					.sort()
+					.forEach((o, idx) => {
+						const index = idx === 0 ? o : o - idx;
+						that.pt.find(".file_list").eq(index).remove();
+					});
+
+				that.file_selection_list = []; // 파일 선택 목록 초기화
+				var file_total_size = that.fileList.reduce((acc, val) => acc + val.size, 0);
+				$("#upload .total_file_count").html(that.fileList.length);
+				$("#upload .total_file_size").html(file_total_size);
 			});
 			
 			//탭
@@ -499,16 +499,10 @@
 				e.stopPropagation();
 				if(e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
 					var files = e.originalEvent.dataTransfer.files;
-					var media_video = $("#upload .media_type_wrap .radioBtn.selected").data("value");
-					if(media_video == "video"){
-						var type = files[0].type;
-						if(type.split("/")[0] != "video"){
-							alert("Video 형태의 파일만 업로드 가능합니다");
-							that.pt.find(".total_file_count").html("");
-							that.pt.find(".total_file_size").html("");	
-							return false;
-						} 
-					}					
+					var media_type = !$(".fileTab_wrap .tab.active").hasClass('zip_file') ? 
+						$("#upload .media_type_wrap .radioBtn.selected").data("value") :
+						'zip';
+					files = [...files].filter( o => o.type.includes(media_type));			
 					that.selectFile(files);
 		        }
 				
@@ -528,10 +522,9 @@
 			// media type 선택 
 			let media_radio_btn = that.pt.find(".media_type_wrap .radioBtn")
 			media_radio_btn.off("click").on("click",function() {
-				let radio_obj = {};
 				let btn = $(this)
 				const files = document.getElementById('files');
-
+				
 				btn.addClass("selected");
 				if(btn.hasClass("selected")){
 					that.pt.find(".media_type_wrap .radioBtn").removeClass("selected");
@@ -539,26 +532,33 @@
 				}
 				
 				if(btn.data("value") == "video"){
+					$(".fileTab_wrap .video_file.tab").trigger("click");
+					$(".fileTab_wrap .video_file").show();
+					$(".fileTab_wrap .img_file").hide();
+					$(".fileTab_wrap .zip_file").hide();
+					$('.fileTab_wrap .video_file .tab').addClass('active');
+					$('.fileTab_wrap .img_file .tab').removeClass('active');
+					$('.fileTab_wrap .zip_file .tab').removeClass('active');
+					files.setAttribute('accept','video/mp4');
+
 					$(".label_type_wrap .radioBtn[data-value='polygon']").hide();
 					$(".label_type_wrap .radioBtn[data-value='polygon']").next().hide();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").hide();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").next().hide();
-					$(".fileTab_wrap .video_file").show();
-					$(".fileTab_wrap .img_file").hide();
-					$(".fileTab_wrap .zip_file").hide();
-// 					$(".fileTab_wrap .tab").removeClass("active");
-					$(".fileTab_wrap .video_file.tab").trigger("click");
-					files.setAttribute('accept','video/mp4')
 				} else {
+					$(".fileTab_wrap .img_file.tab").show().trigger("click");
+					$(".fileTab_wrap .img_file").show();
+					$(".fileTab_wrap .zip_file").show();
+					$(".fileTab_wrap .video_file").hide();
+					$('.fileTab_wrap .img_file .tab').addClass('active');
+					$('.fileTab_wrap .zip_file .tab').removeClass('active');
+					$('.fileTab_wrap .video_file .tab').removeClass('active');
+					files.setAttribute('accept','image/jpg, image/jpeg, image/png');
+					
 					$(".label_type_wrap .radioBtn[data-value='polygon']").show();
 					$(".label_type_wrap .radioBtn[data-value='polygon']").next().show();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").show();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").next().show();
-					$(".fileTab_wrap .img_file.tab").show().trigger("click");
-					$(".fileTab_wrap .zip_file").show();
-					$(".fileTab_wrap .video_file").hide();
-					$(".fileTab_wrap .video_file").removeClass("active");
-					files.setAttribute('accept','image/jpg, image/jpeg, image/png')
 				}
 			});
 			
@@ -589,12 +589,6 @@
 						return "zip";
 					}
 				} else if(files[i].type.match("video")){
-// 					if(files.length>1){
-// 						alert("단일 VideoFile 만 사용 가능합니다");
-// 						return false;
-// 					} else {
-// 						return "video";
-// 					}
 					return "video";
 				} else if(files[i].type.match("image")){
 					if(files[i].type.match("jpg") || files[i].type.match("jpeg") || files[i].type.match("png")){
@@ -616,7 +610,6 @@
 		fileList : new Array(),
 		selectFile : function(files){
 			var that = this;
-		
 			var fileList = that.fileList;
 			var chk = that.checkFiles(files);
 			var len = String(files.length);
@@ -637,14 +630,9 @@
 				
 				
 			} else if(chk == "video"){	//videoFile tab active
-				if(fileList.length>0){
-					fileList.length = 0;
-					that.pt.find(".c_wrap li").remove();
-				}
 				that.pt.find(".tab").removeClass("active");
 				that.pt.find(".video_file").addClass("active");
-				
-				
+						
 				// 200MB 제한
 // 				if(files && files[0].size > (200 * 1024 * 1024)) {			// 50mb는 테스트용, 실제 200mb 제한 
 // 					alert("비디오 파일은 200MB 이하 등록 가능합니다\n선택한 파일 : "+ size);
@@ -668,10 +656,9 @@
 			for(var i = 0; i < files.length; i++){
 				// 파일 배열에 넣기
 				fileList.push(files[i]);
-	            
 				
-// 				// 업로드 파일 목록 생성
-// 				that.addFileList(files[i]);
+				// 업로드 파일 목록 생성
+				that.addFileList(files[i], i);
 				
 			}
 			
@@ -688,28 +675,33 @@
 		},
 
 		
-		addFileList : function(files){
+		addFileList : function(file, index){
 			var that = this;
 			
 			if(that.pt.find(".file_drop_info")){
 				that.pt.find(".file_drop_info").hide();
 			}
 			
-			var size= that.formatBytes(files.size);
+			var size= that.formatBytes(file.size);
 			
 			
-			var html = "<li class='file_list flex'><div class='checkBox'></div><div></div><div>"+files.name+"</div><div>"+size+"</div></li>";
+			var html = "<li class='file_list flex'><div class='checkBox' checkbox-index='"+index+"'></div><div></div><div>"+file.name+"</div><div>"+size+"</div></li>";
 			
-			that.pt.find(".file_wrap .c_wrap").prepend(html);
+			that.pt.find(".file_wrap .c_wrap").append(html);
 			
 			//체크박스
 			that.pt.find(".c_wrap .checkBox").off("click").on("click", function(){
-				if($(this).hasClass("selected")){
-					$(this).removeClass("selected");
-				} else {
-					$(this).addClass("selected");
-				}
+				let index = $(".c_wrap .checkBox").index(this);
 				
+				if($(this).hasClass("selected")){ // 선택 해제
+					$(this).removeClass("selected");
+					index = that.file_selection_list.indexOf(index);
+					that.file_selection_list.splice(index, 1);
+				} else { // 선택
+					$(this).addClass("selected");
+					that.file_selection_list.push(index);
+				}
+
 				//모두선택
 				if(that.pt.find(".c_wrap .checkBox").length == that.pt.find(".c_wrap .checkBox.selected").length){
 					that.pt.find(".checkBox.all").addClass("selected")
@@ -718,13 +710,7 @@
 				}
 			});
 		},
-		
-		deleteFileList : function(index){
-			var that = this;
-// 			delete that.fileList[index];
-			that.fileList.splice(index,1);
-		},
-		
+
 		formatBytes : function(bytes) {
 		    if(bytes < 1024) return bytes + " Bytes";
 		    else if(bytes < 1048576) return(bytes / 1024).toFixed(3) + " KB";
