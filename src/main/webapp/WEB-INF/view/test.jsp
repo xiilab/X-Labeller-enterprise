@@ -249,7 +249,7 @@ var aa = function(){
 		};
 		
 		$.ajax({
-			url : baseUrl + "/task/getTrainLog.json",
+			url : baseUrl + "task/getTrainLog.json",
 			data : ajaxData,
 			type : "POST",
 			success : function(res) {

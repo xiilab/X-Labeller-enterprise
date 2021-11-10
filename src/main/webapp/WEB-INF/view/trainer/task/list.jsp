@@ -1319,7 +1319,7 @@
 			alert("데이터의 크기에 따라 작업시간이 오래 소요될 수 있습니다.\n잠시만 기다려주세요.");
 			$("#loader").show();
 			$.ajax({
-				url : baseUrl + "/data/insertMetaByInference.json",
+				url : baseUrl + "data/insertMetaByInference.json",
 				data : ajaxData,
 				type : "POST",
 				success : function(res) {
