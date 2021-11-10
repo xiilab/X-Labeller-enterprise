@@ -926,7 +926,7 @@
 			};
 
 			$.ajax({
-				url : baseUrl + "/data/getPageNoLimitDataList.json",
+				url : baseUrl + "data/getPageNoLimitDataList.json",
 				data : ajaxData,
 				type : "POST",
 				success : function(res) {

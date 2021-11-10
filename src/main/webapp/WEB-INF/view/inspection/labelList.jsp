@@ -1426,7 +1426,7 @@
 			getDatasetAllLabelGroup : (id) => {
 				const tagset = [];
 				$.ajax({
-					url :  baseUrl + "/data/getLabelGroup.json",
+					url :  baseUrl + "data/getLabelGroup.json",
 					data : {dataset_id : id},
 					type : "POST",
 					async: false,

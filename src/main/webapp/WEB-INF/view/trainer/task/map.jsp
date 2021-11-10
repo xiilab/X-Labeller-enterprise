@@ -1225,7 +1225,7 @@
 // 			};
 
 // 			$.ajax({
-// 				url : baseUrl + "/data/getDataList.json",
+// 				url : baseUrl + "data/getDataList.json",
 // 				data : ajaxData,
 // 				type : "POST",
 // 				success : function(res) {

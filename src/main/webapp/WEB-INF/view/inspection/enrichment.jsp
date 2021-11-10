@@ -3629,7 +3629,7 @@
 					for(let i=0; i<idArr.length; i++){ 
 						idObj[idArr[i].split("_")[0]] = idArr[i].split("_")[1]; 
 						const deffered = $.ajax({
-							url :  baseUrl + "/data/getMetaList.json",
+							url :  baseUrl + "data/getMetaList.json",
 							data : {data_id : idArr[i].split("_")[0]},
 							type : "POST",
 							success : function(res){
@@ -4034,7 +4034,7 @@
 			getDatasetList(){
 				const that = this;
 				const deffered = $.ajax({
-					url : baseUrl + "/data/getDatasetList.json",
+					url : baseUrl + "data/getDatasetList.json",
 					data : {dataset_id : null},							// id => dataset_id(0921)
 					type : "POST",
 					success(res){
@@ -4099,7 +4099,7 @@
 				const that = this;
 				let datasetId = that.root.data.nodes[0].id;
 				const deffered = $.ajax({
-					url : baseUrl + "/algorithm/getAlgorithmList.json",
+					url : baseUrl + "algorithm/getAlgorithmList.json",
 					data : {algorithm_id : null, dataset_id : datasetId},
 					type : "POST",
 					success(res){
@@ -4124,7 +4124,7 @@
 			getAlgorithmById(data, num){
 				const that = this;
 				const deffered = $.ajax({
-					url : baseUrl + "/algorithm/getAlgorithmById.json",
+					url : baseUrl + "algorithm/getAlgorithmById.json",
 					data : {algorithm_id : data},
 					type : "POST",
 					success(res){
@@ -4153,7 +4153,7 @@
 			getTaskById(id){
 				const that = this;
 				const deffered = $.ajax({
-					url : baseUrl + "/task/getTaskById.json",
+					url : baseUrl + "task/getTaskById.json",
 					data : {id : id},
 					type : "POST",
 					success(res){
@@ -4181,7 +4181,7 @@
 				/* console.log("dataset ID : ", that.data.nodes); */
 				/* let dataset_id = nodes[0].id; */
 				const deffered = $.ajax({
-					url : baseUrl + "/task/getQuickInferenceTaskList.json",
+					url : baseUrl + "task/getQuickInferenceTaskList.json",
 					data : {project_id : null, id : dataset_id},
 					type : "POST",
 					success(res){
@@ -4212,7 +4212,7 @@
 				const that = this;
 				let task_list_data = data;
 				const deffered = $.ajax({
-					url : baseUrl + "/project/getProjectList.json",
+					url : baseUrl + "project/getProjectList.json",
 					data : null,
 					type : "POST",
 					success(res){
@@ -4244,7 +4244,7 @@
 				const that = this;
 				
 				const deffered = $.ajax({
-					url : baseUrl + "/task/getCheckPointList.json",
+					url : baseUrl + "task/getCheckPointList.json",
 					data : { id : id },
 					type : "POST",
 					success(res){
@@ -4842,7 +4842,7 @@
 			getSelectedTaskById(id){
 				const that = this;
 				const deffered = $.ajax({
-					url : baseUrl + "/task/getTaskById.json",
+					url : baseUrl + "task/getTaskById.json",
 					data : {id : id},
 					type : "POST",
 					success(res){
@@ -4960,7 +4960,7 @@
 				}
 				
 				const deffered = $.ajax({
-					url : baseUrl + "/project/insertProject.json",
+					url : baseUrl + "project/insertProject.json",
 					data : ajaxData,
 					type : "POST",
 					success(res){
@@ -7023,7 +7023,7 @@
 			getLabelGroup : (id) => {
 				const tagset = [];
 				$.ajax({
-					url :  baseUrl + "/data/getLabelGroup.json",
+					url :  baseUrl + "data/getLabelGroup.json",
 					data : {dataset_id : id},
 					type : "POST",
 					async: false,

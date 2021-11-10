@@ -1003,7 +1003,7 @@
 			that.data.tempData = guid;
 			console.log("ajaxData", ajaxData);				
 			$.ajax({
-				url : baseUrl + "/task/getTrainLog.json",
+				url : baseUrl + "task/getTrainLog.json",
 				data : ajaxData,
 				type : "POST",
 				success : function(res) {

@@ -251,7 +251,7 @@
             
             
             $.ajax({
-    		   	url :  baseUrl + "/data/getDataList.json",
+    		   	url :  baseUrl + "data/getDataList.json",
     		   	data : ajaxData,
     		   	type : "POST",
     		   	success : function(res){
@@ -310,7 +310,7 @@
 			
 			
 			$.ajax({
-    		   	url :  baseUrl + "/data/getMetaList/",
+    		   	url :  baseUrl + "data/getMetaList/",
     		   	data : ajaxData,
     		   	type : "POST",
     		   	success : function(res){
@@ -596,7 +596,7 @@
 			$(selector).html("");
             
             $.ajax({
-    		   	url :  baseUrl + "/data/getMetaList/",
+    		   	url :  baseUrl + "data/getMetaList/",
     		   	data : {},
     		   	type : "POST",
     		   	success : function(res){
@@ -869,7 +869,7 @@
            
             
             $.ajax({
-    		   	url :  baseUrl + "/data/updateMeta.json",
+    		   	url :  baseUrl + "data/updateMeta.json",
     		   	data : ajaxData,
     		   	type : "POST",
     		   	traditional: true,

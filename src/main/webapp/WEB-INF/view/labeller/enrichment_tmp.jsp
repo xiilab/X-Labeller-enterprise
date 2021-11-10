@@ -267,7 +267,7 @@
     	
     	enrichmentAjax : function(id){
     		var deffered = $.ajax({
-    		   	url :  baseUrl + "/data/getDataList.json",
+    		   	url :  baseUrl + "data/getDataList.json",
     		   	data : {dataset_id : id},
     		   	type : "POST",
     		   	success : function(res){
@@ -325,7 +325,7 @@
 				data_id : dataId,	
 			};
 			$.ajax({
-    		   	url :  baseUrl + "/data/getMetaList.json",
+    		   	url :  baseUrl + "data/getMetaList.json",
     		   	data : ajaxData,
     		   	type : "POST",
     		   	success : function(res){
