@@ -502,6 +502,9 @@
 					var media_type = !$(".fileTab_wrap .tab.active").hasClass('zip_file') ? 
 						$("#upload .media_type_wrap .radioBtn.selected").data("value") :
 						'zip';
+					if([...files].filter( o => !o.type.includes(media_type)).length > 0) {
+						alert('유효하지 않은 타입의 파일이 포함되어 있습니다. 유효하지 않은 파일은 무시됩니다.');
+					}
 					files = [...files].filter( o => o.type.includes(media_type));			
 					that.selectFile(files);
 		        }
