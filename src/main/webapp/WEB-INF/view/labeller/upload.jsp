@@ -158,8 +158,8 @@
 		pt : $("#upload"),
 		init : function() {
 			var that = this;
+			that.file_selection_list = [];
 			that.reset();
-			
 			that.listener();
 		},
 		reset : function() {
@@ -241,7 +241,6 @@
 				} else if(selected_media_type.data("value") == "video"){
 					media_type = "VIDEO";
 				}
-				console.log("이 데이터셋의 미디어 유형은 [", media_type, "] 입니다.");
 				
 				// jh.sa : label type 선택 (IMAGE_BBOX, IMAGE_SEGMENTATION, VIDEO_BBOX)
 				let label_type;
@@ -255,7 +254,6 @@
 				} else if (selected_media_type.data("value") == "video" && selected_type.data("value") == "box"){
 					label_type = "VIDEO_BBOX";
 				}
-				console.log("이 데이터셋의 라벨링 유형은 [", label_type, "] 입니다.");
 				
 				if(that.pt.find("input[name='title']").val()==""){
 					alert("제목을 입력해주세요");
@@ -361,25 +359,26 @@
 			});
 			
 			//선택삭제
-			that.pt.find(".delete").off("click").on("click", function(e){		
-				while(true){
-					var seletedList = that.pt.find(".c_wrap .checkBox.selected").parent();
-					var size = that.pt.find(".c_wrap .checkBox").length;
-					var index = seletedList.index();
-					
-					if(seletedList.length <= 0){
-						break;
-					}
-					that.pt.find(".file_list").eq(index).remove();
-					that.deleteFileList( size-(index+1) );
-					
-				}
-				
-				if(that.pt.find(".file_list").length <= 0){
-					that.pt.find(".file_drop_info").show();
-				}
-				
-				that.pt.find(".checkBox.all").removeClass("selected");
+			that.pt.find(".delete").off("click").on("click", function(e){	
+				// 파일 삭제하기 	
+				that.fileList = that.fileList
+					.filter((o, index) => {
+						const willBeDeleted = that.file_selection_list.includes(index); 
+						return !willBeDeleted; 
+					});
+
+				// 삭제한 파일 element 삭제 
+				that.file_selection_list
+					.sort()
+					.forEach((o, idx) => {
+						const index = idx === 0 ? o : o - idx;
+						that.pt.find(".file_list").eq(index).remove();
+					});
+
+				that.file_selection_list = []; // 파일 선택 목록 초기화
+				var file_total_size = that.fileList.reduce((acc, val) => acc + val.size, 0);
+				$("#upload .total_file_count").html(that.fileList.length);
+				$("#upload .total_file_size").html(file_total_size);
 			});
 			
 			//탭
@@ -502,20 +501,7 @@
 					var media_type = !$(".fileTab_wrap .tab.active").hasClass('zip_file') ? 
 						$("#upload .media_type_wrap .radioBtn.selected").data("value") :
 						'zip';
-					console.log('드롭 파일리스트', files, media_type)
-					console.log('media_type', media_type)
-					files = [...files].filter( o => o.type.includes(media_type));
-					console.log('필터링한 파일리스트', files)
-					
-					// if(media_type == "video"){
-					// 	var type = files[0].type;
-					// 	if(type.split("/")[0] != "video"){
-					// 		alert("Video 형태의 파일만 업로드 가능합니다");
-					// 		that.pt.find(".total_file_count").html("");
-					// 		that.pt.find(".total_file_size").html("");	
-					// 		return false;
-					// 	} 
-					// } 			
+					files = [...files].filter( o => o.type.includes(media_type));			
 					that.selectFile(files);
 		        }
 				
@@ -596,13 +582,6 @@
 						return "zip";
 					}
 				} else if(files[i].type.match("video")){
-					console.log('checkFiles(), video')
-// 					if(files.length>1){
-// 						alert("단일 VideoFile 만 사용 가능합니다");
-// 						return false;
-// 					} else {
-// 						return "video";
-// 					}
 					return "video";
 				} else if(files[i].type.match("image")){
 					if(files[i].type.match("jpg") || files[i].type.match("jpeg") || files[i].type.match("png")){
@@ -672,7 +651,7 @@
 				fileList.push(files[i]);
 				
 				// 업로드 파일 목록 생성
-				that.addFileList(files[i]);
+				that.addFileList(files[i], i);
 				
 			}
 			
@@ -689,28 +668,33 @@
 		},
 
 		
-		addFileList : function(files){
+		addFileList : function(file, index){
 			var that = this;
 			
 			if(that.pt.find(".file_drop_info")){
 				that.pt.find(".file_drop_info").hide();
 			}
 			
-			var size= that.formatBytes(files.size);
+			var size= that.formatBytes(file.size);
 			
 			
-			var html = "<li class='file_list flex'><div class='checkBox'></div><div></div><div>"+files.name+"</div><div>"+size+"</div></li>";
+			var html = "<li class='file_list flex'><div class='checkBox' checkbox-index='"+index+"'></div><div></div><div>"+file.name+"</div><div>"+size+"</div></li>";
 			
 			that.pt.find(".file_wrap .c_wrap").append(html);
 			
 			//체크박스
 			that.pt.find(".c_wrap .checkBox").off("click").on("click", function(){
-				if($(this).hasClass("selected")){
-					$(this).removeClass("selected");
-				} else {
-					$(this).addClass("selected");
-				}
+				let index = $(".c_wrap .checkBox").index(this);
 				
+				if($(this).hasClass("selected")){ // 선택 해제
+					$(this).removeClass("selected");
+					index = that.file_selection_list.indexOf(index);
+					that.file_selection_list.splice(index, 1);
+				} else { // 선택
+					$(this).addClass("selected");
+					that.file_selection_list.push(index);
+				}
+
 				//모두선택
 				if(that.pt.find(".c_wrap .checkBox").length == that.pt.find(".c_wrap .checkBox.selected").length){
 					that.pt.find(".checkBox.all").addClass("selected")
