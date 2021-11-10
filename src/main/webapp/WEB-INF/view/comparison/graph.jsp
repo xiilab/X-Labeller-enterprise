@@ -1034,7 +1034,7 @@
 			};
 			$("#loader").show();
 			$.ajax({
-				url : baseUrl + "/task/getTrainLog.json",
+				url : baseUrl + "task/getTrainLog.json",
 				data : ajaxData,
 				async : false,
 				type : "POST",
@@ -1108,7 +1108,7 @@
 
 			$.ajax({
 
-				url : baseUrl + "/task/getMapCSV.json",
+				url : baseUrl + "task/getMapCSV.json",
 
 				data : ajaxData,
 				async : false,
@@ -1183,7 +1183,7 @@
 			$("#loader").show();
 			$.ajax({
 
-				url : baseUrl + "/task/getLossCSV.json",
+				url : baseUrl + "task/getLossCSV.json",
 
 				data : ajaxData,
 				async : false,

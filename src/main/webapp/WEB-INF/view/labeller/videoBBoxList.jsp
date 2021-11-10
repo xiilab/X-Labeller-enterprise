@@ -2822,7 +2822,7 @@
 							dataset_id : datasetId		
 						};
 						$.ajax({
-							url :  baseUrl + "/data/getLabelGroup.json",
+							url :  baseUrl + "data/getLabelGroup.json",
 							data : ajaxData,
 							type : "POST",
 							async: false,

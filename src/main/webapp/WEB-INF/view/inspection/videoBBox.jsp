@@ -4028,7 +4028,7 @@
 							data_id : dataId		
 						};
 						$.ajax({
-							url :  baseUrl + "/data/getLabelGroup.json",
+							url :  baseUrl + "data/getLabelGroup.json",
 							data : ajaxData,
 							type : "POST",
 							async: false,
@@ -4788,7 +4788,7 @@
 						const that = videoBBoxQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/data/getDatasetList.json",
+							url : baseUrl + "data/getDatasetList.json",
 							data : {dataset_id : null},							// id => dataset_id(0921)
 							type : "POST",
 							success(res){
@@ -4817,7 +4817,7 @@
 						const that = videoBBoxQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/task/getQuickInferenceTaskList.json",
+							url : baseUrl + "task/getQuickInferenceTaskList.json",
 							data : {project_id : null, id : videoBBox.data.videoObj.datasetId},
 							type : "POST",
 							success(res){
@@ -4850,7 +4850,7 @@
 						const that = videoBBoxQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/algorithm/getAlgorithmList.json",
+							url : baseUrl + "algorithm/getAlgorithmList.json",
 							data : {algorithm_id : null},
 							type : "POST",
 							success(res){
@@ -4878,7 +4878,7 @@
 						const that = videoBBoxQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/algorithm/getAlgorithmList.json",
+							url : baseUrl + "algorithm/getAlgorithmList.json",
 							data : {algorithm_id : null},
 							type : "POST",
 							success(res){
@@ -4906,7 +4906,7 @@
 						const that = videoBBoxQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/algorithm/getAlgorithmById.json",
+							url : baseUrl + "algorithm/getAlgorithmById.json",
 							data : {algorithm_id : data},
 							type : "POST",
 							success(res){
@@ -4938,7 +4938,7 @@
 						const that = videoBBoxQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/task/getTaskById.json",
+							url : baseUrl + "task/getTaskById.json",
 							data : {id : id},
 							type : "POST",
 							success(res){
@@ -4967,7 +4967,7 @@
 						let task_list_data = data;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/project/getProjectList.json",
+							url : baseUrl + "project/getProjectList.json",
 							data : null,
 							type : "POST",
 							success(res){
@@ -5001,7 +5001,7 @@
 						const that = videoBBoxQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/task/getCheckPointList.json",
+							url : baseUrl + "task/getCheckPointList.json",
 							data : { id : id },
 							type : "POST",
 							success(res){
@@ -5035,7 +5035,7 @@
 						const that = videoBBoxQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
-							url : baseUrl + "/task/getTaskById.json",
+							url : baseUrl + "task/getTaskById.json",
 							data : {id : id},
 							type : "POST",
 							success(res){
@@ -5093,7 +5093,7 @@
 						}
 						
 						const deffered = $.ajax({
-							url : baseUrl + "/project/insertProject.json",
+							url : baseUrl + "project/insertProject.json",
 							data : ajaxData,
 							type : "POST",
 							success(res){
