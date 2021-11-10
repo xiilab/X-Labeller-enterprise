@@ -205,6 +205,7 @@
 		//
 		listener : function() {
 			var that = this;
+
 			that.pt.find("input[name='title'], textarea[name='contents']").off("input").on("input", function(e){
 				var str = $(this).val();	
 				$(this).val(str);
@@ -222,7 +223,7 @@
 				}				
 			});
 		
-			
+
 			that.pt.find("input[name='title']").off("keydown").on("keydown", function(e){
 				if(e.keyCode == 13){
 					e.preventDefault();
@@ -521,10 +522,9 @@
 			// media type 선택 
 			let media_radio_btn = that.pt.find(".media_type_wrap .radioBtn")
 			media_radio_btn.off("click").on("click",function() {
-				let radio_obj = {};
 				let btn = $(this)
 				const files = document.getElementById('files');
-
+				
 				btn.addClass("selected");
 				if(btn.hasClass("selected")){
 					that.pt.find(".media_type_wrap .radioBtn").removeClass("selected");
@@ -532,26 +532,33 @@
 				}
 				
 				if(btn.data("value") == "video"){
+					$(".fileTab_wrap .video_file.tab").trigger("click");
+					$(".fileTab_wrap .video_file").show();
+					$(".fileTab_wrap .img_file").hide();
+					$(".fileTab_wrap .zip_file").hide();
+					$('.fileTab_wrap .video_file .tab').addClass('active');
+					$('.fileTab_wrap .img_file .tab').removeClass('active');
+					$('.fileTab_wrap .zip_file .tab').removeClass('active');
+					files.setAttribute('accept','video/mp4');
+
 					$(".label_type_wrap .radioBtn[data-value='polygon']").hide();
 					$(".label_type_wrap .radioBtn[data-value='polygon']").next().hide();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").hide();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").next().hide();
-					$(".fileTab_wrap .video_file").show();
-					$(".fileTab_wrap .img_file").hide();
-					$(".fileTab_wrap .zip_file").hide();
-// 					$(".fileTab_wrap .tab").removeClass("active");
-					$(".fileTab_wrap .video_file.tab").trigger("click");
-					files.setAttribute('accept','video/mp4')
 				} else {
+					$(".fileTab_wrap .img_file.tab").show().trigger("click");
+					$(".fileTab_wrap .img_file").show();
+					$(".fileTab_wrap .zip_file").show();
+					$(".fileTab_wrap .video_file").hide();
+					$('.fileTab_wrap .img_file .tab').addClass('active');
+					$('.fileTab_wrap .zip_file .tab').removeClass('active');
+					$('.fileTab_wrap .video_file .tab').removeClass('active');
+					files.setAttribute('accept','image/jpg, image/jpeg, image/png');
+					
 					$(".label_type_wrap .radioBtn[data-value='polygon']").show();
 					$(".label_type_wrap .radioBtn[data-value='polygon']").next().show();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").show();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").next().show();
-					$(".fileTab_wrap .img_file.tab").show().trigger("click");
-					$(".fileTab_wrap .zip_file").show();
-					$(".fileTab_wrap .video_file").hide();
-					$(".fileTab_wrap .video_file").removeClass("active");
-					files.setAttribute('accept','image/jpg, image/jpeg, image/png')
 				}
 			});
 			
@@ -703,13 +710,7 @@
 				}
 			});
 		},
-		
-		deleteFileList : function(index){
-			var that = this;
-// 			delete that.fileList[index];
-			that.fileList.splice(index,1);
-		},
-		
+
 		formatBytes : function(bytes) {
 		    if(bytes < 1024) return bytes + " Bytes";
 		    else if(bytes < 1048576) return(bytes / 1024).toFixed(3) + " KB";
