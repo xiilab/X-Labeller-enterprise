@@ -899,7 +899,7 @@ public class DataService {
 //	}
 
 	//수정됨
-	public Object insertData(DatasetVO datasetVO) throws CustomException {
+	public Object insertData(DatasetVO datasetVO) throws Exception {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다.");
@@ -985,7 +985,7 @@ public class DataService {
 			}
 			format = format.toLowerCase();
 
-			if(format.equals("mp4") || format.equals("jpg") || format.equals("jpeg") || format.equals("zip") || format.equals("png")) {
+			if(format.equals("mp4") || format.equals("jpg") || format.equals("jpeg") || format.equals("png")) {
 				mfList.add(mfArr[i]);
 			} else {
 				return Output.JsonOutput("4061", "지원하지 않는 형식의 데이터 포맷이 포함되어 있습니다.");
@@ -1019,22 +1019,52 @@ public class DataService {
 		//데이터셋 ID를 가지고 와서 임시폴더 경로 정의
 		String tempDirPath = XLABELLER_ROOT_PATH+TEMP_PATH+myDatasetVO.getDataset_id();
 
+		List<String> fileList = null;
+		try {
+			fileList = directoryInFileList(tempDirPath);
+		}catch (Exception e){
+			//임시폴더 접근이 안될 때
+			logger.error("directoryInFileList");
+			throw new Exception("4001#등록이 올바르지 않습니다.");
+		}
 
+		if (fileList == null || fileList.size() <=0) { //처리할 임시파일이 없는 경우
+			//디렉토리 삭제
+			FileUtils.delete(tempDirPath);
+			throw new Exception("4001#등록이 올바르지 않습니다.");
+		}
 
-		// 상태 업데이트
-		DatasetVO updateDatasetVO = new DatasetVO();
-		updateDatasetVO.setStatus("2");
-		updateDatasetVO.setDataset_id(datasetId);
-		int cnt = dataDao.updateDataset(updateDatasetVO);
-		if(cnt != 1){
-			throw new CustomException("4001#데이터를 추가하는 과정에서 오류가 발생했습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+		int successCnt = 0;
+
+		if (mediaType.equals("IMAGE")){ // mediaType이 이미지 일때
+			successCnt = imageUploadLogic(XLABELLER_ROOT_PATH + TEMP_PATH + datasetId + "/" ,fileList, myDatasetVO);
+		} else { //mediaType이 비디오 일때
+			successCnt = videoUploadLogic(XLABELLER_ROOT_PATH + TEMP_PATH + datasetId + "/" ,fileList, myDatasetVO);
+		}
+
+		if ( successCnt == 0 ) {
+			throw new Exception("4061#모든 데이터가 지원하지 않는 형식의 데이터 포맷 입니다.");
 		}
 
 		String msg = "업로드 요청 데이터 "+ String.valueOf(mfArr.length) + "건 중에 정상 포맷 데이터인 " +
-				String.valueOf(mfList.size()) +"건 업로드를 백그라운드에서 수행합니다.";
+				String.valueOf(successCnt) +"건 업로드를 완료하였습니다.";
+
+
+//		// 상태 업데이트
+//		DatasetVO updateDatasetVO = new DatasetVO();
+//		updateDatasetVO.setStatus("2");
+//		updateDatasetVO.setDataset_id(datasetId);
+//		int cnt = dataDao.updateDataset(updateDatasetVO);
+//		if(cnt != 1){
+//			throw new CustomException("4001#데이터를 추가하는 과정에서 오류가 발생했습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+//		}
+//
+//		String msg = "업로드 요청 데이터 "+ String.valueOf(mfArr.length) + "건 중에 정상 포맷 데이터인 " +
+//				String.valueOf(mfList.size()) +"건 업로드를 백그라운드에서 수행합니다.";
 		
 		mfList.clear();
 		mfList = null;
+
 		return Output.JsonOutput("200", msg);
 	}
 	
