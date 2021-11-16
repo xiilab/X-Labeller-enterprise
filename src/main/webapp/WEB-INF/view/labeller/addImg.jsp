@@ -17,10 +17,11 @@
 		#addImg .fileTab_wrap .blank { width: 100%; height: 30px; border-bottom: 1px solid #dedcde; border-left: 1px solid #dedcde; }
 		
 		#addImg .file_wrap { width: 100%;height: 381px; margin-bottom: 10px; border: 1px solid #dedcde; border-top: 0; position: relative; }
+		#addImg .file_wrap .h_wrap { width: initial; padding: 0 12.2px; justify-content: space-between; }
 		#addImg .file_wrap .h_wrap:after{ content: ''; width: 100%; border-bottom: 1px solid #dedcde; position: absolute; top:30px; left: 0; }
-		#addImg .file_wrap .h_wrap div { line-height: 30px; font-size: 11px; font-weight: 400; color: #555555; }
-/* 		#addImg .file_wrap .h_wrap div:nth-of-type(1) { display: inline-block; width: 50px; height: 30px; } */
-/* 		#addImg .file_wrap .h_wrap div:nth-of-type(2) { display: inline-block; width: 20px; } */
+		#addImg .file_wrap .h_wrap div { display: flex; gap: 6px; width: fit-content; line-height: 30px; font-size: 11px; font-weight: 400; color: #555555; }
+		/* 		#addImg .file_wrap .h_wrap div:nth-of-type(1) { display: inline-block; width: 50px; height: 30px; } */
+		/* 		#addImg .file_wrap .h_wrap div:nth-of-type(2) { display: inline-block; width: 20px; } */
 		#addImg .file_wrap .h_wrap div:nth-of-type(3) { display: inline-block; width: 90%; padding-left: 20px; }
 		#addImg .file_wrap .h_wrap div:nth-of-type(4) { display: inline-block; width: 150px; text-align: center; }
 		
@@ -73,21 +74,17 @@
 				</div>
 				<div class="file_wrap">
 					<div class="h_wrap flex">
-<!-- 						<div class="checkBox all"></div> -->
-						<div></div>
-						<div></div>
-						<div>Total file count</div>
-						<div>Total file size</div>
-<!-- 						<div>File</div> -->
-<!-- 						<div>Size</div> -->
+						<div>
+							<div>Total file count:</div>
+							<div class="total_file_count"></div>
+						</div>
+						<div>
+							<div>Total file size: </div>
+							<div class="total_file_size"></div>
+						</div>
+						<!-- <div class="checkBox all"></div> -->
 					</div>
-					<div class="h_wrap flex">
-<!-- 						<div class="checkBox all"></div> -->
-						<div></div>
-						<div></div>
-						<div class="total_file_count"></div>
-						<div class="total_file_size"></div>
-					</div>					
+
 					<ul class="c_wrap">
 						<li class="file_drop_info flex">
 							<div class="info_wrap">
@@ -97,7 +94,7 @@
 					</ul>
 				</div>
 				<div class="input_wrap">
-					<input type="file" id="files" name="files" class="file" accept="image/jpg, image/jpeg, image/png, video/*" multiple />
+					<input type="file" id="files" name="files" class="file" accept="image/jpg, image/jpeg, image/png" multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
 						<div class="delete hide">Delete</div>
