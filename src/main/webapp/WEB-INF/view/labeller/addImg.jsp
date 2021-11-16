@@ -611,7 +611,7 @@
 				fileList.push(files[i]);
 	                    
 				// 업로드 파일 목록 생성
-// 				that.addFileList(files[i]);
+				that.addFileList(files[i]);
 			}
 			
 			//개수반영
