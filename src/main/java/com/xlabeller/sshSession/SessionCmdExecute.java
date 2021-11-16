@@ -362,9 +362,8 @@ public class SessionCmdExecute implements Callable<Object> {
 			JSONParser parser = new JSONParser();
 			Object obj = null;
 			try {
-				obj = parser.parse(config);
+				obj = parser.parse(config.replaceAll("\\\\",""));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			JSONObject jsonObj = (JSONObject) obj;
