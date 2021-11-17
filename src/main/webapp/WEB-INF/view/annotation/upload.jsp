@@ -1117,7 +1117,7 @@
 				html += "<div class='checkBox'></div>"; 
 				html += "<span>Select All</span>"; 
 				html += "<button class='add_btn'>Add List</button>";
-				html += "<button class='arg_btn'>Augmentation</button>";
+// 				html += "<button class='arg_btn'>Augmentation</button>";
 				html += "</div></div>";
 				html += "<div class='media_wrap'>";
 				html += "<div class='search_result'>";	
@@ -1370,37 +1370,36 @@
 				that.pt.find(".search_result_wrap .box .select_box").removeClass("selected");
 			});
 			
-			that.pt.find(".search_wrap .arg_btn").off("click").on("click",function(){
+// 			that.pt.find(".search_wrap .arg_btn").off("click").on("click",function(){
 				
 				
-				var tempImgs = $(".media_wrap .search_result .box_contain canvas");
-				var data = [];
-				for(var i=0; i<tempImgs.length; i++){
-					var img = that.encodeBase64ImageTagViaCanvas(tempImgs[i]);
-					var tmpData = {
-						image : img.split("base64,")[1],
-						label : [{
-							x1 : 0, 
-							y1 : 0,
-							x2 : 0+$(tempImgs[i])[0]['width'],
-							y2 : 0+$(tempImgs[i])[0]['height'],
-							type : $(tempImgs[i]).parent().parent().parent().find(".label_wrap span").html(),
-						}],
-						count : 5,
-						augments : [{
-								min_value : 10,
-								max_value : 30,
-								augment_type : "SPNOISE"
-							}],
-						optional : {
-							flip : ["FLIPUD","FLIPLR"]
-						}
-					};
-					that.createAugData(tmpData);
-				}
-// 				that.createAugData(tmpData);
+// 				var tempImgs = $(".media_wrap .search_result .box_contain canvas");
+// 				var data = [];
+// 				for(var i=0; i<tempImgs.length; i++){
+// 					var img = that.encodeBase64ImageTagViaCanvas(tempImgs[i]);
+// 					var tmpData = {
+// 						image : img.split("base64,")[1],
+// 						label : [{
+// 							x1 : 0, 
+// 							y1 : 0,
+// 							x2 : 0+$(tempImgs[i])[0]['width'],
+// 							y2 : 0+$(tempImgs[i])[0]['height'],
+// 							type : $(tempImgs[i]).parent().parent().parent().find(".label_wrap span").html(),
+// 						}],
+// 						count : 5,
+// 						augments : [{
+// 								min_value : 10,
+// 								max_value : 30,
+// 								augment_type : "SPNOISE"
+// 							}],
+// 						optional : {
+// 							flip : ["FLIPUD","FLIPLR"]
+// 						}
+// 					};
+// 					that.createAugData(tmpData);
+// 				}
 				
-			});
+// 			});
 			
 			// jh.sa 추가
 			that.pt.find(".search_result_wrap .label_wrap").off("mouseenter").on("mouseenter", function(){

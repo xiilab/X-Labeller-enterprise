@@ -130,7 +130,8 @@
 		init : function() {
 			var that = this;
 			
-			var html = "<div class='flex'><div class='new_btn filter_color'>New +</div><div class='import_btn filter_color'>Import</div></div>";
+// 			var html = "<div class='flex'><div class='new_btn filter_color'>New +</div><div class='import_btn filter_color'>Import</div></div>";
+			var html = "<div class='flex'><div class='new_btn filter_color'>New +</div></div>";
 			$("#workspace .btn_wrap").empty();
 			$("#workspace .btn_wrap").append(html);
 			
