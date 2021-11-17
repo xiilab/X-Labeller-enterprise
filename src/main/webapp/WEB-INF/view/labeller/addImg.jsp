@@ -97,7 +97,7 @@
 					<input type="file" id="files" name="addImg_files" class="file" accept="image/jpg, image/jpeg, image/png" multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
-						<div class="delete hide">Delete</div>
+						<div class="delete">Delete</div>
 						<div class="append">Attach</div>
 					</div>
 					<div class="fps_wrap">
@@ -121,7 +121,7 @@
 			media_type : null,	
 		},
 		init : function(node, datasetId) {
-			var that = this;
+			var that = this;			
 			if(typeof(node) == "undefined"){
 				that.node = wsObj["labeller"].dir.getSelectedNodes();
 			} else {
