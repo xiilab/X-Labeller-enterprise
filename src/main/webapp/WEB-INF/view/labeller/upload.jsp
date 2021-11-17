@@ -462,18 +462,20 @@
 			$("#upload #files").off("change").on("change", function(e){
 				try{
 					var files = this.files;
-					var media_video = $("#upload .media_type_wrap .radioBtn.selected").data("value");
-					if(media_video == "video"){
-						var type = files[0].type;
-						if(type.split("/")[0] != "video"){
-							alert("Video 형태의 파일만 업로드 가능합니다");
-							that.pt.find(".total_file_count").html("");
-							that.pt.find(".total_file_size").html("");	
-							return false;
-						} 
+					var media_type = $("#upload .media_type_wrap .radioBtn.selected").data("value");
+					media_type = (
+						$(".fileTab_wrap .tab.active").hasClass('zip_file') ? 
+							'zip' :
+							media_type === 'video' ? 
+							'video/mp4' : 
+							media_type // image
+					);
+
+					if([...files].filter( o => !o.type.includes(media_type)).length > 0) {
+						alert('유효하지 않은 타입의 파일이 포함되어 있습니다. 유효하지 않은 파일은 무시됩니다.');
 					}
-					that.selectFile(files);
-					
+					files = [...files].filter( o => o.type.includes(media_type));
+					that.selectFile(files);	
 					that.pt.find(".checkBox.all").removeClass("selected");
 				}catch(exception){
 					console.log(exception);
