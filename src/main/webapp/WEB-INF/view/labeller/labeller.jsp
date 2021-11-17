@@ -1060,8 +1060,8 @@
 				var config = new Array();
 				$.each(res.result.data, function(index, value){
 					let node_name = value.title;
-					if(value.title.length > 18) {
-						node_name = node_name.substring(0, 18) + "..."; 
+					if(value.title.length > 10) {
+						node_name = node_name.substring(0, 10) + "..."; 
 					}
 					var obj = new Object();
 					obj.id = value.dataset_id;
