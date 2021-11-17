@@ -109,7 +109,7 @@
 				<div class="fileTab_wrap flex">
 					<div class="img_file tab active">ImageFile</div>
 					<div class="video_file tab">VideoFile</div>
-					<div class="zip_file tab">ZIPFile</div>
+					<!-- <div class="zip_file tab">ZIPFile</div> -->
 					<div class="blank"></div>
 				</div>
 				<div class="file_wrap">
