@@ -94,7 +94,7 @@
 					</ul>
 				</div>
 				<div class="input_wrap">
-					<input type="file" id="files" name="files" class="file" accept="image/jpg, image/jpeg, image/png" multiple />
+					<input type="file" id="files" name="addImg_files" class="file" accept="image/jpg, image/jpeg, image/png" multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
 						<div class="delete hide">Delete</div>
@@ -436,7 +436,7 @@
 		
 		getDatasetById : function(id){
 			var that = this;
-			const files = document.getElementById('files');			
+			const files = $('#addImg #files')[0];
 			$("#loader").show();
 			$.ajax({
 				url :  baseUrl + "data/getDatasetById.json",
@@ -450,21 +450,24 @@
 						that.data.media_type = res.result.data.media_type;
 						// 해당 데이터셋의 media_type에 따라 업로드 탭 영역 구분
 						if(that.data.media_type == "VIDEO"){
-							$(".fileTab_wrap .video_file.tab").trigger("click");				
-							$(".fileTab_wrap .video_file").show();
-							$(".fileTab_wrap .img_file").hide();
-							$(".fileTab_wrap .zip_file").hide();
-							$('.fileTab_wrap .video_file .tab').addClass('active');
-							$('.fileTab_wrap .img_file .tab').removeClass('active');
-							$('.fileTab_wrap .zip_file .tab').removeClass('active');
+							$("#addImg .fileTab_wrap .video_file.tab").trigger("click");				
+							$("#addImg .fileTab_wrap .video_file").show();
+							$("#addImg .fileTab_wrap .img_file").hide();
+							$("#addImg .fileTab_wrap .zip_file").hide();
+							$('#addImg .fileTab_wrap .video_file.tab').addClass('active');
+							$('#addImg .fileTab_wrap .img_file.tab').removeClass('active');
+							$('#addImg .fileTab_wrap .zip_file.tab').removeClass('active');
 							files.setAttribute('accept','video/mp4');
-						} else {
-							$(".fileTab_wrap .img_file").show();
-							$(".fileTab_wrap .zip_file").hide();
-							$(".fileTab_wrap .video_file").hide();
-							$(".fileTab_wrap .img_file.tab").trigger("click");
+						} else if(that.data.media_type == "IMAGE"){
+							$("#addImg .fileTab_wrap .img_file .tab").trigger("click");
+							$("#addImg .fileTab_wrap .img_file").show();
+							$("#addImg .fileTab_wrap .video_file").hide();
+							$("#addImg .fileTab_wrap .zip_file").hide();
+							$('#addImg .fileTab_wrap .img_file.tab').addClass('active');
+							$('#addImg .fileTab_wrap .video_file.tab').removeClass('active');
+							$('#addImg .fileTab_wrap .zip_file.tab').removeClass('active');
 							files.setAttribute('accept','image/jpg, image/jpeg, image/png');								
-						}						
+						} 
 					} else if(res.result.code == "2001"){
 						alert(res.result.data);
 						location.href = baseUrl + 'login';
