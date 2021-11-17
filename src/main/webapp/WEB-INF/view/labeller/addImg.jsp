@@ -367,21 +367,9 @@
 			});
 			$("#addImg #files").off("change").on("change", function(e){
 				try{
-					// if(media_type == "VIDEO"){
-					// 	var type = files[0].type;
-					// 	if(type.split("/")[0] != "video"){
-					// 		alert("Video 형태의 파일만 업로드 가능합니다");
-					// 		that.pt.find(".total_file_count").html("");
-					// 		that.pt.find(".total_file_size").html("");	
-							
-					// 		return false;
-					// 	} 
-					// }
-
 					var files = this.files;
-					var media_type = that.data.media_type === 'IMAGE' ? 'image' : 'video';
+					var media_type = that.data.media_type === 'IMAGE' ? 'image' : 'video/mp4';
 					if([...files].filter( o => !o.type.includes(media_type)).length > 0) {
-						console.log('유효하지 않은 타입의 파일이 포함되어 있습니다.')
 						alert('유효하지 않은 타입의 파일이 포함되어 있습니다. 유효하지 않은 파일은 무시됩니다.');
 					}
 					files = [...files].filter( o => o.type.includes(media_type));
@@ -411,9 +399,8 @@
 				e.stopPropagation();
 				if(e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
 					var files = e.originalEvent.dataTransfer.files;
-					var media_type = that.data.media_type === 'IMAGE' ? 'image' : 'video';
+					var media_type = that.data.media_type === 'IMAGE' ? 'image' : 'video/mp4';
 					if([...files].filter( o => !o.type.includes(media_type)).length > 0) {
-						console.log('유효하지 않은 타입의 파일이 포함되어 있습니다.')
 						alert('유효하지 않은 타입의 파일이 포함되어 있습니다. 유효하지 않은 파일은 무시됩니다.');
 					}
 					files = [...files].filter( o => o.type.includes(media_type));
