@@ -1637,42 +1637,41 @@
 							tempRect.setCoords(); */
 							if(!that.data.meta[uuid].hasOwnProperty('rectData') || that.data.meta[uuid]['rectData']['top'] == undefined){
 								// 새로 만든 바운딩 박스 저장 
-								var path = that.pt.find(".list_table .path.active").attr("data-path");
+// 								var path = that.pt.find(".list_table .path.active").attr("data-path");
 								
 								//test ai assitant
-								var aiRect = Object.assign(that.computed.rescale(tempRect,true));
-								var ajaxData = {
-										path : path,
-										left : aiRect.left,
-										top : aiRect.top,
-										width : aiRect.width,
-										height : aiRect.height,
-										type : "IMAGE_BBOX",
-								}
+// 								var aiRect = Object.assign(that.computed.rescale(tempRect,true));
+// 								var ajaxData = {
+// 										path : path,
+// 										left : aiRect.left,
+// 										top : aiRect.top,
+// 										width : aiRect.width,
+// 										height : aiRect.height,
+// 										type : "IMAGE_BBOX",
+// 								}
 								
-								console.log("assitant",ajaxData);
-								$.ajax({
-									url : baseUrl + "aiAssistant/runAiAssistant.json",
-									data : ajaxData,
-								   	type : "POST",
-								   	success : function(res){
-								   		console.log("=====runAiAssistant=====", res);
-										if(res.result.code == "200"){
-											var temp = that.computed.rescale(JSON.parse(res.result.data),false);
-											tempRect.set({
-												left : temp.left,
-												top : temp.top,
-												width : temp.width,
-												height : temp.height,
-											});
-											canvas.renderAll();
-										}
-								   	},
-								   	error : function(err){
-								   		$("#loader").hide();
-								   		 console.log("ERROR!!", err);
-								   	}
-								});
+// 								$.ajax({
+// 									url : baseUrl + "aiAssistant/runAiAssistant.json",
+// 									data : ajaxData,
+// 								   	type : "POST",
+// 								   	success : function(res){
+// 								   		console.log("=====runAiAssistant=====", res);
+// 										if(res.result.code == "200"){
+// 											var temp = that.computed.rescale(JSON.parse(res.result.data),false);
+// 											tempRect.set({
+// 												left : temp.left,
+// 												top : temp.top,
+// 												width : temp.width,
+// 												height : temp.height,
+// 											});
+// 											canvas.renderAll();
+// 										}
+// 								   	},
+// 								   	error : function(err){
+// 								   		$("#loader").hide();
+// 								   		 console.log("ERROR!!", err);
+// 								   	}
+// 								});
 								
 								that.computed.saveMetaData(tempRect, uuid);
 								that.computed.stackHistory(uuid,"created");
