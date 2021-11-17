@@ -318,6 +318,11 @@
 					that.pt.find(".file_drop_info").show();
 				}
 				
+				// 삭재 후 개수, 사이즈 반영
+				var file_total_size = that.fileList.reduce((acc, file) => acc + file.size, 0);
+				$("#addImg .total_file_count").html(that.fileList.length);
+				$("#addImg .total_file_size").html(that.formatBytes(file_total_size));	
+
 				that.pt.find(".checkBox.all").removeClass("selected");
 			});
 			
@@ -611,7 +616,7 @@
 				file_total_size += fileList[i].size; 
 			}
 			$("#addImg .total_file_count").html(fileList.length);
-			$("#addImg .total_file_size").html(file_total_size);			
+			$("#addImg .total_file_size").html(that.formatBytes(file_total_size));			
 		},
 		
 		addFileList : function(files){
