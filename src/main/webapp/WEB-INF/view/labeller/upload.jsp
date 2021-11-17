@@ -499,9 +499,15 @@
 				e.stopPropagation();
 				if(e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
 					var files = e.originalEvent.dataTransfer.files;
-					var media_type = !$(".fileTab_wrap .tab.active").hasClass('zip_file') ? 
-						$("#upload .media_type_wrap .radioBtn.selected").data("value") :
-						'zip';
+					var media_type = $("#upload .media_type_wrap .radioBtn.selected").data("value");
+					media_type = (
+						$(".fileTab_wrap .tab.active").hasClass('zip_file') ? 
+							'zip' :
+							media_type === 'video' ? 
+							'video/mp4' : 
+							media_type // image
+					);
+					console.log('media_type', media_type)
 					if([...files].filter( o => !o.type.includes(media_type)).length > 0) {
 						alert('유효하지 않은 타입의 파일이 포함되어 있습니다. 유효하지 않은 파일은 무시됩니다.');
 					}
