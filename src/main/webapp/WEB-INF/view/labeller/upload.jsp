@@ -86,8 +86,8 @@
 					<div class="media_type_wrap filter_color">
 						<span class="radioBtn selected" data-value="image"></span>
 						<span class="radio_label">Image</span>
-						<span class="radioBtn" data-value="video"></span>
-						<span class="radio_label">Video</span>
+<!-- 						<span class="radioBtn" data-value="video"></span> -->
+<!-- 						<span class="radio_label">Video</span> -->
 					</div>
 				</div>				
 				<div class="title_wrap flex">
