@@ -16,15 +16,16 @@
 /* 		#addImg .fileTab_wrap .blank { width: calc(100% - 153px); height: 30px; border-bottom: 1px solid #dedcde; border-left: 1px solid #dedcde; } */
 		#addImg .fileTab_wrap .blank { width: 100%; height: 30px; border-bottom: 1px solid #dedcde; border-left: 1px solid #dedcde; }
 		
-		#addImg .file_wrap { width: 100%;height: 381px; margin-bottom: 10px; border: 1px solid #dedcde; border-top: 0; position: relative; }
+		#addImg .file_wrap { width: 100%; height: 381px; margin-bottom: 10px; border: 1px solid #dedcde; border-top: 0; position: relative; display: flex; flex-direction: column;}
+		#addImg .file_wrap .h_wrap { width: initial; padding: 0 12.2px; justify-content: space-between; }
 		#addImg .file_wrap .h_wrap:after{ content: ''; width: 100%; border-bottom: 1px solid #dedcde; position: absolute; top:30px; left: 0; }
-		#addImg .file_wrap .h_wrap div { line-height: 30px; font-size: 11px; font-weight: 400; color: #555555; }
-/* 		#addImg .file_wrap .h_wrap div:nth-of-type(1) { display: inline-block; width: 50px; height: 30px; } */
-/* 		#addImg .file_wrap .h_wrap div:nth-of-type(2) { display: inline-block; width: 20px; } */
+		#addImg .file_wrap .h_wrap div { display: flex; gap: 6px; width: fit-content; line-height: 30px; font-size: 11px; font-weight: 400; color: #555555; }
+		/* 		#addImg .file_wrap .h_wrap div:nth-of-type(1) { display: inline-block; width: 50px; height: 30px; } */
+		/* 		#addImg .file_wrap .h_wrap div:nth-of-type(2) { display: inline-block; width: 20px; } */
 		#addImg .file_wrap .h_wrap div:nth-of-type(3) { display: inline-block; width: 90%; padding-left: 20px; }
 		#addImg .file_wrap .h_wrap div:nth-of-type(4) { display: inline-block; width: 150px; text-align: center; }
 		
-		#addImg .file_wrap .c_wrap { height:320px; background-color: #ffffff; overflow-y: scroll;}
+		#addImg .file_wrap .c_wrap { height: inherit; background-color: #ffffff; overflow-y: scroll;}
 		#addImg .file_wrap .c_wrap .file_drop_info { height:100%; }
 		#addImg .file_wrap .c_wrap .file_drop_info .info_wrap { margin: auto; font-weight: 200; color: #a0a5ae; }
 		#addImg .file_wrap .c_wrap .file_drop_info .img{ width: 28px; height: 30px; margin: 0 auto; margin-bottom: 10px; background: url("images/icon_add_image.png") no-repeat center; }
@@ -73,21 +74,17 @@
 				</div>
 				<div class="file_wrap">
 					<div class="h_wrap flex">
-<!-- 						<div class="checkBox all"></div> -->
-						<div></div>
-						<div></div>
-						<div>Total file count</div>
-						<div>Total file size</div>
-<!-- 						<div>File</div> -->
-<!-- 						<div>Size</div> -->
+						<div>
+							<div>Total file count:</div>
+							<div class="total_file_count"></div>
+						</div>
+						<div>
+							<div>Total file size: </div>
+							<div class="total_file_size"></div>
+						</div>
+						<!-- <div class="checkBox all"></div> -->
 					</div>
-					<div class="h_wrap flex">
-<!-- 						<div class="checkBox all"></div> -->
-						<div></div>
-						<div></div>
-						<div class="total_file_count"></div>
-						<div class="total_file_size"></div>
-					</div>					
+
 					<ul class="c_wrap">
 						<li class="file_drop_info flex">
 							<div class="info_wrap">
@@ -97,10 +94,10 @@
 					</ul>
 				</div>
 				<div class="input_wrap">
-					<input type="file" id="files" name="files" class="file" accept="image/jpg, image/jpeg, image/png, video/*" multiple />
+					<input type="file" id="files" name="addImg_files" class="file" accept="image/jpg, image/jpeg, image/png" multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
-						<div class="delete hide">Delete</div>
+						<div class="delete">Delete</div>
 						<div class="append">Attach</div>
 					</div>
 					<div class="fps_wrap">
@@ -124,7 +121,7 @@
 			media_type : null,	
 		},
 		init : function(node, datasetId) {
-			var that = this;
+			var that = this;			
 			if(typeof(node) == "undefined"){
 				that.node = wsObj["labeller"].dir.getSelectedNodes();
 			} else {
@@ -321,6 +318,11 @@
 					that.pt.find(".file_drop_info").show();
 				}
 				
+				// 삭재 후 개수, 사이즈 반영
+				var file_total_size = that.fileList.reduce((acc, file) => acc + file.size, 0);
+				$("#addImg .total_file_count").html(that.fileList.length);
+				$("#addImg .total_file_size").html(that.formatBytes(file_total_size));	
+
 				that.pt.find(".checkBox.all").removeClass("selected");
 			});
 			
@@ -371,20 +373,13 @@
 			$("#addImg #files").off("change").on("change", function(e){
 				try{
 					var files = this.files;
-					var media_video = that.data.media_type;
-					if(media_video == "VIDEO"){
-						var type = files[0].type;
-						if(type.split("/")[0] != "video"){
-							alert("Video 형태의 파일만 업로드 가능합니다");
-							that.pt.find(".total_file_count").html("");
-							that.pt.find(".total_file_size").html("");	
-							
-							return false;
-						} 
-					}					
-					
-					that.selectFile(files);
-					
+					var media_type = that.data.media_type === 'IMAGE' ? 'image' : 'video/mp4';
+					if([...files].filter( o => !o.type.includes(media_type)).length > 0) {
+						alert('유효하지 않은 타입의 파일이 포함되어 있습니다. 유효하지 않은 파일은 무시됩니다.');
+					}
+					files = [...files].filter( o => o.type.includes(media_type));
+					that.selectFile(files);	
+
 					that.pt.find(".checkBox.all").removeClass("selected");
 				}catch(exception){
 					console.log(exception);
@@ -409,17 +404,11 @@
 				e.stopPropagation();
 				if(e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
 					var files = e.originalEvent.dataTransfer.files;
-					var media_video = that.data.media_type;
-					if(media_video == "VIDEO"){
-						var type = files[0].type;
-						if(type.split("/")[0] != "video"){
-							alert("Video 형태의 파일만 업로드 가능합니다");
-							that.pt.find(".total_file_count").html("");
-							that.pt.find(".total_file_size").html("");	
-							
-							return false;
-						} 
-					}						
+					var media_type = that.data.media_type === 'IMAGE' ? 'image' : 'video/mp4';
+					if([...files].filter( o => !o.type.includes(media_type)).length > 0) {
+						alert('유효하지 않은 타입의 파일이 포함되어 있습니다. 유효하지 않은 파일은 무시됩니다.');
+					}
+					files = [...files].filter( o => o.type.includes(media_type));
 					that.selectFile(files);
 		        }
 				
@@ -439,7 +428,7 @@
 		
 		getDatasetById : function(id){
 			var that = this;
-			
+			const files = $('#addImg #files')[0];
 			$("#loader").show();
 			$.ajax({
 				url :  baseUrl + "data/getDatasetById.json",
@@ -453,16 +442,24 @@
 						that.data.media_type = res.result.data.media_type;
 						// 해당 데이터셋의 media_type에 따라 업로드 탭 영역 구분
 						if(that.data.media_type == "VIDEO"){
-							$(".fileTab_wrap .img_file").hide();
-							$(".fileTab_wrap .zip_file").hide();
-							$(".fileTab_wrap .video_file").show();
-							$(".fileTab_wrap .video_file.tab").trigger("click");				
-						} else {
-							$(".fileTab_wrap .img_file").show();
-							$(".fileTab_wrap .zip_file").hide();
-							$(".fileTab_wrap .video_file").hide();
-							$(".fileTab_wrap .img_file.tab").trigger("click");								
-						}						
+							$("#addImg .fileTab_wrap .video_file.tab").trigger("click");				
+							$("#addImg .fileTab_wrap .video_file").show();
+							$("#addImg .fileTab_wrap .img_file").hide();
+							$("#addImg .fileTab_wrap .zip_file").hide();
+							$('#addImg .fileTab_wrap .video_file.tab').addClass('active');
+							$('#addImg .fileTab_wrap .img_file.tab').removeClass('active');
+							$('#addImg .fileTab_wrap .zip_file.tab').removeClass('active');
+							files.setAttribute('accept','video/mp4');
+						} else if(that.data.media_type == "IMAGE"){
+							$("#addImg .fileTab_wrap .img_file .tab").trigger("click");
+							$("#addImg .fileTab_wrap .img_file").show();
+							$("#addImg .fileTab_wrap .video_file").hide();
+							$("#addImg .fileTab_wrap .zip_file").hide();
+							$('#addImg .fileTab_wrap .img_file.tab').addClass('active');
+							$('#addImg .fileTab_wrap .video_file.tab').removeClass('active');
+							$('#addImg .fileTab_wrap .zip_file.tab').removeClass('active');
+							files.setAttribute('accept','image/jpg, image/jpeg, image/png');								
+						} 
 					} else if(res.result.code == "2001"){
 						alert(res.result.data);
 						location.href = baseUrl + 'login';
@@ -582,10 +579,6 @@
 // 					alert("기존에 등록되어있는 VidieoFile이 존재합니다.\nVideoFile은 한 개만 사용 가능합니다.");
 // 					return false;					
 // 				}
-				if(fileList.length>0){
-					fileList.length = 0;
-					that.pt.find(".c_wrap li").remove();
-				}
 				that.pt.find(".tab").removeClass("active");
 				that.pt.find(".video_file").addClass("active");
 				
@@ -614,7 +607,7 @@
 				fileList.push(files[i]);
 	                    
 				// 업로드 파일 목록 생성
-// 				that.addFileList(files[i]);
+				that.addFileList(files[i]);
 			}
 			
 			//개수반영
@@ -623,7 +616,7 @@
 				file_total_size += fileList[i].size; 
 			}
 			$("#addImg .total_file_count").html(fileList.length);
-			$("#addImg .total_file_size").html(file_total_size);			
+			$("#addImg .total_file_size").html(that.formatBytes(file_total_size));			
 		},
 		
 		addFileList : function(files){
