@@ -20,7 +20,7 @@
 /* 		#upload .fileTab_wrap .blank { width: calc(100% - 153px); height: 30px; border-bottom: 1px solid #dedcde; border-left: 1px solid #dedcde; } */
 		#upload .fileTab_wrap .blank { width: 100%; height: 30px; border-bottom: 1px solid #dedcde; border-left: 1px solid #dedcde; }
 		
-		#upload .file_wrap { width: 100%;height: 260px; margin-bottom: 10px; border: 1px solid #dedcde; border-top: 0; position: relative; }
+		#upload .file_wrap { width: 100%; height: 260px; display: flex; flex-direction: column; margin-bottom: 10px; border: 1px solid #dedcde; border-top: 0; position: relative; }
 		#upload .file_wrap .h_wrap { justify-content: space-between; }
 		#upload .file_wrap .h_wrap:after{ content: ''; width: 100%; border-bottom: 1px solid #dedcde; position: absolute; top:30px; left: 0; }
 		#upload .file_wrap .h_wrap div { width: fit-content; margin: 0 2px; line-height: 30px; font-size: 11px; font-weight: 400; color: #555555; }
@@ -29,7 +29,7 @@
 		#upload .file_wrap .h_wrap div:nth-of-type(3) { display: inline-block; width: 90%; padding-left: 20px; }
 		#upload .file_wrap .h_wrap div:nth-of-type(4) { display: inline-block; width: 150px; text-align: center; }
 		
-		#upload .file_wrap .c_wrap { height:200px; background-color: #ffffff; overflow-y: scroll;}
+		#upload .file_wrap .c_wrap { height: inherit; background-color: #ffffff; overflow-y: scroll;}
 		#upload .file_wrap .c_wrap .file_drop_info { height:100%; }
 		#upload .file_wrap .c_wrap .file_drop_info .info_wrap { margin: auto; font-weight: 200; color: #a0a5ae; }
 		#upload .file_wrap .c_wrap .file_drop_info .img{ width: 28px; height: 30px; margin: 0 auto; margin-bottom: 10px; background: url("images/icon_add_image.png") no-repeat center; }
@@ -158,7 +158,6 @@
 		pt : $("#upload"),
 		init : function() {
 			var that = this;
-			that.file_selection_list = [];
 			that.reset();
 			that.listener();
 		},
@@ -361,25 +360,28 @@
 			
 			//선택삭제
 			that.pt.find(".delete").off("click").on("click", function(e){	
-				// 파일 삭제하기 	
-				that.fileList = that.fileList
-					.filter((o, index) => {
-						const willBeDeleted = that.file_selection_list.includes(index); 
-						return !willBeDeleted; 
-					});
+				while(true){
+					var selectedList = that.pt.find(".c_wrap .checkBox.selected").parent();
+					var size = that.pt.find(".c_wrap .checkBox").length;
+					var index = selectedList.index();
+					
+					if(selectedList.length <= 0){
+						break;
+					}
+					that.pt.find(".file_list").eq(index).remove();
+					that.deleteFileList( size-(index+1) );	
+				}
 
-				// 삭제한 파일 element 삭제 
-				that.file_selection_list
-					.sort()
-					.forEach((o, idx) => {
-						const index = idx === 0 ? o : o - idx;
-						that.pt.find(".file_list").eq(index).remove();
-					});
+				if(that.pt.find(".file_list").length <= 0){
+					that.pt.find(".file_drop_info").show();
+				}
 
-				that.file_selection_list = []; // 파일 선택 목록 초기화
-				var file_total_size = that.fileList.reduce((acc, val) => acc + val.size, 0);
+				// 삭재 후 개수, 사이즈 반영
+				var file_total_size = that.fileList.reduce((acc, file) => acc + file.size, 0);
 				$("#upload .total_file_count").html(that.fileList.length);
-				$("#upload .total_file_size").html(file_total_size);
+				$("#upload .total_file_size").html(that.formatBytes(file_total_size));	
+
+				that.pt.find(".checkBox.all").removeClass("selected");
 			});
 			
 			//탭
@@ -679,7 +681,7 @@
 				file_total_size += fileList[i].size; 
 			}
 			$("#upload .total_file_count").html(fileList.length);
-			$("#upload .total_file_size").html(file_total_size);
+			$("#upload .total_file_size").html(that.formatBytes(file_total_size));
 			
 			
 			
@@ -698,7 +700,7 @@
 			
 			var html = "<li class='file_list flex'><div class='checkBox' checkbox-index='"+index+"'></div><div></div><div>"+file.name+"</div><div>"+size+"</div></li>";
 			
-			that.pt.find(".file_wrap .c_wrap").append(html);
+			that.pt.find(".file_wrap .c_wrap").prepend(html);
 			
 			//체크박스
 			that.pt.find(".c_wrap .checkBox").off("click").on("click", function(){
@@ -706,11 +708,8 @@
 				
 				if($(this).hasClass("selected")){ // 선택 해제
 					$(this).removeClass("selected");
-					index = that.file_selection_list.indexOf(index);
-					that.file_selection_list.splice(index, 1);
 				} else { // 선택
 					$(this).addClass("selected");
-					that.file_selection_list.push(index);
 				}
 
 				//모두선택
@@ -720,6 +719,10 @@
 					that.pt.find(".checkBox.all").removeClass("selected")
 				}
 			});
+		},
+		deleteFileList : function(index){
+			var that = this;
+			that.fileList.splice(index,1);
 		},
 
 		formatBytes : function(bytes) {
