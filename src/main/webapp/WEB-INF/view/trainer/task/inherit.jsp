@@ -507,7 +507,7 @@
 			let i = 0;
 			for (i = start ; i < end ; i++) {
 				let data = annotation_arr[i];
-				html += " <tr data-id='"+data["id"]+"'> ";
+				html += " <tr data-id='"+data["annotation_id"]+"'> ";
 				if(radio_obj[data.id] != undefined){
 					html += "   <td><div class='radioBtn selected'></div></td>";	
 				} else {
@@ -1019,7 +1019,7 @@
 			
 			let html = "<option value=''>Please select the project</option>"; 
 			for(let i=0, len = project_data.length; i<len; i++){
-				html += "<option data-id='"+data[i]["id"]+"' value='"+data[i]["title"]+"'>";
+				html += "<option data-id='"+data[i]["project_id"]+"' value='"+data[i]["title"]+"'>";
 				html += data[i]["title"];
 				html += "</option>";
 	
