@@ -378,8 +378,8 @@
 
 				// 삭재 후 개수, 사이즈 반영
 				var file_total_size = that.fileList.reduce((acc, file) => acc + file.size, 0);
-				$("#addImg .total_file_count").html(that.fileList.length);
-				$("#addImg .total_file_size").html(that.formatBytes(file_total_size));	
+				$("#upload .total_file_count").html(that.fileList.length);
+				$("#upload .total_file_size").html(that.formatBytes(file_total_size));	
 
 				that.pt.find(".checkBox.all").removeClass("selected");
 			});
@@ -681,7 +681,7 @@
 				file_total_size += fileList[i].size; 
 			}
 			$("#upload .total_file_count").html(fileList.length);
-			$("#upload .total_file_size").html(file_total_size);
+			$("#upload .total_file_size").html(that.formatBytes(file_total_size));
 			
 			
 			
