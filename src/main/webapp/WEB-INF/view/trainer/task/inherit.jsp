@@ -819,31 +819,37 @@
 				type : "POST",
 				success : function(res) {
 					console.log("======insertTask======", res);
-					if (res.result.code == "200") {
-						that.resetView();
-// 						trainer.refreshTask(current_node);
-
-						// 기존 프로젝트 닫기 추가
-						var current_node = that.data.currentNode;
-						let current_project_node = current_node.getParentNode();
-						wsObj[obj.key].dir.removeChildNodes(current_project_node);
-						$("#"+current_project_node.tId).children("a").children("#"+current_project_node.tId+"_switch").removeClass("noline_open").addClass("noline_close");						
-						let transfer_project_node = wsObj[obj.key].dir.getNodeByParam("id",res.taskVO.project_id);
-						trainer.refreshTask(transfer_project_node);
-						wsObj[obj.key].dir.selectNode(transfer_project_node);
-						trainer.detail(res.taskVO.task_id);
-						$("#trainer.ztree").animate({scrollTop:0},500);
-						console.log("current_node : ", current_node);
-						console.log("transfer_project_node : ", transfer_project_node);
- 						//console.log("res.taskVO.algorithm_id::::", res.taskVO.algorithm_id);
-						//console.log("res.taskVO.config:::::", res.taskVO.config); 
-					} else if (res.result.code == "2001") {
+					try {
+						if (res.result.code == "200") {
+							that.resetView();
+	// 						trainer.refreshTask(current_node);
+	
+							// 기존 프로젝트 닫기 추가
+							var current_node = that.data.currentNode;
+							let current_project_node = current_node.getParentNode();
+							wsObj['trainer'].dir.removeChildNodes(current_project_node);
+							$("#"+current_project_node.tId).children("a").children("#"+current_project_node.tId+"_switch").removeClass("noline_open").addClass("noline_close");						
+							let transfer_project_node = wsObj['trainer'].dir.getNodeByParam("project_id",res.taskVO.project_id);
+							trainer.refreshTask(transfer_project_node);
+							wsObj['trainer'].dir.selectNode(transfer_project_node);
+							trainer.detail(res.taskVO.task_id);
+							$("#trainer.ztree").animate({scrollTop:0},500);
+							console.log("current_node : ", current_node);
+							console.log("transfer_project_node : ", transfer_project_node);
+							 //console.log("res.taskVO.algorithm_id::::", res.taskVO.algorithm_id);
+							//console.log("res.taskVO.config:::::", res.taskVO.config); 
+						} else if (res.result.code == "2001") {
+							alert(res.result.data);
+							location.href = baseUrl + 'login';
+						}
+						
+						$("#loader").hide();
 						alert(res.result.data);
-						location.href = baseUrl + 'login';
+					} catch(e) {
+						console.error('생성된 task의 project 정보 가져오는 과정에서 오류 발생')
+						$("#loader").hide();
+						alert(res.result.data);
 					}
-					
-					$("#loader").hide();
-					alert(res.result.data);
 				},
 				error : function(err) {
 					$("#loader").hide();
