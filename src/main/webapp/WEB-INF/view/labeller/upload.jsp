@@ -20,7 +20,7 @@
 /* 		#upload .fileTab_wrap .blank { width: calc(100% - 153px); height: 30px; border-bottom: 1px solid #dedcde; border-left: 1px solid #dedcde; } */
 		#upload .fileTab_wrap .blank { width: 100%; height: 30px; border-bottom: 1px solid #dedcde; border-left: 1px solid #dedcde; }
 		
-		#upload .file_wrap { width: 100%;height: 260px; margin-bottom: 10px; border: 1px solid #dedcde; border-top: 0; position: relative; }
+		#upload .file_wrap { width: 100%; height: 260px; display: flex; flex-direction: column; margin-bottom: 10px; border: 1px solid #dedcde; border-top: 0; position: relative; }
 		#upload .file_wrap .h_wrap { justify-content: space-between; }
 		#upload .file_wrap .h_wrap:after{ content: ''; width: 100%; border-bottom: 1px solid #dedcde; position: absolute; top:30px; left: 0; }
 		#upload .file_wrap .h_wrap div { width: fit-content; margin: 0 2px; line-height: 30px; font-size: 11px; font-weight: 400; color: #555555; }
@@ -29,7 +29,7 @@
 		#upload .file_wrap .h_wrap div:nth-of-type(3) { display: inline-block; width: 90%; padding-left: 20px; }
 		#upload .file_wrap .h_wrap div:nth-of-type(4) { display: inline-block; width: 150px; text-align: center; }
 		
-		#upload .file_wrap .c_wrap { height:200px; background-color: #ffffff; overflow-y: scroll;}
+		#upload .file_wrap .c_wrap { height: inherit; background-color: #ffffff; overflow-y: scroll;}
 		#upload .file_wrap .c_wrap .file_drop_info { height:100%; }
 		#upload .file_wrap .c_wrap .file_drop_info .info_wrap { margin: auto; font-weight: 200; color: #a0a5ae; }
 		#upload .file_wrap .c_wrap .file_drop_info .img{ width: 28px; height: 30px; margin: 0 auto; margin-bottom: 10px; background: url("images/icon_add_image.png") no-repeat center; }
