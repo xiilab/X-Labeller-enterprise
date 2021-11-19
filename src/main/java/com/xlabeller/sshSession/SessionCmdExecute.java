@@ -368,7 +368,7 @@ public class SessionCmdExecute implements Callable<Object> {
 			}
 			JSONObject jsonObj = (JSONObject) obj;
 			batch = String.valueOf(jsonObj.get("batch_size"));
-			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +"--rm -itd --label gpu_id=" + gpuIndex +
+			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
 					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
 					+ taskId + " -v /xlabeller:/xlabeller xlabeller_yolov4:2.0 " + "python3 xlabeller_yolov4_train.py"
 					+ " --pid " + projectId
