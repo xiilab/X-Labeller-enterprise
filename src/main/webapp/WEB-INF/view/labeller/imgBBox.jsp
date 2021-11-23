@@ -5181,6 +5181,8 @@
 							if(res.result.code == "200"){
 								that.computed.getAlgorithmById(res.result.data.algorithm_id, "1");
 								that.computed.getCheckpointList(id, "1");
+// 								that.computed.getAlgorithmById(res.result.data.algorithm_id, "2");
+// 								that.computed.getCheckpointList(id, "2");
 							} else if (res.result.code == "2001") {
 								alert(res.result.data);
 								location.href = baseUrl + 'login';
@@ -6137,10 +6139,19 @@
 					const that = imgBBoxQuick;
 					
 					// 초기화시 RETINAT 기본값 적용 
+// 					let options = $(".algorithm_result").children("option");
+// 					let selected_option_id;
+// 					for(var i=1; i < options.length; i++){
+// 					    if(options[i].label == "RETINANET"){
+// 					    	options[i].selected = true;
+// 					    	selected_option_id = options[i].attributes["data-id"].value
+// 					    }
+// 					}
+					// 초기화시 YOLO 기본값 적용
 					let options = $(".algorithm_result").children("option");
 					let selected_option_id;
 					for(var i=1; i < options.length; i++){
-					    if(options[i].label == "RETINANET"){
+					    if(options[i].label == "YOLO"){
 					    	options[i].selected = true;
 					    	selected_option_id = options[i].attributes["data-id"].value
 					    }

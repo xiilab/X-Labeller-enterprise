@@ -107,7 +107,7 @@
 						<li menu="menu_1"><a href="<c:url value="/labeller" />" >Labeller</a></li>
 						<li menu="menu_2"><a href="<c:url value="/annotation" />" >Annotation</a></li>
 						<li menu="menu_3"><a href="<c:url value="/trainer" />">Trainer</a></li>
-						<li menu="menu_4"><a href="<c:url value="/comparison" />">Comparison</a></li>
+<%-- 						<li menu="menu_4"><a href="<c:url value="/comparison" />">Comparison</a></li> --%>
 						<li menu="menu_5"><a href="<c:url value="/setup" />">Setup</a></li>
 						<li menu="menu_6"><a href="<c:url value="/monitor" />">Monitor</a></li>
 <%-- 						<li menu="menu_7"><a href="<c:url value="/algorithm/list" />">Algorithm</a></li> --%>
@@ -191,10 +191,12 @@
 			    			$(".nav_depth1 li").eq(3).children("a").addClass("active");
 			    			break;
 			    		case "setup":
-			    			$(".nav_depth1 li").eq(4).children("a").addClass("active");
+// 			    			$(".nav_depth1 li").eq(4).children("a").addClass("active");
+			    			$(".nav_depth1 li").eq(3).children("a").addClass("active");
 			    			break;
 			    		case "monitor":
-			    			$(".nav_depth1 li").eq(5).children("a").addClass("active");
+// 			    			$(".nav_depth1 li").eq(5).children("a").addClass("active");
+			    			$(".nav_depth1 li").eq(4).children("a").addClass("active");
 			    			break;
 			    		case "algorithm":
 			    			$(".nav_depth1 li").eq(6).children("a").addClass("active");			    			
@@ -288,7 +290,7 @@
 								} */
 								var html = ""
 									+ "	<ul class='flex'> "
-									+"		<li menu=''><a href='<c:url value='/info' />' target='_blank' ><div class='help_btn'></div>help</a></li> "
+// 									+"		<li menu=''><a href='<c:url value='/info' />' target='_blank' ><div class='help_btn'></div>help</a></li> "
 									+"		<li menu='' class='flex'><div class='state'></div><a href='<c:url value='/mypage' />' >"+res.result.data.account+"</a></li> "
 									+"		<li menu='' class='end'><a class='logout_btn cp filter_color'>Logout</a></li> "
 									+ "	</ul> ";

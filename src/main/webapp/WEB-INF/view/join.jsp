@@ -76,7 +76,8 @@
 					<span id="infoPwdCheck"></span>					
 					<div class="input_wrap flex">
 						<label class="input_label">키</label>
-						<input class="" type="text" name="key" placeholder="발급받은 키값을 입력해주세요.">
+<!-- 						<input class="" type="text" name="key" placeholder="발급받은 키값을 입력해주세요." > -->
+						<input class="" type="text" name="key" placeholder="" value="BlB2jNI/0Dr658Gic3ZIzpeDX1eKtCXx6MxOjwxx210=" disabled>
 					</div>
 					
 <!-- 					<div class="input_wrap flex"> -->

@@ -1173,101 +1173,92 @@
 			var label_arr = that.data.labelArr;
 			
 			that.resetAnnotationListScroll();
-		
+			
 			that.data.labelArr = taskData.annotation_list;
 			let algorithm_id = taskData.algorithm_id;
-			let algorithm_data = algorithmData;
-			let train_param = JSON.parse(algorithm_data.train_param);
-
-			// config 는 getTaskById 에서, train_param 은 getAlgorithmById 에서 가져옴 
-			let config = JSON.parse(taskData.config);
-			let config_length = Object.keys(config).length;
-			//let check_first = $("#task_detail").find(".checkBox.first");
-// 			let teateateat = JSON.parse(algorithmData.train_param);
+			let train_param = JSON.parse(algorithmData.train_param);
+			let temp_task = JSON.parse(taskData.config);
+			let temp_arr = Object.keys(temp_task);
+			
+			let config = [];
+			
+			for(var i=0; i<temp_arr.length; i++){
+				let tmpObj = {};
+				let label = temp_arr[i];
+				tmpObj['label'] = label;
+				tmpObj['value'] = temp_task[label];
+				for(var j=0; j<train_param.length; j++){
+					if(train_param[j]['param'] == label){
+						tmpObj['type'] = train_param[j]['type'];
+						tmpObj['helper'] = train_param[j]['helper'];
+					}
+				}
+				config.push(tmpObj);
+			}
+			
 			
 			that.pt.find(".detail_title").val(taskData.title);
 			that.pt.find(".detail_contents").val(taskData.contents);
 			
-			console.log("config:::", config);
-			console.log("config_length:::", config_length);
-			console.log("algorithmData:::", algorithm_data);
-			console.log("train_param:::", train_param);
-			//console.log("check_first:::", check_first, typeof(check_first));
-			
 			let target = $("#task_detail").find(".box_wrap");
 			let target_title = $("#task_detail").find(".sub_wrap .ms_wrap .algorithm_name");
-			let algorithm_name = "( Selected algorithm : " + algorithm_data.title + " )";
+			let algorithm_name = "( Selected algorithm : " + algorithmData.title + " )";
 			$(target).html("");
 			$(target_title).html(algorithm_name);
 			
-			for(let i = 0; i < config_length - 1; i++){
-			let config_key = Object.keys(config)[i];
-			let config_value = config[Object.keys(config)[i]];
-			let type_config_value = typeof(config[Object.keys(config)[i]]);
-			
-			let html = "";
-			
-			if(type_config_value === "string"){
-				html += '<div class="input_wrap flex light">';
-// 				html += '<label>'+config_key+'</label>';
-				html += '<label>'+config_key+'<span class="tooltip_wrap"></span></label>';
-				html += '<span class="tooltip">'+train_param[i].helper+'</span>';
-				html += '<input type="text" name="'+config_key+'" value="'+config_value+'" disabled/>';
-				html += '</div>';
-				$(target).append(html);
-				continue;
-			} else if (type_config_value === "number"){
-				html += '<div class="input_wrap flex light">';
-// 				html += '<label>'+config_key+'</label>';
-				html += '<label>'+config_key+'<span class="tooltip_wrap"></span></label>';
-				html += '<span class="tooltip">'+train_param[i].helper+'</span>';
-				html += '<input type="number" name="'+config_key+'" value="'+config_value+'" disabled/>';
-				html += '</div>';
-				$(target).append(html);
-				continue;
-			} else if (type_config_value === "boolean") {
-				if (config_value === true) {
-					html += '<div class="input_wrap flex check">';
-// 					html += '<label>'+config_key+'</label>';
-					html += '<label>'+config_key+'<span class="tooltip_wrap"></span></label>';
-					html += '<span class="tooltip">'+train_param[i].helper+'</span>';				
-					html += '<div class="check_box_wrap">';
-					html += '<div class="check_box">';
-					html += '<div class="checkBox first selected" name="'+config_key+'"></div>';
-					html += '</div>';
-					html += '</div>';
+			for(let i = 0; i < config.length; i++){
+// 				let config_key = Object.keys(config)[i];
+// 				let config_value = config[config_key];
+// 				let type_config_value = typeof(config[config_key]);
+				
+				let html = "";
+				if(config[i]['type'] == 'string'){
+					html += '<div class="input_wrap flex light">';
+					html += '<label>'+config[i]['label']+'<span class="tooltip_wrap"></span></label>';
+					html += '<span class="tooltip">'+config[i]['helper']+'</span>';
+					html += '<input type="text" name="'+config[i]['label']+'" value="'+config[i]['value']+'" disabled/>';
 					html += '</div>';
 					$(target).append(html);
-				} else if (config_value === false) {
-					html += '<div class="input_wrap flex check">';
-					html += '<label>'+config_key+'<span class="tooltip_wrap"></span></label>';
-					html += '<span class="tooltip">'+train_param[i].helper+'</span>';
-					html += '<div class="check_box_wrap">';
-					html += '<div class="check_box">';
-					html += '<div class="checkBox first" name="'+config_key+'"></div>';
+					continue;
+				}else if (config[i]['type'] === "number"){
+					html += '<div class="input_wrap flex light">';
+					html += '<label>'+config[i]['label']+'<span class="tooltip_wrap"></span></label>';
+					html += '<span class="tooltip">'+config[i]['helper']+'</span>';
+					html += '<input type="number" name="'+config[i]['label']+'" value="'+config[i]['value']+'" disabled/>';
 					html += '</div>';
-					html += '</div>';
-					html += '</div>';
+					$(target).append(html);
+					continue;
+				} else if (config[i]['type'] === "boolean") {
+					if (config[i]['value'] === true) {
+						html += '<div class="input_wrap flex check">';
+						html += '<label>'+config[i]['label']+'<span class="tooltip_wrap"></span></label>';
+						html += '<span class="tooltip">'+config[i]['helper']+'</span>';				
+						html += '<div class="check_box_wrap">';
+						html += '<div class="check_box">';
+						html += '<div class="checkBox first selected" name="'+config[i]['label']+'"></div>';
+						html += '</div>';
+						html += '</div>';
+						html += '</div>';
+						$(target).append(html);
+					} else if (config[i]['value'] === false) {
+						html += '<div class="input_wrap flex check">';
+						html += '<label>'+config[i]['label']+'<span class="tooltip_wrap"></span></label>';
+						html += '<span class="tooltip">'+config[i]['helper']+'</span>';
+						html += '<div class="check_box_wrap">';
+						html += '<div class="check_box">';
+						html += '<div class="checkBox first" name="'+config[i]['label']+'"></div>';
+						html += '</div>';
+						html += '</div>';
+						html += '</div>';
+						
+						$(target).append(html);					
+					}
 					
-					$(target).append(html);					
+					
+					continue;
 				}
 				
-				
-				continue;
 			}
-			
-			if(i == config_length -1) {
-				html += '<div class="input_wrap flex light">';
-// 				html += '<label>'+config_key+'</label>';
-				html += '<label>'+config_key+'</label>';
-				html += '<input type="text" name="'+config_key+'" value="'+config_value+'" disabled/>';
-				html += '</div>';
-				$(target).append(html);					
-			}
-			
-			};
-			
-// 			console.log("train_param_arr::", train_param_arr);
 			
 			// helper 툴팁
 			let tooltip_wrap = that.pt.find(".tooltip_wrap");

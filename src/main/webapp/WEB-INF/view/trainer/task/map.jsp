@@ -321,7 +321,7 @@
                                 </table>
                             </div>
                         </div>							
-						<span class="model_download_btn">Download Model</span>
+<!-- 						<span class="model_download_btn">Download Model</span> -->
 						<span class="list_total">Total 0</span>
 						<div class="list_wrap">
 							<div class="table_header">
