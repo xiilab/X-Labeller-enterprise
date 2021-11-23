@@ -630,8 +630,9 @@
 						location.href = baseUrl + 'login';
 					} else if(res.result.code == "4001"){
 						alert(res.result.data);
-						that.removeEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table"));
-						that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "No Model", "please train your task first");
+						that.emptyModelListData();
+						// that.removeEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table"));
+						// that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "No Model", "please train your task first");
 					} else {
 						alert(res.result.data);
 						that.emptyModelListData();
