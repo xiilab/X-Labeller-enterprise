@@ -839,7 +839,7 @@
 			"Inference List" : that.list,
 			"Delete" : that.del,
 			"Inheritance" : that.inherit,
- 			"Compute Score" : that.map
+//  			"Compute Score" : that.map
 		}
 
 		result.push(arr);

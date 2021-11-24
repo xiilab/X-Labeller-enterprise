@@ -3190,10 +3190,12 @@ public class DataService {
 		
 		// IMAGE_SEGMENTATION, IMAGE_BBOX용
 		JSONArray jArr = fd.getMeta();
+		
 		if (jArr == null || jArr.isEmpty() || jArr.size() <= 0) {
 			throw new Exception("4001#지원하지 않는 데이터 포맷입니다. 지속적으로 발생시 문의 부탁드립니다.");
 		}
 		
+//		String label_type = importDatasetVO.getLabel_type();
 		String label_type = (String)((JSONObject)jArr.get(0)).get("label_type");
 		if(label_type == null || label_type.length() <= 0) {
 			return Output.JsonOutput("4071", "import할 수 없는 파일입니다.");
@@ -3226,7 +3228,6 @@ public class DataService {
 			DatasetVO datasetVO = new DatasetVO();
 			datasetVO.setContents(importDatasetVO.getContents());
 			datasetVO.setTitle(importDatasetVO.getTitle());
-//			datasetVO.setLabel_type(importDatasetVO.getLabel_type());
 			datasetVO.setUser_id(userInfo.getUser_id());
 			datasetVO.setLabel_type(label_type);
 			datasetVO.setMedia_type("IMAGE");
@@ -3316,23 +3317,46 @@ public class DataService {
 
 				dataVO.setData_id(dataId);
 
-				String w = (String) jObj.get("w");
+//				String w = (String) jObj.get("x1");
+//				if (w == null || w.length() <= 0) {
+//					continue;
+//				}
+//				String h = (String) jObj.get("h");
+//				if (h == null || h.length() <= 0) {
+//					continue;
+//				}
+//				String x = (String) jObj.get("x1");
+//				if (x == null || x.length() <= 0) {
+//					continue;
+//				}
+//				String y = (String) jObj.get("y1");
+//				if (y == null || y.length() <= 0) {
+//					continue;
+//				}
+				
+				int x1 = Integer.valueOf(jObj.get("x1").toString());
+				int x2 = Integer.valueOf(jObj.get("x2").toString());
+				int y1 = Integer.valueOf(jObj.get("y1").toString());
+				int y2 = Integer.valueOf(jObj.get("y2").toString());
+				
+				String w = String.valueOf(x2 - x1);
 				if (w == null || w.length() <= 0) {
 					continue;
 				}
-				String h = (String) jObj.get("h");
+				String h = String.valueOf(y2 - y1);
 				if (h == null || h.length() <= 0) {
 					continue;
 				}
-				String x = (String) jObj.get("x");
+				String x = String.valueOf(x1);
 				if (x == null || x.length() <= 0) {
 					continue;
 				}
-				String y = (String) jObj.get("y");
+				String y = String.valueOf(y1);
 				if (y == null || y.length() <= 0) {
 					continue;
 				}
-				String label = (String) jObj.get("label");
+				
+				String label = (String) jObj.get("className");
 				if (label == null || label.length() <= 0) {
 					continue;
 				}
@@ -3343,28 +3367,31 @@ public class DataService {
 					continue;
 				}
 				
-				String info = null;
-				String seg = null;
-				if(((String)jObj.get("label_type")).equals("#IMAGE_SEGMENTATION")) {
-					JSONArray jsonArray = new JSONArray();
-					seg = (String)jObj.get("segmentation");
-					if(seg == null || seg.length() <= 0) {
-						continue;
-					}
-					String box = x + "," + y + "," + w + "," + h;
-					JSONObject segJson = new JSONObject();
-					segJson.put("segmentation", seg);
-					segJson.put("box", box);
-					jsonArray.add(segJson);
-					String json = jsonArray.toJSONString();
-					info = json.replace("\"[", "[");
-					info = info.replace("]\"", "]");
-					info = info.replace("\\", "");
-//					info = segJson.toJSONString();
-					//info = json;
-				} else if(((String)jObj.get("label_type")).equals("#IMAGE_BBOX")) {
-					info = x + "," + y + "," + w + "," + h;
-				}
+				
+				// temperate code : 211123 - k.park
+				String info = x + "," + y + "," + w + "," + h;
+				
+				// original code : 211123 - k.park
+//				if(((String)jObj.get("label_type")).equals("#IMAGE_SEGMENTATION")) {
+//					JSONArray jsonArray = new JSONArray();
+//					seg = (String)jObj.get("segmentation");
+//					if(seg == null || seg.length() <= 0) {
+//						continue;
+//					}
+//					String box = x + "," + y + "," + w + "," + h;
+//					JSONObject segJson = new JSONObject();
+//					segJson.put("segmentation", seg);
+//					segJson.put("box", box);
+//					jsonArray.add(segJson);
+//					String json = jsonArray.toJSONString();
+//					info = json.replace("\"[", "[");
+//					info = info.replace("]\"", "]");
+//					info = info.replace("\\", "");
+////					info = segJson.toJSONString();
+//					//info = json;
+//				} else if(((String)jObj.get("label_type")).equals("#IMAGE_BBOX")) {
+//					info = x + "," + y + "," + w + "," + h;
+//				}
 				
 				MetaVO metaTempVO = new MetaVO();
 				metaTempVO.setData_id(dataId);

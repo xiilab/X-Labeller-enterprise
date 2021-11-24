@@ -280,7 +280,7 @@
 			console.log("=====drawDeploymentList=====")
 			var that = this;
 			var deArr=[];
-   			that.pt.find(".deployment_wrap").removeClass("hide");
+//    			that.pt.find(".deployment_wrap").removeClass("hide");
 			for(var i= data.length -1; i>=0; i--){
 				if(data[i]["type"]=="master") { continue; }
 				var html="";
@@ -317,7 +317,7 @@
 			console.log("=====drawInstallmentList=====")
 			var that = this;
 			var deArr=[];
-   			that.pt.find(".install_wrap").removeClass("hide");
+//    			that.pt.find(".install_wrap").removeClass("hide");
 			for(var i= data.length -1; i>=0; i--){
 				if(data[i]["type"]=="master") { continue; }
 				var html="";	
@@ -354,7 +354,7 @@
 			console.log("=====NFS Join=====");			// jh.sa 210129
 			var that = this;
 			var deArr=[];
-			that.pt.find(".swarmjoin_wrap").removeClass("hide");
+// 			that.pt.find(".swarmjoin_wrap").removeClass("hide");
 			for(var i= data.length -1; i>=0; i--){
 				var html="";
 				if(data[i]["type"]=="master") { continue; }

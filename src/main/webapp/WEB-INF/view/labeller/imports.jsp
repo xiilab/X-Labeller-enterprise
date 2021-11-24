@@ -74,15 +74,15 @@
 					<textarea class="" name="contents" data-length="200" placeholder="Please enter the description"></textarea>
 				</div>
 				
-<!-- 				<div class="title_wrap flex">
+ 				<div class="title_wrap flex">
 					<div>Label Type :</div>
 					<div class="label_type_wrap">
 						<span class="radioBtn selected" data-value="box"></span>
 						<span class="radio_label">Bounding Box</span>
-						<span class="radioBtn" data-value="polygon"></span>
-						<span class="radio_label">Segmentation</span>
+<!-- 						<span class="radioBtn" data-value="polygon"></span> -->
+<!-- 						<span class="radio_label">Segmentation</span> -->
 					</div>
-				</div> -->					
+				</div>					 
 					
 				<div class="title_wrap flex">
 					<div>Add File</div>
@@ -108,11 +108,11 @@
 					<input type="file" id="files" name="files" class="file" accept="image/jpg, image/jpeg, image/png, video/*" multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
-						<span>Duplicate file existence : </span>
-						<input class="" type="radio" name="is_new" id="true" value="0" checked="checked">
-						<label for="true" class="">Create File</label>
-						<input class="" type="radio" name="is_new" id="false" value="1" >
-						<label for="false" class="">Copy Link</label>
+<!-- 						<span>Duplicate file existence : </span> -->
+<!-- 						<input class="" type="radio" name="is_new" id="true" value="0" checked="checked"> -->
+<!-- 						<label for="true" class="">Create File</label> -->
+<!-- 						<input class="" type="radio" name="is_new" id="false" value="1" > -->
+<!-- 						<label for="false" class="">Copy Link</label> -->
 						<div class="append">Attach</div>
 					</div>
 					<div class="btn_wrap fr">
@@ -193,9 +193,9 @@
 				let label_type;
 				let selected_type = that.pt.find(".label_type_wrap .radioBtn.selected");
 				if(selected_type.data("value") == "box"){
-					label_type = "box";
+					label_type = "#IMAGE_BBOX";
 				} else if (selected_type.data("value") == "polygon"){
-					label_type = "polygon";
+					label_type = "#IMAGE_SEGMENTATION";
 				}
 							
 				if(that.pt.find("input[name='title']").val()==""){
@@ -214,13 +214,13 @@
 				for(var i = 0 ; i < that.fileList.length ; i++){
 					formData.append("files",that.fileList[i]);	
 				}
-				var is_new
-				if(that.pt.find("input[name='is_new']:checked").val() == 0){
-					is_new = true;
-				} else {
-					is_new = false;
-				}
-				console.log(is_new);
+				var is_new = true;
+// 				if(that.pt.find("input[name='is_new']:checked").val() == 0){
+// 					is_new = true;
+// 				} else {
+// 					is_new = false;
+// 				}
+// 				console.log(is_new);
 				
 				formData.append("title",that.pt.find("input[name='title']").val());
 				formData.append("contents",that.pt.find("textarea[name='contents']").val());

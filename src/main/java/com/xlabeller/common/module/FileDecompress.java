@@ -31,13 +31,18 @@ public class FileDecompress{
 			
 			int i = 0;
 			while((ze = zis.getNextEntry()) != null){
+				System.out.println("!!!"+ze.getName());
+				if( ze.getName().indexOf("MACOSX") > -1) {
+					continue;
+				}
+				
 				if(ze.isDirectory()) {
 					continue;
 				}
 				
 				
-				
-				if(ze.getName().indexOf(imgDir) != -1) {
+//				if(ze.getName().indexOf(imgDir) != -1) {
+				if(ze.getName().indexOf(".png") != -1 || ze.getName().indexOf(".jpg") != -1 || ze.getName().indexOf(".jpeg") != -1) {
 					if(ze.getName().contains("/.") == true) {
 						continue;
 					}
@@ -92,10 +97,19 @@ public class FileDecompress{
 		            fos.close();
 		            i++;
 						
-				}else if(ze.getName().indexOf("data.json") != -1) {
+				}else if(ze.getName().indexOf(".json") != -1) {
 					JSONParser jp = new JSONParser();
 					InputStreamReader isr = new InputStreamReader(zis);
-					metaJson = (JSONArray)jp.parse(isr);
+					String path = ze.getName().replace(".json",".png");
+//					metaJson = (JSONArray) jp.parse(isr);
+					
+					JSONArray tempArr = (JSONArray) jp.parse(isr);
+					JSONObject tempObj = (JSONObject) tempArr.get(0);
+					tempObj.put("path", path);
+					JSONArray newArr = new JSONArray();
+					newArr.add(tempObj);
+					metaJson = newArr;
+					
 				}else {
 					
 					
@@ -156,10 +170,14 @@ public class FileDecompress{
 	
 	public JSONArray getMeta() {
 		JSONObject tempObj = null;
+		
 		for(int i = 0 ; i < metaJson.size() ; i++) {
 			tempObj = (JSONObject)metaJson.get(i);
 			tempObj.put("path", ( fileNameMap.get(tempObj.get("path")) ) );
+			// 211123 - k.park : SHOULD MODIFY CODE BELOW
+			tempObj.put("label_type", "#IMAGE_BBOX" );
 		}
+//		return metaJson;
 		return metaJson;
 	}
 	
