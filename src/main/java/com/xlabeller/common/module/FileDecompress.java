@@ -111,10 +111,9 @@ public class FileDecompress{
 					JSONArray tempArr = (JSONArray) jp.parse(streamToString);
 					JSONObject tempObj = (JSONObject) tempArr.get(0);
 					tempObj.put("path", path);
-					JSONArray newArr = new JSONArray();
-					newArr.add(tempObj);
-					metaJson = newArr;
-
+					//hc.park
+					//마지막 label만 추가되는 부분 fix
+					metaJson.add(tempObj);
 				}else {
 					
 					
