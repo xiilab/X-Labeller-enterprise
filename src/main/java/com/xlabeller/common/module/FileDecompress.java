@@ -9,6 +9,8 @@ import org.mozilla.universalchardet.UniversalDetector;
 import java.io.*;
 import java.text.Normalizer;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
@@ -102,14 +104,17 @@ public class FileDecompress{
 					InputStreamReader isr = new InputStreamReader(zis);
 					String path = ze.getName().replace(".json",".png");
 //					metaJson = (JSONArray) jp.parse(isr);
-					
-					JSONArray tempArr = (JSONArray) jp.parse(isr);
+					//hc.park zwnbsp 해결위해 string 변환후 replace처리
+					Stream<String> streamOfString = new BufferedReader(isr).lines();
+					String streamToString = streamOfString.collect(Collectors.joining());
+					streamToString = streamToString.replaceAll("[\\p{Cf}]", "");
+					JSONArray tempArr = (JSONArray) jp.parse(streamToString);
 					JSONObject tempObj = (JSONObject) tempArr.get(0);
 					tempObj.put("path", path);
 					JSONArray newArr = new JSONArray();
 					newArr.add(tempObj);
 					metaJson = newArr;
-					
+
 				}else {
 					
 					
