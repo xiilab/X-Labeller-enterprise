@@ -375,6 +375,30 @@ public class SessionCmdExecute implements Callable<Object> {
 					+ " --tid " + taskId
 					+ " --batch " + batch
 					+ " --subdivisions " + batch;
+		} else if (algorithmId.equals("7")) { // efficientdet:latest
+			String batch = null; 
+			String epochs = null;
+			String model = null;
+			JSONParser parser = new JSONParser();
+			Object obj = null;
+			try {
+				obj = parser.parse(config.replaceAll("\\\\",""));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			JSONObject jsonObj = (JSONObject) obj;
+			batch = String.valueOf(jsonObj.get("batch_size"));
+			epochs = String.valueOf(jsonObj.get("epochs"));
+			model = String.valueOf(jsonObj.get("model"));
+			
+			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
+					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
+					+ taskId + " --ipc=host -v /xlabeller:/xlabeller efficientdet:latest " + "python3 run_efficientdet.py"
+					+ " --pid " + projectId
+					+ " --tid " + taskId
+					+ " --batch " + batch
+					+ " --epochs " + epochs
+					+ " --model " + model;
 		} else {
 			cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=t_" + projectId + "_"
 				+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " -v /xlabeller:/xlabeller ca_"
@@ -432,6 +456,35 @@ public class SessionCmdExecute implements Callable<Object> {
 		return rObj;
 	}
 	
+	
+	
+	public Object callCustomEfficientdetInference(String projectId, String taskId, String gpuIndex, String modelName,
+			String csvFileName) {
+		String cmd = "docker run -runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
+				" --name xlabeller_i_" + projectId + "_" + taskId + 
+				" -v /xlabeller:/xlabeller " + 
+				" --ipc=host " + 
+				" efficientdet:latest" + 
+				" python3 run_visualization.py" +
+				" --pid " + projectId +
+				" --tid " + taskId +
+				" --gpus 1 " +
+				" --modelname " + modelName + 
+				" --output " + csvFileName +
+				"";
+		
+		System.out.println(cmd);
+		String cmdResult = cmdExcute(cmd);
+		JSONObject rObj = new JSONObject();
+		if (cmdResult == null) {
+			rObj.put("code", "551");
+			rObj.put("data", "Inference 과정 중에 오류가 발생했습니다.\n잠시 후에 다시 시도해주시길 바랍니다.");
+		} else if (cmdResult.length() > 0) {
+			rObj.put("code", "200");
+			rObj.put("data", "Inference를 시작합니다.");
+		}
+		return rObj;
+	}
 	
 	// s.kim 210602
 	public Object callCustomYolov4Inference(String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String classificationThreshold) {

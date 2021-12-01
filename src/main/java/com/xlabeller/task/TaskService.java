@@ -1336,6 +1336,15 @@ public class TaskService {
 				String classificationThreshold = String.valueOf(jsonObj.get("classification_threshold"));
 
 				result = sessionCmdExecute.callCustomYolov4Inference(projectId, taskId, gpuIndex, modelName, csvSavePath, classificationThreshold);
+			
+			} else if (algorithmId.equals("7")){
+				JSONParser parser = new JSONParser();
+				Object obj = parser.parse(config);
+				JSONObject jsonObj = (JSONObject) obj;
+
+				String classificationThreshold = String.valueOf(jsonObj.get("classification_threshold"));
+
+				result = sessionCmdExecute.callCustomEfficientdetInference(projectId, taskId, gpuIndex, modelName, csvSavePath);
 			} else {
 				config = config.replaceAll("\"", "\\\\\"");
 				result = sessionCmdExecute.callCustomInference(projectId, taskId, algorithmId, gpuIndex, mode, modelName, csvSavePath, config);
