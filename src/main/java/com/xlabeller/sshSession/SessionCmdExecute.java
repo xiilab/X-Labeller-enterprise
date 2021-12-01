@@ -460,7 +460,7 @@ public class SessionCmdExecute implements Callable<Object> {
 	
 	public Object callCustomEfficientdetInference(String projectId, String taskId, String gpuIndex, String modelName,
 			String csvFileName) {
-		String cmd = "docker run -runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
+		String cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
 				" --name xlabeller_i_" + projectId + "_" + taskId + 
 				" -v /xlabeller:/xlabeller " + 
 				" --ipc=host " + 
