@@ -14,6 +14,8 @@ import com.xlabeller.sshSession.SSHCmdExecute;
 import com.xlabeller.sshSession.SSHSessionConnection;
 import com.xlabeller.sshSession.SessionCmdExecute;
 import com.xlabeller.sshSession.SessionSingletone;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.*;
@@ -177,20 +180,30 @@ public class TaskService {
 		String fileList[] = null;
 		try {
 			files = new File(pathName).listFiles(); // 경로에 있는 파일목록구함
-			if (files == null || files.length <= 0) {
+			if ( (files == null || files.length <= 0) && !taskVO.getTask_id().equals("3") ) {
 				return Output.JsonOutput("4001", "모델이 존재하지 않습니다.\n학습 후 Inference해주세요.");
 			}
-			fileList = new String[files.length];
+			
+			// 무조건 3은 패스
+			if(taskVO.getTask_id().equals("3")) {
+				// ㄹㅇ /xlabeller/src/main/webapp/WEB-INF/view/trainer/task/map.jsp 코드 보느라고 눈깔빠지는줄
+				fileList = new String[] {
+						"checkpoint-130.pth.tar"
+				};
+			} else {
+				fileList = new String[files.length];
+				Arrays.sort(files, new Comparator<File>() {
+					public int compare(File f1, File f2) {
+						return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+					}
+				});
 
-			Arrays.sort(files, new Comparator<File>() {
-				public int compare(File f1, File f2) {
-					return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+				for (int i = 0; i < files.length; i++) {
+					fileList[i] = files[i].getName();
 				}
-			});
-
-			for (int i = 0; i < files.length; i++) {
-				fileList[i] = files[i].getName();
 			}
+
+			
 		} catch (Exception e) {
 			if (e instanceof NumberFormatException) {
 				logger.error("NumberFormatException Error!", e);
@@ -1191,7 +1204,7 @@ public class TaskService {
 		if(inferenceVO.getConfig() == null || inferenceVO.getConfig().length() <= 0) {
 			return Output.JsonOutput("4506", "선택된 알고리즘이 없거나 손상되었습니다.\n새로 고침 후 다시 시도해주시고 지속저으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
-		if(inferenceVO.getModel_name() == null || inferenceVO.getModel_name().length() <= 0) {
+		if((inferenceVO.getModel_name() == null || inferenceVO.getModel_name().length() <= 0) && !inferenceVO.getTask_id().equals("3")) {
 			return Output.JsonOutput("4506", "Inference할 학습모델을 선택해주세요.");
 		}
 		if(inferenceVO.getCsv_save_name() == null || inferenceVO.getCsv_save_name().length() <= 0) {
@@ -1293,6 +1306,15 @@ public class TaskService {
 		
 		// imgPath csv파일 변환
 		String path = WORKSPACE_PATH + resultTask.getProject_id() + "/" + resultTask.getTask_id() + "/imagepath/imagepath.csv"; 
+		
+		String pathDir = WORKSPACE_PATH + resultTask.getProject_id() + "/" + resultTask.getTask_id() + "/imagepath/";
+		try {
+			// 강제 폴더 생성 !!!!!!!!!!!!!!!!!!!!
+			System.out.println(pathDir + "강제 폴더 생성 !!!!!!!!!!!!!!!!!!!!");
+			Paths.get(pathDir).toFile().mkdirs();
+		} catch (Exception e) {
+		}
+		
 		CsvWriter csvWriter = new CsvWriter();
 		boolean fileState = csvWriter.createString(path, inferenceVO.getImg_path());
 		if(fileState == false) {

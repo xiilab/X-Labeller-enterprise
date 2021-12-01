@@ -460,6 +460,8 @@ public class SessionCmdExecute implements Callable<Object> {
 	
 	public Object callCustomEfficientdetInference(String projectId, String taskId, String gpuIndex, String modelName,
 			String csvFileName) {
+		
+		
 		String cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
 				" --name xlabeller_i_" + projectId + "_" + taskId + 
 				" -v /xlabeller:/xlabeller " + 
@@ -472,6 +474,12 @@ public class SessionCmdExecute implements Callable<Object> {
 				" --modelname " + modelName + 
 				" --output " + csvFileName +
 				"";
+		
+		if(taskId.equals("3")) {
+			// 기본 학습모델 선택
+			System.out.println("기본 학습모델 선택");
+			cmd += " --default True ";
+		}
 		
 		System.out.println(cmd);
 		String cmdResult = cmdExcute(cmd);
