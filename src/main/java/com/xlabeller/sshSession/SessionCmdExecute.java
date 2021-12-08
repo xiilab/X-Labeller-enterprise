@@ -379,6 +379,7 @@ public class SessionCmdExecute implements Callable<Object> {
 			String batch = null; 
 			String epochs = null;
 			String model = null;
+			String learning_rate = null;
 			JSONParser parser = new JSONParser();
 			Object obj = null;
 			try {
@@ -390,12 +391,14 @@ public class SessionCmdExecute implements Callable<Object> {
 			batch = String.valueOf(jsonObj.get("batch_size"));
 			epochs = String.valueOf(jsonObj.get("epochs"));
 			model = String.valueOf(jsonObj.get("model"));
+			learning_rate = String.valueOf(jsonObj.get("learning_rate"));
 			
 			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
 					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
 					+ taskId + " --ipc=host -v /xlabeller:/xlabeller efficientdet:latest " + "python3 run_efficientdet.py"
 					+ " --pid " + projectId
 					+ " --tid " + taskId
+					+ " --learning_rate " + learning_rate
 					+ " --batch " + batch
 					+ " --epochs " + epochs
 					+ " --model " + model;
@@ -510,7 +513,7 @@ public class SessionCmdExecute implements Callable<Object> {
 		
 		
 		
-		String cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
+		String cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +"  --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
 				" --name xlabeller_i_" + projectId + "_" + taskId + 
 				" -v /xlabeller:/xlabeller" + 
 				" xlabeller_yolov4:2.0" + 
@@ -539,7 +542,7 @@ public class SessionCmdExecute implements Callable<Object> {
 	// s.kim 210602
 	public Object callCustomYolov4VideoInference(String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String classificationThreshold) {
 
-		String cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
+		String cmd = "docker run --rm -itd --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
 				" --name xlabeller_i_" + projectId + "_" + taskId + 
 				" -v /xlabeller:/xlabeller" + 
 				" xlabeller_yolov4:2.0" + 
@@ -613,7 +616,7 @@ public class SessionCmdExecute implements Callable<Object> {
 
 	public String callCustonInference(String projectId, String taskId, String algorithmId, String gpuIndex, String mode,
 			String modelName, String csvFileName, String datasetId, String parameterJson) {
-		String cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_"
+		String cmd = "docker run --rm -itd  --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +"  --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_"
 				+ taskId + " --name xlabeller_i_" + projectId + "_" + taskId + " -v nfs:/xlabeller ca_" + algorithmId
 				+ ":latest" + " python -u run_custom_model.py --action inference --mode " + mode + " --params \""
 				+ parameterJson + "\" --gpu_id " + gpuIndex + " --data_path /xlabeller/workspace/" + projectId + "/"
