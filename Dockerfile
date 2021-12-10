@@ -16,7 +16,7 @@ RUN chmod 755 /usr/local/tomcat/conf/Catalina/localhost/uploadFile.xml
 RUN chmod -R 777 /usr/local/uploadFile
 ADD setenv.sh /usr/local/tomcat/bin
 RUN chmod 755 /usr/local/tomcat/bin/setenv.sh
-RUN mkdir /usr/local/uploadFile/xlabeller/workspace
+RUN mkdir -p /usr/local/uploadFile/xlabeller/workspace
 
 ADD Seoul /usr/local/tomcat/
 RUN cp --remove-destination /usr/local/tomcat/Seoul /etc/localtime
