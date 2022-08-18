@@ -30,6 +30,7 @@ public class DataService {
 
 	private String XLABELLER_ROOT_PATH = "/usr/local/uploadFile/xlabeller/";
 	private String WORKSPACE_PATH = "/usr/local/uploadFile/xlabeller/workspace/";
+	
 	private String MID_PATH = "dataset/";
 	private String TEMP_PATH = "dataset_temp/";
 
@@ -483,9 +484,9 @@ public class DataService {
 
 		String fn = filename;
 		fn = encodingText(fn); // encoding 변환
-		fn = fn.replaceAll(",", "_");
 		String format = fn.split("\\.")[fn.split("\\.").length-1];
 		String sourceFileName = fn.split("\\.")[0];
+//		fn = fn.replaceAll(",", "_");
 
 		if(!format.toLowerCase().equals("mp4") ) {
 			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
@@ -499,42 +500,82 @@ public class DataService {
 		File convFile = new File(XLABELLER_ROOT_PATH+MID_PATH+fileName);
 
 
+		GstUtil gu = new GstUtil();
 		File fileToMove = new File(tempDir+"/"+filename);
 		boolean isMoved = fileToMove.renameTo(convFile);
 		if (!isMoved) {
 			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
 		}
+		
+//		filename.transferTo(new File(tempDir));
+		
+		gu.convertVideotoJPG(XLABELLER_ROOT_PATH+MID_PATH+fileName, XLABELLER_ROOT_PATH + "dataset/", sourceFileName,
+				String.valueOf(currentTime),datasetVO.getDataset_id(), 1);
+//		gu.convertVideotoJPG(tempDir, XLABELLER_ROOT_PATH + "dataset/", sourceFileName,
+//				String.valueOf(currentTime),datasetVO.getDataset_id(), 1);
+		FileUtils.delete(tempDir);
+		List<String> pathList = gu.getPath();
+		if (pathList == null || pathList.isEmpty() || pathList.size() <= 0) {
+			throw new Exception("4072#등록이 올바르지 않습니다.");
+		}
+		for (int j = 0; j < pathList.size(); j++) {
+			DataVO dataVO = new DataVO();
+			dataVO.setDataset_id(datasetVO.getDataset_id());
+			dataVO.setPath(MID_PATH + pathList.get(j));
+			dataVO.setUser_id(datasetVO.getUser_id());
+			dataVO.setMedia_type("IMAGE");
+			dataVO.setWidth(null);
+			dataVO.setHeight(null);
+			dataVO.setFps(null);
+			dataVO.setConfirm_status("0");
+			dataVO.setFilename(fn);
+			dataVO.setFrame(null);
+			dataVO.setDuration(null);
+			dataList.add(dataVO);
+			
+			if(dataList != null && !dataList.isEmpty() ) {
+				insertDataInner(dataList);
+				dataList.clear();
+			}
+		}
+		
+//		File fileToMove = new File(tempDir+"/"+filename);
+//		boolean isMoved = fileToMove.renameTo(convFile);
+//		if (!isMoved) {
+//			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
+//		}
+		
 
 
 
 		//비디오 메타정보 취득
-		VideoMetaUtil vmu = new VideoMetaUtil(XLABELLER_ROOT_PATH+MID_PATH+fileName);
-		if(!vmu.isAvailable()) {
-			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
-		}
-		String width = String.valueOf(vmu.getWidth());
-		String height = String.valueOf(vmu.getHeight());
-
-
-		DataVO dataVO = new DataVO();
-		dataVO.setDataset_id(datasetVO.getDataset_id());
-		dataVO.setPath(MID_PATH+fileName);
-
-		dataVO.setMedia_type(datasetVO.getMedia_type());
-		dataVO.setWidth(String.valueOf(width));
-		dataVO.setHeight(String.valueOf(height));
-		dataVO.setFps(String.valueOf(vmu.getFps()));
-		dataVO.setFilename(sourceFileName+"."+format);
-		dataVO.setFrame(String.valueOf(vmu.getTotalFrame()));
-		dataVO.setDuration(String.valueOf(vmu.getDuration()));
-		dataVO.setUser_id(datasetVO.getUser_id());
-
-		dataList.add(dataVO);
-
-		if(dataList != null && !dataList.isEmpty() ) {
-			insertDataInner(dataList);
-			dataList.clear();
-		}
+//		VideoMetaUtil vmu = new VideoMetaUtil(XLABELLER_ROOT_PATH+MID_PATH+fileName);
+//		if(!vmu.isAvailable()) {
+//			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
+//		}
+//		String width = String.valueOf(vmu.getWidth());
+//		String height = String.valueOf(vmu.getHeight());
+//
+//
+//		DataVO dataVO = new DataVO();
+//		dataVO.setDataset_id(datasetVO.getDataset_id());
+//		dataVO.setPath(MID_PATH+fileName);
+//
+//		dataVO.setMedia_type(datasetVO.getMedia_type());
+//		dataVO.setWidth(String.valueOf(width));
+//		dataVO.setHeight(String.valueOf(height));
+//		dataVO.setFps(String.valueOf(vmu.getFps()));
+//		dataVO.setFilename(sourceFileName+"."+format);
+//		dataVO.setFrame(String.valueOf(vmu.getTotalFrame()));
+//		dataVO.setDuration(String.valueOf(vmu.getDuration()));
+//		dataVO.setUser_id(datasetVO.getUser_id());
+//
+//		dataList.add(dataVO);
+//
+//		if(dataList != null && !dataList.isEmpty() ) {
+//			insertDataInner(dataList);
+//			dataList.clear();
+//		}
 		return;
 	}
 
@@ -601,7 +642,7 @@ public class DataService {
 		format = format.toLowerCase();
 
 		if(!(format.equals("jpg") || format.equals("jpeg") || format.equals("png"))) {
-			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
+			throw new Exception("4072#지원하는 포맷이 아닙니다.");
 		}
 		if(sourceFileName == null || sourceFileName.length() <= 0) {
 			throw new Exception("4061#파일명이 올바르지 않습니다.");

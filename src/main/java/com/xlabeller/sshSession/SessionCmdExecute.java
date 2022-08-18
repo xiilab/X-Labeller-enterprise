@@ -375,7 +375,7 @@ public class SessionCmdExecute implements Callable<Object> {
 					+ " --tid " + taskId
 					+ " --batch " + batch
 					+ " --subdivisions " + batch;
-		} else if (algorithmId.equals("7")) { // efficientdet:latest
+		} else if (algorithmId.equals("7") || algorithmId.equals("8")) { // efficientdet:latest
 			String batch = null; 
 			String epochs = null;
 			String model = null;
