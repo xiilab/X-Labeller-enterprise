@@ -617,7 +617,6 @@
 					return false;
 				}
 			}
-			
 			return "image";
 		},
 		

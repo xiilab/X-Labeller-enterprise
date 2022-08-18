@@ -38,37 +38,49 @@
 /* 서브 */
 
 
-#project_upload .sub_wrap {width: 40%; height: 100%; background-color: #f5f5f5; overflow: overlay; position:relative;}
-#project_upload .sub_title { display: block; font-family: Open_Sans; font-size: 12px;color: #343434; font-weight:400;}
+#project_upload .sub_wrap {width: 40%; height: 100%; background-color: #f5f5f5; overflow: overlay; position:relative; text-align:center; } 
+#project_upload .sub_title { display: block; font-family: Open_Sans; font-size: 12px;color: #343434; font-weight:400;} */
+#project_upload .sub_txt {font-weight: 200; color: #777777; font-size: 12px; margin-top: 4px;} */
+#project_upload .sub_wrap .margin {margin: 100px 43px;}
 
-#project_upload .sub_wrap .margin {margin: 0 43px;}
-
-#project_upload .sub_wrap .box_wrap {margin-top: 17px; margin-bottom: 17px; padding: 15px; }
+/* #project_upload .sub_wrap .box_wrap {margin-top: 17px; margin-bottom: 17px; padding: 15px; height:100%; width:100%; } */
+#project_upload .sub_wrap .input_wrap {margin-top: 17px; margin-bottom: 17px; padding: 15px; height:100%; width:100%; }
 #project_upload .sub_wrap .box_wrap.border { border: 1px solid #dedcde; }
 #project_upload .sub_wrap .box_wrap .input_wrap { margin-bottom: 12px; padding-top: 5px; }
+
+#project_upload .sub_wrap #fileForm { border:1px solid #d9d9d9; height:400px; background-color:#f8f8f8; }
+
 /* #project_upload .sub_wrap .box_wrap .input_wrap:nth-child(6) {margin-bottom : 17px;}
 #project_upload .sub_wrap .box_wrap .input_wrap:nth-child(7) {margin-bottom : 29px;} */
-#project_upload .sub_wrap .box_wrap .input_wrap > label { margin-right: 27px; float: left; width: 180px; font-family: Open_Sans; font-size: 12px;  color: #343434; font-weight: 300;}
-#project_upload .sub_wrap .box_wrap .input_wrap > input { border-radius:2px; width: calc(100% - 172px); height: 32px; background-color: #ffffff; padding: 0 11px ; font-family: Open_Sans;  font-weight: 300; border: 1px solid #dedcde; margin-bottom: -11px; }
-#project_upload .sub_wrap .box_wrap .input_wrap.backbone input {background-color: #f9f9f9; color: #999999;}
-#project_upload .sub_wrap .box_wrap .input_wrap.gpu input {background-color: #f9f9f9; color: #999999;}
-#project_upload .sub_wrap .check_box_wrap { width:calc(100% - 148px); margin-bottom: -11px; }
-#project_upload .sub_wrap .check_box_wrap .check_box > label {font-family: Open_Sans;font-size: 13px;font-weight: 300; color: #616263; margin-left: 19px; }
-#project_upload .sub_wrap .check_box_wrap .check_box:last-child { margin-bottom: 0; }
-#project_upload .sub_wrap .check_box_wrap .check_box {margin-bottom: 15px;}
-
-#project_upload .sub_wrap .description_wrap { margin: 17px 0; padding: 15px; }
-#project_upload .sub_wrap .description_wrap.border { border: 1px solid #dedcde; }
-#project_upload .sub_wrap .description_wrap .description { font: 400 12px system-ui; }
 
 
-#project_upload .sub_wrap .box_wrap .input_wrap.light input:focus {border: 1px solid #4c84ff;}
+#project_upload .sub_wrap .box_wrap .input_wrap > label { margin-right: 27px; float: left; width: 180px; font-family: Open_Sans; font-size: 12px;  color: #343434; font-weight: 300;} 
+#project_upload .sub_wrap .box_wrap .input_wrap > input { border-radius:2px; width: calc(100% - 172px); height: 32px; background-color: #ffffff; padding: 0 11px ; font-family: Open_Sans;  font-weight: 300; border: 1px solid #dedcde; margin-bottom: -11px; } 
+#project_upload .sub_wrap .box_wrap .input_wrap.backbone input {background-color: #f9f9f9; color: #999999;} 
+#project_upload .sub_wrap .box_wrap .input_wrap.gpu input {background-color: #f9f9f9; color: #999999;} 
+#project_upload .sub_wrap .check_box_wrap { width:calc(100% - 148px); margin-bottom: -11px; } 
+#project_upload .sub_wrap .check_box_wrap .check_box > label {font-family: Open_Sans;font-size: 13px;font-weight: 300; color: #616263; margin-left: 19px; } 
+#project_upload .sub_wrap .check_box_wrap .check_box:last-child { margin-bottom: 0; } 
+#project_upload .sub_wrap .check_box_wrap .check_box {margin-bottom: 15px;} 
 
-#project_upload .sub_wrap .btn_wrap {text-align: center; margin-bottom: 103px;}
-#project_upload .sub_wrap .btn_wrap .submit_btn {width: 280px; height: 40px; font-weight: 300; border: 0; }
+#project_upload .sub_wrap .description_wrap { margin: 17px 0; padding: 15px; } 
+#project_upload .sub_wrap .description_wrap.border { border: 1px solid #dedcde; } 
+#project_upload .sub_wrap .description_wrap .description { font: 400 12px system-ui; } 
 
-#project_upload .sub_wrap .defaultBtn {display:inline-block; width: 14px; height: 14px; background-color: #f5f5f5;}
-#project_upload .sub_wrap .defaultBtn.selected {background: url("./images/icon_comparison_check.png") no-repeat center;}
+
+#project_upload .sub_wrap .box_wrap .input_wrap.light input:focus {border: 1px solid #4c84ff;} 
+
+#project_upload .sub_wrap .btn_wrap {text-align: center; margin-bottom: 103px;} 
+#project_upload .sub_wrap .btn_wrap .submit_btn {width: 280px; height: 40px; font-weight: 300; border: 0; } 
+
+#project_upload .sub_wrap .defaultBtn {display:inline-block; width: 14px; height: 14px; background-color: #f5f5f5;} 
+#project_upload .sub_wrap .defaultBtn.selected {background: url("./images/icon_comparison_check.png") no-repeat center;} 
+
+
+/* #project_upload .sub_wrap {text-align: center; margin: auto; display: block;} */
+/* #project_upload .sub_wrap .drop_image {margin: 0 auto; background: url('./images/img_dragdrop_gray.png') no-repeat center; width: 140px; height: 34px; border-radius: 5px; border: 2px solid #e1e1e1;} */
+/* #project_upload .sub_wrap .main_txt {color: #777777; font-size:16px; margin-top: 17px;} */
+/* #project_upload .sub_wrap .sub_txt {font-weight: 200; color: #777777; font-size: 12px; margin-top: 4px;} */
 
 #project_upload .empty_wrap {text-align: center; margin-top: 170px; }
 #project_upload .empty_wrap .no_image {margin-bottom: 17px; background-repeat: no-repeat; background-position-x: center; }
@@ -210,26 +222,43 @@
 				</div>
 			</div>
 
-			<div class="sub_wrap">
-				<div class="margin">
-					<div class="ms_wrap filter_color">
-						<span class="sub_title">Config</span>
-						<select id="algorithm_list" class="algorithm_list" name="algorithm_list">
-							<option value=''>Please select algorithm</option>
-						</select>
-						<div class="description_wrap">
-						
-						</div>						
-						<div class="box_wrap">
+ 			<div class="sub_wrap">
+ 				<div class="margin">
+ 					<div class="ms_wrap filter_color">
+ 						<span class="sub_title">UPLOAD MODEL</span>
+ 						<select id="algorithm_list" class="algorithm_list" name="algorithm_list"> 
+ 							<option value=''>Please select algorithm</option> 
+ 						</select> 
+<!--  						<div class="sub_txt">Please drag&drop the Project</div> -->
+ 						<div class="description_wrap"></div>
+<!--  						<div class="box_wrap" id="fileForm" enctype="multipart/form-data">						  -->
+ 						<form  id="fileForm" enctype="multipart/form-data">
+ 							<div class="input_wrap">
+	 							<input type="file" id="files" name="files" class="file" accept="*"  multiple />
+ 							</div>
+ 						</form> 
+ 						<div class="btn_wrap">
+ 							<button class="submit_btn">UPLOAD MODEL</button>
+ 						</div>
+ 						
+ 					</div>
+ 				</div>
+ 			</div>
 
-						</div>
 
-						<div class="btn_wrap">
-							<button class="submit_btn">Save</button>
-						</div>
-					</div>
-				</div>
-			</div>
+<!-- 			<div class="sub_wrap"> -->
+<!-- 				<div class="margin"> -->
+<!-- 					<div class="drop_image"></div> -->
+<!-- 					<div class="main_txt">Drag&Drop</div> -->
+<!-- 					<div class="sub_txt">Please drag&drop the Project</div> -->
+					
+<!-- 					<div class="btn_wrap"> -->
+<!-- 						<button class="submit_btn">Save</button> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+
+
 		</div>
 	</div>
 </body>
@@ -385,11 +414,34 @@
 				} else {
 					that.getAnnotationList(that.data.label_type, page_num);
 				}
+			});
+			
+			$("#project_upload .sub_wrap .btn_wrap .submit_btn").off("click").on("click", function(){
+				console.log("clicked submit btn");
+				that.pt.find("#files").trigger("click");
 				
-				
-			});				
+			});
+			
+			$("#project_upload .sub_wrap #files").off("change").on("change", function(e){
+				try{
+					var formFile = $("#files");
+					var model_data = new FormData();
+					
+					var algorithm_id = $("#algorithm_list option:selected").val();
+					
+					model_data.append("files",formFile);
+					
+					
+					
+					
+					createJson(model_data);
+				}catch(exception){
+					console.log(exception);
+				}
+			});
 
 		},
+		
 
 		getAnnotationList : function(label_type, page) {
 			let that = this;
@@ -473,10 +525,10 @@
 // 			}
 
 			if(data.length == 0){
-				that.pt.find(".submit_btn").hide();
+// 				that.pt.find(".submit_btn").hide();
 				that.addEmptyData(that.pt.find(".list_wrap"), "No Annotation", "please add annotation");
 			} else {
-				that.pt.find(".submit_btn").hide();
+// 				that.pt.find(".submit_btn").hide();
 			}	
 			
 			for(let i=0, len = data.length; i<len; i++){
@@ -660,7 +712,7 @@
 					that.selectboxListener();
 					that.pt.find(".description_wrap").removeClass("border").html("");
 					that.pt.find(".box_wrap").removeClass("border").html("");
-					that.pt.find(".submit_btn").hide();
+// 					that.pt.find(".submit_btn").hide();
 					that.pt.find(".algorithm_list").html("<option value=''>Please select algorithm</option>");
 				}
 				
@@ -807,10 +859,11 @@
 					project_id : that.data.project_id,
 					annotation_id : data_id,
 					algorithm_id : algo,
-					config : result_string,
+// 					config : result_string,
 					title : title,
 					contents : contents,
-					label_type : that.pt.find("tbody tr").find(".selected").parent().parent().children('td').eq(5).text()
+					label_type : that.pt.find("tbody tr").find(".selected").parent().parent().children('td').eq(5).text(),
+					files : data.files,
 				}
 			console.log("insertTask Label_type : ", ajaxData['label_type']);
 			$("#loader").show();
@@ -1020,13 +1073,15 @@
 					for(let i=0; i < data.length; i++){
 						if(selected_algorithm == data[i]["title"]){
 							console.log("Got it!!");
-							that.getAlgorithmById(data[i]["algorithm_id"]);
+// 							that.getAlgorithmById(data[i]["algorithm_id"]);
 							break;
 						};
 					};
-					that.pt.find(".sub_wrap .box_wrap").addClass("border");
-					that.pt.find(".sub_wrap .description_wrap").addClass("border");
-					that.pt.find(".submit_btn").show();
+// 					that.pt.find(".sub_wrap .box_wrap").addClass("border");
+// 					that.pt.find(".sub_wrap .description_wrap").addClass("border");
+
+
+// 					that.pt.find(".submit_btn").show();
 				}
 			});
 		},
@@ -1129,10 +1184,10 @@
 					
 					//$(target).append(html);
 					that.defaultListener();
-					that.pt.find(".submit_btn").show();
-					that.pt.find(".submit_btn").off("click").on("click", function() {
-						that.createJson(data);
-					});						
+// 					that.pt.find(".submit_btn").show();
+// 					that.pt.find(".submit_btn").off("click").on("click", function() {
+// 						that.createJson(data);
+// 					});						
 			};
 		},
 		
@@ -1160,7 +1215,7 @@
 					that.pt.find(".sub_wrap .box_wrap").removeClass("border");
 					that.pt.find(".sub_wrap .description_wrap").html("");
 					that.pt.find(".sub_wrap .description_wrap").removeClass("border");	
-					that.pt.find(".submit_btn").hide();				
+// 					that.pt.find(".submit_btn").hide();				
 					/* that.getAlgorithmList(); */
 					algorithm_select.attr("disabled", "disabled");			    	
 			    } 
@@ -1171,7 +1226,7 @@
 				that.pt.find(".sub_wrap .box_wrap").removeClass("border");
 				that.pt.find(".sub_wrap .description_wrap").html("");
 				that.pt.find(".sub_wrap .description_wrap").removeClass("border");	
-				that.pt.find(".submit_btn").hide();				
+// 				that.pt.find(".submit_btn").hide();				
 				
 				algorithm_select.attr("disabled", "disabled");
 			} else if ($("#project_upload .radioBtn.selected").length == 1) {
@@ -1183,7 +1238,7 @@
 				that.pt.find(".sub_wrap .box_wrap").removeClass("border");
 				that.pt.find(".sub_wrap .description_wrap").html("");
 				that.pt.find(".sub_wrap .description_wrap").removeClass("border");	
-				that.pt.find(".submit_btn").hide();
+// 				that.pt.find(".submit_btn").hide();
 				/* that.getAlgorithmList(); */
 			};
 			

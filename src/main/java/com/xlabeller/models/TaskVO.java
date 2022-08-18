@@ -2,6 +2,8 @@ package com.xlabeller.models;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class TaskVO {
 	private String task_id;
 	//private String id;
@@ -50,7 +52,16 @@ public class TaskVO {
 //	private String mapPath1;
 //	private String mapPath2;
 	private List<String> mapPath;
+	private MultipartFile[] files;
 	
+	
+	
+	public MultipartFile[] getFiles() {
+		return files;
+	}
+	public void setFiles(MultipartFile[] files) {
+		this.files = files;
+	}
 	public String getType() {
 		return type;
 	}

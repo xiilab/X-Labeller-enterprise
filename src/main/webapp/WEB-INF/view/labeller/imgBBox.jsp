@@ -1011,7 +1011,7 @@
                  		</div>              <!-- Image Slide area end -->    						
 						
 	               		<div class="quick_wrap flex"> <!-- Quick Training & Inference Btn area start -->
-							<div id="quick_training_btn" class="quick_btn filter_color">Quick Training</div>
+<!-- 							<div id="quick_training_btn" class="quick_btn filter_color">Quick Training</div> -->
 							<div id="quick_inference_btn" class="quick_btn filter_color">Quick Inference</div>
 							
 							<!-- Quick Training -->

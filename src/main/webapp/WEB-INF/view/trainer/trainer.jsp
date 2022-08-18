@@ -834,11 +834,11 @@
 		}
 		
 		arr2["rMenu"] = {
-			"Training" : that.detail,
+// 			"Training" : that.detail,
 			"Start Inference" : that.run,
 			"Inference List" : that.list,
 			"Delete" : that.del,
-			"Inheritance" : that.inherit,
+// 			"Inheritance" : that.inherit,
 //  			"Compute Score" : that.map
 		}
 
