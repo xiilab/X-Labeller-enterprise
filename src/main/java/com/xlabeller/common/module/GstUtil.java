@@ -27,9 +27,9 @@ public class GstUtil
 
 	public void convertVideotoJPG(String videoPath, String imagePath, String baseName,String currentDate,String datasetId, int fps) {
 		
-		if(!Gst.isInitialized()) {
-			Gst.init();
-		}
+//		if(!Gst.isInitialized()) {
+//			Gst.init();
+//		}
 		
 		
 		this.searchDir = imagePath+File.separator;

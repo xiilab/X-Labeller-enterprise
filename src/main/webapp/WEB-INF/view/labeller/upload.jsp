@@ -140,10 +140,10 @@
 						<div class="delete">Delete</div>
 						<div class="append">Attach</div>
 					</div>
-					<div class="fps_wrap">
-						<label for="fps">FPS : </label>
-						<input id="fps" class="fps" type="number" onKeyPress="return checkNum2(event);"/>
-					</div>
+<!-- 					<div class="fps_wrap"> -->
+<!-- 						<label for="fps">FPS : </label> -->
+<!-- 						<input id="fps" class="fps" type="number" onKeyPress="return checkNum2(event);"/> -->
+<!-- 					</div> -->
 					<div class="btn_wrap fr">
 						<div class="save filter_color">Save</div>
 					</div>
@@ -240,6 +240,7 @@
 					media_type = "IMAGE";
 				} else if(selected_media_type.data("value") == "video"){
 					media_type = "VIDEO";
+// 					media_type = "IMAGE";
 				}
 				
 				// jh.sa : label type 선택 (IMAGE_BBOX, IMAGE_SEGMENTATION, VIDEO_BBOX)
@@ -253,6 +254,7 @@
 					label_type = "IMAGE_LINE";
 				} else if (selected_media_type.data("value") == "video" && selected_type.data("value") == "box"){
 					label_type = "VIDEO_BBOX";
+// 					label_type = "IMAGE_BBOX";
 				}
 				
 				if(that.pt.find("input[name='title']").val()==""){
@@ -390,9 +392,9 @@
 				$(this).addClass("active");
 				
 				// video file인 경우 fps 입력 영역 활성화
-				if($(this).hasClass("video_file")){
-					that.pt.find(".fps_wrap").show();
-				} 
+// 				if($(this).hasClass("video_file")){
+// 					that.pt.find(".fps_wrap").show();
+// 				} 
 // 				else if($(this).hasClass("img_file") || $(this).hasClass("zip_file")){
 // 					that.pt.find(".fps_wrap").hide();
 // 				}

@@ -835,13 +835,15 @@
 			row_click.off("click").on("click",function() {
 				let tr = $(this);
 				let btn = tr.children().children().children(".radioBtn");
-				let id = tr.data("id");
+// 				let id = tr.data("id");
+				let id = tr.attr("data-id");
 				btn.toggleClass("selected");
 				if(btn.hasClass("selected")){
 					that.data.radio_obj = {};
 					that.pt.find(".sub_wrap .list_wrap .anno_table tbody tr .radioBtn").removeClass("selected");
 					btn.addClass("selected");
-					that.data.radio_obj[id] = id;
+// 					that.data.radio_obj["id"] = id;
+					that.data.radioObj["id"] = id;
 				} else {
 					that.data.radio_obj = {};
 				}
@@ -1737,7 +1739,7 @@
 							var taskId;
 							var pId = res.result.data.project_id;
 							that.data.taskId = res.result.data.task_id;
-							var dUrl = "/uploadFile/xlabeller/workspace/"+pId+"/"+taskId+"/model/"+modelFile;
+							var dUrl = "/uploadFile/xlabeller/workspace/"+pId+"/"+that.data.taskId+"/model/"+modelFile;
 							window.open(dUrl);
 						}else{
 							alert("다운로드 요청이 유효하지 않습니다");

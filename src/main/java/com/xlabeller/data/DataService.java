@@ -4,6 +4,9 @@ import com.xlabeller.common.module.*;
 import com.xlabeller.models.*;
 import com.xlabeller.task.TaskDao;
 import org.apache.log4j.Logger;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.common.model.Picture;
+import org.jcodec.scale.AWTUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -363,8 +366,10 @@ public class DataService {
 		DatasetVO insertDatasetVO = new DatasetVO(); 
 		insertDatasetVO.setTitle(datasetVO.getTitle());
 		insertDatasetVO.setContents(datasetVO.getContents());
-		insertDatasetVO.setMedia_type(datasetVO.getMedia_type());
-		insertDatasetVO.setLabel_type(datasetVO.getLabel_type());
+//		insertDatasetVO.setMedia_type(datasetVO.getMedia_type());
+//		insertDatasetVO.setLabel_type(datasetVO.getLabel_type());
+		insertDatasetVO.setMedia_type("IMAGE");
+		insertDatasetVO.setLabel_type("IMAGE_BBOX");
 		insertDatasetVO.setUser_id(userInfo.getUser_id());
 		insertDatasetVO.setStatus("1");
 		
@@ -486,7 +491,6 @@ public class DataService {
 		fn = encodingText(fn); // encoding 변환
 		String format = fn.split("\\.")[fn.split("\\.").length-1];
 		String sourceFileName = fn.split("\\.")[0];
-//		fn = fn.replaceAll(",", "_");
 
 		if(!format.toLowerCase().equals("mp4") ) {
 			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
@@ -500,7 +504,6 @@ public class DataService {
 		File convFile = new File(XLABELLER_ROOT_PATH+MID_PATH+fileName);
 
 
-		GstUtil gu = new GstUtil();
 		File fileToMove = new File(tempDir+"/"+filename);
 		boolean isMoved = fileToMove.renameTo(convFile);
 		if (!isMoved) {
@@ -509,35 +512,26 @@ public class DataService {
 		
 //		filename.transferTo(new File(tempDir));
 		
-		gu.convertVideotoJPG(XLABELLER_ROOT_PATH+MID_PATH+fileName, XLABELLER_ROOT_PATH + "dataset/", sourceFileName,
-				String.valueOf(currentTime),datasetVO.getDataset_id(), 1);
-//		gu.convertVideotoJPG(tempDir, XLABELLER_ROOT_PATH + "dataset/", sourceFileName,
-//				String.valueOf(currentTime),datasetVO.getDataset_id(), 1);
-		FileUtils.delete(tempDir);
-		List<String> pathList = gu.getPath();
-		if (pathList == null || pathList.isEmpty() || pathList.size() <= 0) {
-			throw new Exception("4072#등록이 올바르지 않습니다.");
-		}
-		for (int j = 0; j < pathList.size(); j++) {
-			DataVO dataVO = new DataVO();
-			dataVO.setDataset_id(datasetVO.getDataset_id());
-			dataVO.setPath(MID_PATH + pathList.get(j));
-			dataVO.setUser_id(datasetVO.getUser_id());
-			dataVO.setMedia_type("IMAGE");
-			dataVO.setWidth(null);
-			dataVO.setHeight(null);
-			dataVO.setFps(null);
-			dataVO.setConfirm_status("0");
-			dataVO.setFilename(fn);
-			dataVO.setFrame(null);
-			dataVO.setDuration(null);
-			dataList.add(dataVO);
-			
-			if(dataList != null && !dataList.isEmpty() ) {
-				insertDataInner(dataList);
-				dataList.clear();
-			}
-		}
+//		for (int j = 0; j < pathList.size(); j++) {
+//			DataVO dataVO = new DataVO();
+//			dataVO.setDataset_id(datasetVO.getDataset_id());
+//			dataVO.setPath(MID_PATH + pathList.get(j));
+//			dataVO.setUser_id(datasetVO.getUser_id());
+//			dataVO.setMedia_type("IMAGE");
+//			dataVO.setWidth(null);
+//			dataVO.setHeight(null);
+//			dataVO.setFps(null);
+//			dataVO.setConfirm_status("0");
+//			dataVO.setFilename(fn);
+//			dataVO.setFrame(null);
+//			dataVO.setDuration(null);
+//			dataList.add(dataVO);
+//			
+//			if(dataList != null && !dataList.isEmpty() ) {
+//				insertDataInner(dataList);
+//				dataList.clear();
+//			}
+//		}
 		
 //		File fileToMove = new File(tempDir+"/"+filename);
 //		boolean isMoved = fileToMove.renameTo(convFile);
@@ -549,12 +543,40 @@ public class DataService {
 
 
 		//비디오 메타정보 취득
-//		VideoMetaUtil vmu = new VideoMetaUtil(XLABELLER_ROOT_PATH+MID_PATH+fileName);
-//		if(!vmu.isAvailable()) {
-//			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
-//		}
-//		String width = String.valueOf(vmu.getWidth());
-//		String height = String.valueOf(vmu.getHeight());
+		VideoMetaUtil vmu = new VideoMetaUtil(XLABELLER_ROOT_PATH+MID_PATH+fileName);
+		if(!vmu.isAvailable()) {
+			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
+		}
+		int frames = vmu.getTotalFrame();
+		
+		for (int j=0; j<frames; j++) {
+			int frm = j*5;
+			if(frm > frames) {
+				break;
+			}
+			Picture img = FrameGrab.getFrameFromFile(convFile, frm);
+			BufferedImage bi = AWTUtil.toBufferedImage(img);
+			String newImgName = fileName.split(".mp4")[0]+"_"+frm+".png";
+			ImageIO.write(bi,"png",new File(XLABELLER_ROOT_PATH+MID_PATH+newImgName));	
+			
+			DataVO dataVO = new DataVO();
+			dataVO.setDataset_id(datasetVO.getDataset_id());
+			dataVO.setPath(MID_PATH+newImgName);
+
+			dataVO.setMedia_type("IMAGE");
+			dataVO.setWidth(String.valueOf(img.getWidth()));
+			dataVO.setHeight(String.valueOf(img.getHeight()));
+			dataVO.setFps("1");
+			dataVO.setFilename(newImgName);
+			dataVO.setFrame("1");
+			dataVO.setDuration("0");
+			dataVO.setUser_id(datasetVO.getUser_id());
+			
+			dataList.add(dataVO);
+		}
+		
+		
+		
 //
 //
 //		DataVO dataVO = new DataVO();
@@ -572,10 +594,10 @@ public class DataService {
 //
 //		dataList.add(dataVO);
 //
-//		if(dataList != null && !dataList.isEmpty() ) {
-//			insertDataInner(dataList);
-//			dataList.clear();
-//		}
+		if(dataList != null && !dataList.isEmpty() ) {
+			insertDataInner(dataList);
+			dataList.clear();
+		}
 		return;
 	}
 
