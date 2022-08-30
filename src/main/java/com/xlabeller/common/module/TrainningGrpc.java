@@ -1,5 +1,7 @@
 package com.xlabeller.common.module;
 
+import javax.annotation.processing.Generated;
+
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
@@ -9,7 +11,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  */
-@javax.annotation.Generated(
+@Generated(
     value = "by gRPC proto compiler (version 1.16.1)",
     comments = "Source: xlabeller/xlabeller.proto")
 public final class TrainningGrpc {

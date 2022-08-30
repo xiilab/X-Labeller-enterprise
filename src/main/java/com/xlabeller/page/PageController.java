@@ -697,6 +697,32 @@ public class PageController {
 	}		
 	
 	/************************************************************************/
+	/************************************************************************/
+	// visualization
+	@RequestMapping("/visualization")
+	public ModelAndView visualization() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("visualization/visualization");
+		return modelAndView;
+	}
+
+	@RequestMapping("/visualization/main")
+	public ModelAndView visualizationMain() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("visualization/main");
+
+		return modelAndView;
+	}
+
+	@RequestMapping("/visualization/detail")
+	public ModelAndView visualizationDetail() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("visualization/visualizationDetail");
+
+		return modelAndView;
+	}
+
+	/************************************************************************/
 	
 	/************************************************************************/
 	// mAP 비교용 임시 페이지

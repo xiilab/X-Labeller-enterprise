@@ -34,6 +34,7 @@
 		<script src="<c:url value="/js/fabric.js" />"></script>
 		
 		<script src="<c:url value="/js/xValidate.js" />"></script>
+		<script src="<c:url value="/js/jquery.canvasjs.min.js" />"></script>
 		
 		<style>
 			#header { background-image: linear-gradient(to bottom, #3c3d3f, #3a3b3d 55%, #343537); }
@@ -110,6 +111,7 @@
 <%-- 						<li menu="menu_4"><a href="<c:url value="/comparison" />">Comparison</a></li> --%>
 						<li menu="menu_5"><a href="<c:url value="/setup" />">Setup</a></li>
 						<li menu="menu_6"><a href="<c:url value="/monitor" />">Monitor</a></li>
+						<li menu="menu_7"><a href="<c:url value="/visualization" />">Visualization</a></li>
 <%-- 						<li menu="menu_7"><a href="<c:url value="/algorithm/list" />">Algorithm</a></li> --%>
 						<!-- mAP 임시 -->
 <%-- 						<li menu="menu_8"><a href="<c:url value="/map/comparison"/>">Score</a></li>					 --%>
@@ -198,6 +200,10 @@
 // 			    			$(".nav_depth1 li").eq(5).children("a").addClass("active");
 			    			$(".nav_depth1 li").eq(4).children("a").addClass("active");
 			    			break;
+						case "visualization":
+// 			    			$(".nav_depth1 li").eq(5).children("a").addClass("active");
+							$(".nav_depth1 li").eq(5).children("a").addClass("active");
+							break;
 			    		case "algorithm":
 			    			$(".nav_depth1 li").eq(6).children("a").addClass("active");			    			
 			    			break;
