@@ -36,6 +36,8 @@
 		<script src="<c:url value="/js/xValidate.js" />"></script>
 		<script src="<c:url value="/js/jquery.canvasjs.min.js" />"></script>
 		
+		<script src="<c:url value="/js/echarts.min.js" />"></script>
+		
 		<style>
 			#header { background-image: linear-gradient(to bottom, #3c3d3f, #3a3b3d 55%, #343537); }
  			#header .logo { cursor: pointer; }

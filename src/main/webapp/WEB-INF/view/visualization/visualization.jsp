@@ -215,11 +215,13 @@
                 }
 
                 let detail_id = wsObj[setting.key].dir.getSelectedNodes()[0].id;
-                console.log("datasetId : " + detail_id);
+                let title = wsObj[setting.key].dir.getSelectedNodes()[0].title;
+                
+                console.log("title / datasetId : ", title, detail_id);
 
                 that.event.hideView();
                 that.event.addView($(".detail"));
-                visualizationDetail.init(detail_id);
+                visualizationDetail.init(title, detail_id);
                 // var data_modified = that.dataModifiedCheck();        // jh.sa 210129
                 // if (data_modified) {
                 //     that.getDatasetById("labelling");
