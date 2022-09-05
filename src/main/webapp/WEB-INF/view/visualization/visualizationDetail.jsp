@@ -116,36 +116,41 @@
 				
 				var that = visualizationDetail;
 				var ajaxData = {
-					datasetId : that.data.datasetId,
+					dataset_id : that.data.datasetId,
 				};
 				
-// 				$.ajax({
-// 					url : baseUrl + "/somthing.json",
-// 					data: ajaxData,
-// 					type: "POST",
-// 					traditional : true,
-// // 					beforeSend: function() {},
-// // 					complete: function () {},
-// 					success : function (res) {
-// 						if(res.result.code == "200") {
-	
-							/* sample data */		
-							var typeArr = ['HD이하', 'FHD', 'QHD', '4K이상']
-							var result = typeArr.map((item, index) => {
-								
-								return { type: item, count: Math.floor(Math.random() * 1000) }	
-							});							
-							
-							that.computed.initDataCountByResolution(result);
-// 							that.computed.initDataCountByResolution(res.result.data)
-// 						} else {
-// 							alert(res.result.data);
-// 						}
-// 					},
-// 					error : function (err) {
-// 						console.log()
-// 					},
-// 				})
+				$.ajax({
+					url : baseUrl + "visualization/getDataQuantityPerResolution.json",
+					data: ajaxData,
+					type: "GET",
+					traditional : true,
+// 					beforeSend: function() {},
+// 					complete: function () {},
+					success : function (res) {
+						if(res.result.code == "200") {
+							const data = res.result.data;
+							/* sample data */
+							// var typeArr = ['HD이하', 'FHD', 'QHD', '4K이상']
+							// var result = typeArr.map((item, index) => {
+							// 	return { type: item, count: Math.floor(Math.random() * 1000) }
+							// });
+							const result = [
+								{type : 'HD이하', count: Math.floor(data.hd_data_cnt)},
+								{type : 'FHD', count: Math.floor(data.fhd_data_cnt)},
+								{type : 'QHD', count: Math.floor(data.qhd_data_cnt)},
+								{type : '4K이상', count: Math.floor(data.fk_data_cnt)}
+							]
+
+							// that.computed.initDataCountByResolution(result);
+							that.computed.initDataCountByResolution(result)
+						} else {
+							alert(res.result.data);
+						}
+					},
+					error : function (err) {
+						console.log()
+					},
+				})
 
 			},		
 			
@@ -188,38 +193,42 @@
 				
 				var that = visualizationDetail;
 				var ajaxData = {
-					datasetId : that.data.datasetId,
+					dataset_id : that.data.datasetId,
 				};
 				
-// 				$.ajax({
-// 					url : baseUrl + "/somthing.json",
-// 					data: ajaxData,
-// 					type: "POST",
-// 					traditional : true,
-// // 					beforeSend: function() {},
-// // 					complete: function () {},
-// 					success : function (res) {
-// 						if(res.result.code == "200") {
-	
+				$.ajax({
+					url : baseUrl + "visualization/getDataQuantityPerClass.json",
+					data: ajaxData,
+					type: "GET",
+					traditional : true,
+// 					beforeSend: function() {},
+// 					complete: function () {},
+					success : function (res) {
+						if(res.result.code == "200") {
+							console.log("res.result.data::", res.result.data);
+							const data = res.result.data;
+							const result = data.map((data) => {
+								return {type : data.label, count : Math.floor(data.class_cnt)}
+							})
 							/* sample data */		
-							var typeArr = ['승용차', 'SUV', '트럭', '경차', '보행자', '도로', '신호등', '자전거', '어린이']
-							var result = typeArr.map((item, index) => {
-								
-								return { type: item, count: Math.floor(Math.random() * 1000) }	
-							});							
+							// var typeArr = ['승용차', 'SUV', '트럭', '경차', '보행자', '도로', '신호등', '자전거', '어린이']
+							// var result = typeArr.map((item, index) => {
+							//
+							// 	return { type: item, count: Math.floor(Math.random() * 1000) }
+							// });
 							
 							that.computed.initDataCountByClass(result);
 						
 // 							that.computed.initDataCountByResolution(res.result.data)
 
-// 						} else {
-// 							alert(res.result.data);
-// 						}
-// 					},
-// 					error : function (err) {
-// 						console.log()
-// 					},
-// 				})
+						} else {
+							alert(res.result.data);
+						}
+					},
+					error : function (err) {
+						console.log()
+					},
+				})
 			
 			},
 			
@@ -266,36 +275,42 @@
 				 
 				 var that = visualizationDetail;
 					var ajaxData = {
-						datasetId : that.data.datasetId,
+						dataset_id : that.data.datasetId,
 					};
 					
-//	 				$.ajax({
-//	 					url : baseUrl + "/somthing.json",
-//	 					data: ajaxData,
-//	 					type: "POST",
-//	 					traditional : true,
-	// // 					beforeSend: function() {},
-	// // 					complete: function () {},
-//	 					success : function (res) {
-//	 						if(res.result.code == "200") {
-	
+	 				$.ajax({
+	 					url : baseUrl + "visualization/getClassQuantityPerResolution.json",
+	 					data: ajaxData,
+	 					type: "GET",
+	 					traditional : true,
+	// 					beforeSend: function() {},
+	// 					complete: function () {},
+	 					success : function (res) {
+	 						if(res.result.code == "200") {
+								const data = res.result.data;
 								/* sample data */		
-								var typeArr = ['HD이하', 'FHD', 'QHD', '4K이상']
-								var result = typeArr.map((item, index) => {
-									
-									return { type: item, count: Math.floor(Math.random() * 1000) }	
-								});							
+								// var typeArr = ['HD이하', 'FHD', 'QHD', '4K이상']
+								// var result = typeArr.map((item, index) => {
+								//
+								// 	return { type: item, count: Math.floor(Math.random() * 1000) }
+								// });
+								const result = [
+									{type : 'HD이하', count : Math.floor(data.hd_meta_cnt)}
+									, {type : 'FHD', count : Math.floor(data.fhd_meta_cnt)}
+									, {type : 'QHD', count : Math.floor(data.qhd_meta_cnt)}
+									, {type : '4K이상', count : Math.floor(data.fk_meta_cnt)}
+								]
 								
 								that.computed.initObjectCountByResolution(result);
 //	 							that.computed.initObjectCountByResolution(res.result.data)
-//	 						} else {
-//	 							alert(res.result.data);
-//	 						}
-//	 					},
-//	 					error : function (err) {
-//	 						console.log()
-//	 					},
-//	 				})
+	 						} else {
+	 							alert(res.result.data);
+	 						}
+	 					},
+	 					error : function (err) {
+	 						console.log()
+	 					},
+	 				})
 			 },			 
 			 
 			 initObjectCountByResolution : function(result) {
@@ -351,7 +366,6 @@
 			init : function() {},
 			
 			procDataCountByResolution : function(resolutionType, dataCount) {
-				
 				var that = visualizationDetail;
 				
 				var optionObj = {

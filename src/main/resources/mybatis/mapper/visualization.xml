@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.visualization">
+
+    <!-- 해상도별 데이터 수량 -->
+    <select id="getDataQuantityPerResolution" parameterType="VisualizationVO" resultType="VisualizationVO">
+        <![CDATA[
+        SELECT
+        COUNT(CASE WHEN (WIDTH * HEIGHT < 921690) THEN 1 END) AS hd_data_cnt
+        , COUNT(CASE WHEN (WIDTH * HEIGHT BETWEEN 921690 AND 2073600) THEN 1 END) AS fhd_data_cnt
+        , COUNT(CASE WHEN (WIDTH * HEIGHT BETWEEN 2073600 AND 3686400) THEN 1 END) AS qhd_data_cnt
+        , COUNT(CASE WHEN (WIDTH * HEIGHT > 3686400) THEN 1 END) AS fk_data_cnt
+        FROM DATA
+        WHERE (WIDTH IS NOT NULL AND HEIGHT IS NOT NULL)
+        AND DATASET_ID = #{dataset_id}
+        ]]>
+    </select>
+
+    <!-- 클래스별 데이터 수량 -->
+    <select id="getDataQuantityPerClass" parameterType="VisualizationVO" resultType="VisualizationVO">
+            SELECT
+                LABEL
+                , COUNT(*) AS class_cnt
+            FROM META
+            WHERE DATA_ID IN (
+                SELECT DATA_ID
+                FROM DATA
+                WHERE DATASET_ID = #{dataset_id}
+            )
+            GROUP BY LABEL
+    </select>
+
+    <!-- 해상도별 객체 수량 -->
+    <select id="getClassQuantityPerResolution" parameterType="VisualizationVO" resultType="VisualizationVO">
+        <![CDATA[
+        SELECT
+            COUNT(CASE WHEN D.WIDTH * D.HEIGHT < 921690 THEN M.META_ID END) AS hd_meta_cnt
+             , COUNT(CASE WHEN D.WIDTH * D.HEIGHT BETWEEN 921690 AND 2073600 THEN M.META_ID END) AS fhd_meta_cnt
+             , COUNT(CASE WHEN D.WIDTH * D.HEIGHT BETWEEN 2073600 AND 3686400 THEN M.META_ID END) AS qhd_meta_cnt
+             , COUNT(CASE WHEN (D.WIDTH * D.HEIGHT > 3686400) THEN M.META_ID END) AS fk_meta_cnt
+        FROM DATA D
+        JOIN META M ON D.DATA_ID = M.DATA_ID
+        WHERE (D.WIDTH IS NOT NULL AND D.HEIGHT IS NOT NULL)
+        AND DATASET_ID = #{dataset_id}
+        ]]>
+    </select>
+</mapper>
