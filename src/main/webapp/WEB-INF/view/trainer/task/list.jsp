@@ -742,16 +742,20 @@
 		resetImageScroll : function(){
 			var that = task_list;
 			var scroll_info = that.data.inferenceScrollObj;
-			var image_arr = that.data.imgObj.image_arr;
-			var image_obj = that.data.imgObj.image_obj;
-			var selected_obj = that.data.imgObj.selected_obj;
+// 			var image_arr = that.data.imgObj.image_arr;
+// 			var image_obj = that.data.imgObj.image_obj;
+// 			var selected_obj = that.data.imgObj.selected_obj;
 			
 			scroll_info.isScroll_top = false;
 			scroll_info.isScroll_end = false;
 			scroll_info.isScroll = false;
-			image_arr = [];
-			image_obj = {};
-			selected_obj = {};
+			
+// 			image_arr = [];
+// 			image_obj = {};
+// 			selected_obj = {};
+			that.data.imgObj.image_arr = [];
+			that.data.imgObj.image_obj = {};
+			that.data.imgObj.selected_obj = {};
 
 			
 		},
