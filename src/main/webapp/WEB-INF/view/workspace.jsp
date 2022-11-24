@@ -53,6 +53,9 @@
 	 };
 	 */
 	function workspace(setting) {
+		
+		console.log("SETTING : ", setting)
+		 
 		var ws = {
 			pt : {},
 			dir : {},
@@ -69,7 +72,8 @@
 				var zSetting = {
 					view : {
 						showLine : false,
-						addDiyDom : ws.addDiyDom
+						addDiyDom : ws.addDiyDom,
+						dblClickExpand : false, // 더블 클릭 했을때 expand/collapse 이벤트 실행 안되
 					},
 					edit : {
 						drag : {
@@ -177,70 +181,84 @@
 			//노드 추가
 			addNode : function(pNode, config) {
 				var that = this;
+				
+				console.log("### addNode : ", this)
 				//console.log("config::", config);
 				that.dir.addNodes(pNode, config);
 
 				var nodes;
 				if (pNode === null) {
 					nodes = that.dir.getNodesByParam("parentTId", null);
-					/* console.log("nodes15 :", nodes); */
+// 					console.log("nodes15 :", nodes);
 				} else {
 					nodes = that.dir.getNodesByParam("parentTId", pNode["tId"]);
-					/* console.log("nodes16 : ", nodes); */
+// 					console.log("nodes16 : ", nodes);
 				}
+				
 
-				// 트리에서 + : 클릭, 폴더 : 더블클릭 => 폴더 열기
+				// 트리에서 + : 클릭, 폴더 : 더블클릭 => 폴더 열기 
 				that.pt.find(".switch").off("click").on("click", function() {
+					
 					$(this).next().trigger("click");
-					$(this).addClass("filter_color");
-					console.log($(this));
+// 					$(this).addClass("filter_color");
+					console.log("### switch Click", $(this));
 					that.expandNode(this);
 				});
-				that.pt.find("a").off("dblclick").on(
-						"dblclick",
-						function() {
-							//console.log("click!");
-							var temp = $(this).attr("id").replace("a", "ico");
-							$(this).find('#' + temp).addClass("filter_color");
-							that.pt.find("span:last-child").removeClass(
-									"filter_color");
-							$(this).find("span:last-child").addClass(
-									"filter_color");
-							that.expandNode();
-						});
+				
+				// 리스트 두번씩 클릭했을 때
+				// 임시 주석 
+				/* that.pt.find("a").off("dblclick").on("dblclick", function() {
+					
+					// 기존에 더블클릭시, 하위노드가 펼쳐졌음 
+					//console.log("click!");
+					$(this).find('#' + temp).addClass("filter_color");
+					that.pt.find("span:last-child").removeClass("filter_color");
+					$(this).find("span:last-child").addClass("filter_color");
+					that.expandNode();
+					
+				}); */
+				
 				that.pt.find(".ztree li a").on("mouseover", function() {
 					$(this).addClass("hover");
 					//$(this).addClass("filter_color");
 				});
+				
 				that.pt.find(".ztree li a").on("mouseout", function() {
 					$(this).removeClass("hover");
 					//$(this).removeClass("filter_color");
 				});
 			},
 
-			//노드 확장 (상위 노드 열기)
+			//노드 확장/축소 (노드 열기/닫기)
 			expandNode : function(e) {
+				
 				var that = this;
-
 				var node = that.dir.getSelectedNodes()[0];
 				that.dir.removeChildNodes(node);
-				//console.log("node::",node);
+				
+				console.log("### expandNode ::", node);
 
 				if (!node) {
 					//선택된 노드가 없을때 => 처음 실행했을때
-					//console.log("click1");
 					that.info_arr[0].expandNode();
+					
 				} else if (node.level == that.info_arr.length - 1) {
-					//console.log("click2");
-					//하위노드가 없을때
+					// 선택한 노드가 최종노드일 때
+// 					console.log("--- Children Node None")
 					return;
+					
 				} else {
-					if (!that.pt.find('#' + node.tId + '_ico').hasClass(
-							"ico_open")
-							&& that.info_arr[node.level].expandNode) {
-						//console.log("click3");
-						//console.log("ttttttt");
+					
+					if (!that.pt.find('#' + node.tId + '_ico').hasClass("ico_open") && that.info_arr[node.level].expandNode) {
+// 						console.log("--- Expand Node ")
 						that.info_arr[node.level + 1].expandNode();
+					} else {
+// 						console.log("--- Collapse Node : ")
+						that.pt.find('#' + node.tId + '_ico').removeClass("ico_open");
+						that.pt.find('#' + node.tId + '_ico').addClass("ico_close");
+						that.pt.find('#' + node.tId + '_switch').removeClass("noline_open");
+						that.pt.find('#' + node.tId + '_switch').addClass("noline_close");
+
 					}
 				}
 
@@ -259,9 +277,15 @@
 				},
 
 				onClick : function(event, treeId, treeNode) {
+					
 					var that = ws;
 
 					var nodes = that.dir.getSelectedNodes()
+
+					console.log("### rMenu onClick");
+					console.log("--- event : ", event);
+					console.log("--- nodes : ", nodes);
+					console.log("--- shiftKey : ", event.shiftKey);
 
 					//shiftKey
 					if (event.shiftKey) {
@@ -269,14 +293,31 @@
 					} else {
 						that.rMenu.clickFlag = true;
 						if (event.ctrlKey || event.metaKey) {
-							//다중선택
-							if (nodes.length > 0
-									&& nodes[0].parentTId != nodes[nodes.length - 1].parentTId) {
+							
+							if (nodes.length > 0 && nodes[0].parentTId != nodes[nodes.length - 1].parentTId) {
 								that.dir.selectNode(treeNode);
 							}
 						}
 						that.rMenu.startNode = nodes[nodes.length - 1];
 					}
+				
+					// military 20221125
+					// 1. 해당 노드 클릭시 expand/collapse 이벤트 발생
+					that.expandNode();
+					
+					// 2. drop 이벤트 연동
+					var node = that.dir.getSelectedNodes()[0];
+					var drop = that.info_arr[node.level].drop;
+					
+					if(!drop) { return false }
+					
+					$("." + drop.area).removeClass("dragOver");
+					
+					if ($("." + drop.area).length > 0) {
+						drop.onDrop();
+				 
+					} 
+					
 				},
 
 				//같은 레벨 노드 연속 선택
@@ -334,6 +375,9 @@
 
 				//우클릭이벤트
 				rClick : function(event, treeId, treeNode) {
+					
+					console.log("### rMenu rClick : ", event, treeId, treeNode);
+					
 					var that = ws;
 
 					if (!treeNode
@@ -382,87 +426,76 @@
 						that.pt.find("#rMenu ul").append(html);
 					}
 
-					that.pt
-							.find("#rMenu ul li")
-							.on(
-									"click",
-									function() {
-										var upper = that.info_arr[node.level].rMenu[this.className];
-										if (typeof (upper) == "object") {
-											return;
-										} else if (typeof (upper) == "function") {
-											upper();
-										}
+					// 우클릭 해서 생성된 메뉴를 클릭했을 때
+					that.pt.find("#rMenu ul li").on("click", function() {
+						
+						var upper = that.info_arr[node.level].rMenu[this.className];
+						if (typeof (upper) == "object") {
+							return;
+						} else if (typeof (upper) == "function") {
+							upper();
+						}
 
-										that.pt.find("#rMenu").css({
-											"display" : "none"
-										});
-										$("body").off("mousedown",
-												that.rMenu.onBodyMouseDown);
-									});
+						that.pt.find("#rMenu").css({"display" : "none"});
+					});
 
 					//하위메뉴
-					that.pt
-							.find("#rMenu ul li")
-							.on(
-									"mouseenter",
-									function() {
-										that.pt.find(".lower").remove();
-										var upper = that.info_arr[node.level].rMenu[this.className];
-										console.log("this.className : "
-												+ this.className);
-										if (typeof (upper) == "object") {
-											var html = "<ul class='lower' id="+this.className+">";
-											var upperKey = Object.keys(upper);
-											for (var i = 0; i < upperKey.length; i++) {
-												html += "<li class='"+upperKey[i]+"'>"
-														+ upperKey[i] + "</li>";
-											}
-											html += "</ul>";
+					that.pt.find("#rMenu ul li").on("mouseenter",function() {
+						
+						that.pt.find(".lower").remove();
+						var upper = that.info_arr[node.level].rMenu[this.className];
+						console.log("this.className : "+ this.className);
+						
+						if (typeof (upper) == "object") {
+							
+							var html = "<ul class='lower' id="+this.className+">";
+							var upperKey = Object.keys(upper);
+							for (var i = 0; i < upperKey.length; i++) {
+								html += "<li class='"+upperKey[i]+"'>"
+										+ upperKey[i] + "</li>";
+							}
+							html += "</ul>";
 
-											that.pt.find("#rMenu").after(html);
+							that.pt.find("#rMenu").after(html);
 
-											var top = $(this).offset().top
-													- that.pt.find("#dir_wrap")
-															.offset().top;
-											var left = $(this).offset().left
-													+ (this.offsetWidth + 1)
-													- that.pt.find("#dir_wrap")
-															.offset().left;
-											that.pt.find(
-													".lower#" + this.className)
-													.css({
-														"top" : top + "px",
-														"left" : left + "px"
-													});
-
-											that.pt
-													.find(".lower li")
-													.on(
-															"click",
-															function() {
-																var parentId = this.parentNode.id;
-																that.info_arr[node.level].rMenu[parentId][this.className]
-																		();
-
-																that.pt
-																		.find(
-																				".lower")
-																		.remove();
-																that.pt
-																		.find(
-																				"#rMenu")
-																		.css(
-																				{
-																					"display" : "none"
-																				});
-																$("body")
-																		.off(
-																				"mousedown",
-																				that.rMenu.onBodyMouseDown);
-															});
-										}
+							var top = $(this).offset().top
+									- that.pt.find("#dir_wrap")
+											.offset().top;
+							var left = $(this).offset().left
+									+ (this.offsetWidth + 1)
+									- that.pt.find("#dir_wrap")
+											.offset().left;
+							that.pt.find(
+									".lower#" + this.className)
+									.css({
+										"top" : top + "px",
+										"left" : left + "px"
 									});
+
+							that.pt.find(".lower li").on("click",function() {
+								var parentId = this.parentNode.id;
+								that.info_arr[node.level].rMenu[parentId][this.className]
+										();
+
+								that.pt
+										.find(
+												".lower")
+										.remove();
+								that.pt
+										.find(
+												"#rMenu")
+										.css(
+												{
+													"display" : "none"
+												});
+								$("body")
+										.off(
+												"mousedown",
+												that.rMenu.onBodyMouseDown);
+							});
+							
+						}
+					});
 				},
 				//우클릭 메뉴 show
 				showRMenu : function(x, y) {
@@ -505,6 +538,8 @@
 			//드래그 이벤트
 			drag : {
 				onDrop : function(event) {
+					
+					console.log("### DRAG onDrop : ", $(event.target))
 					var that = ws;
 
 					var node = that.dir.getSelectedNodes()[0];
@@ -535,6 +570,8 @@
 				},
 
 				onDragMove : function(event, treeId, treeNodes) {
+					
+					console.log("### DRAG onDragMove : ", $(event.target))
 					var that = ws;
 
 					var node = that.dir.getSelectedNodes()[0];
@@ -542,14 +579,15 @@
 					if ($(event.target).hasClass(drop.area)) {
 						$(event.target).addClass("dragOver");
 					} else if ($(event.target).parents("." + drop.area).length > 0) {
-						$(event.target).parents("." + drop.area).addClass(
-								"dragOver");
+						$(event.target).parents("." + drop.area).addClass("dragOver");
 					} else {
 						$("." + drop.area).removeClass("dragOver");
 					}
 				},
 
 				dropInner : function(treeId, nodes, targetNode) {
+					
+					console.log("### DRAG dropInner : ", )
 					var that = ws;
 
 					for (var i = 0; i < nodes.length; i++) {

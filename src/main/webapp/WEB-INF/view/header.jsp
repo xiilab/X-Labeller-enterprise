@@ -40,6 +40,8 @@
 		
 		<style>
 			#header { background-image: linear-gradient(to bottom, #3c3d3f, #3a3b3d 55%, #343537); }
+			
+			#header .contents { display : flex; }
  			#header .logo { cursor: pointer; }
  			
 		    /******************/
@@ -53,10 +55,10 @@
 		    /* #header .logo_wrap { width: 221px; height: 64px; text-align: center; background: url('images/wizardlab_logo.png') no-repeat center; cursor: pointer; background-size : contain;} 
 		    /* */ 
 		   	#header .logo_wrap .logo_contaion { background-size : contain;}
-		    #header .nav_wrap { width: 640px; line-height: 64px; }
-		    #header .account_wrap { height: 64px; }
+		    #header .nav_wrap { display: flex; flex-grow: 1; justify-content: space-between; min-width: 640px; height: 64px; /* line-height: 64px; */ }
+		    #header .account_wrap { display: flex; height: 64px; }
 		    
-		    #header .nav_depth1 > ul {}
+		    #header .nav_depth1 > ul { display : flex; }
 		   	#header .nav_depth1 > ul > li {text-align: center; width: 110px; }
 		   	#header .nav_depth1 a {  position: relative; color: #ffffff;  line-height: 64px; display: inline-block;  width: 100%; }
 		    
@@ -71,6 +73,9 @@
 			#header .nav_depth1 a.hover:after{ width: 100%; left: 0;   background-color: #4c84ff; }
 		    #header .nav_depth1 a.active { color: #4c84ff; background-color: #333333; }
 		    #header .nav_depth1 a.active:after{ width: 100%; left: 0;   background-color: #4c84ff; }
+		    #header .nav_depth1 li[menu="setting"] a:before { content: ""; position: absolute; width: 20px; height: 20px; top: 50%; left: 12px; transform: translateY(-50%); background: url("images/icon-setting-outline.svg");}
+		    #header .nav_depth1 li[menu="setting"] a.hover:before,
+		    #header .nav_depth1 li[menu="setting"] a.active:before { background: url("images/icon-setting-solid.svg");}
 		    
 		    #header .nav_depth2 { position: absolute; z-index: 100; width: 100%; height: 236px; background-color: #fff; display: none; border-top: 1px #eaeaea solid; border-bottom: 1px #eaeaea solid; }
 			#header .nav_depth2 .nav_depth2_list { margin-left: 195px; align-items: flex-start;  padding-top: 50px; }
@@ -79,7 +84,7 @@
 			#header .nav_depth2 .nav_depth2_list > li > ul > li { margin-bottom: 15px; padding-bottom: 15px; }
 			#header .nav_depth2 .nav_depth2_list > li > ul > li > a:hover { padding-bottom: 15px; border-bottom: 1px #008bed solid; }
 			
-		    #header .account_wrap > ul { height: 100%; }
+		    #header .account_wrap > ul {  display : flex; /* height: 100%; */ width: fit-content; }
 		   	#header .account_wrap > ul > li { width: auto; line-height: 40px; margin: 0 15px; position: relative; }
 		   	#header .account_wrap > ul > li:not(.end):after{ content: ''; position: absolute; width: 1px; height: 16px; display: block; right: -15px; top: 12px; background-color: #777777; }
 		   	#header .account_wrap > ul > li > a { font-size: 13px; font-weight: 300; color: #f5f5f5; }
@@ -105,26 +110,31 @@
 				<div class="logo_wrap fl"></div>
 				
 				
-				<div class="nav_wrap nav_depth1 fl flex">
-					<ul class="flex filter_color">
+				<div class="nav_wrap nav_depth1">
+					<ul class="filter_color left_side ">
 						<li menu="menu_1"><a href="<c:url value="/labeller" />" >Labeller</a></li>
 						<li menu="menu_2"><a href="<c:url value="/annotation" />" >Annotation</a></li>
 						<li menu="menu_3"><a href="<c:url value="/trainer" />">Trainer</a></li>
 <%-- 						<li menu="menu_4"><a href="<c:url value="/comparison" />">Comparison</a></li> --%>
-						<li menu="menu_5"><a href="<c:url value="/setup" />">Setup</a></li>
-						<li menu="menu_6"><a href="<c:url value="/monitor" />">Monitor</a></li>
+						<!-- military 20221125 -->
+<%-- 						<li menu="menu_5"><a href="<c:url value="/setup" />">Setup</a></li> --%>
+						<!-- military 20221125 -->
+<%-- 						<li menu="menu_6"><a href="<c:url value="/monitor" />">Monitor</a></li> --%>
+						<li menu="menu_6"><a href="<c:url value="/monitor" />">GPU Monitor</a></li>
 						<li menu="menu_7"><a href="<c:url value="/visualization" />">Visualization</a></li>
 <%-- 						<li menu="menu_7"><a href="<c:url value="/algorithm/list" />">Algorithm</a></li> --%>
 						<!-- mAP 임시 -->
 <%-- 						<li menu="menu_8"><a href="<c:url value="/map/comparison"/>">Score</a></li>					 --%>
 					</ul>
+					<ul class="filter_color right_side">
+						<li menu="setting"><a href="<c:url value="/setup"/>">Setup</a>
+					</li>
+					</ul>
 				</div>
 				
 				<div class="account_wrap fr">
-<!-- 					<ul class="flex"> -->
 <%-- 						<li menu=""><a href="<c:url value="/login" />" >로그인</a></li> --%>
 <%-- 						<li menu=""><a href="<c:url value="/join" />">회원가입</a></li> --%>
-<!-- 					</ul> -->
 				</div>
 				<div class="clear"></div>
 			</div>
@@ -182,36 +192,37 @@
 			    var cur_page='${pageContext.request.getParameter("cur_page")}'
 			    switch(cur_page){
 			    		case "labeller":
-			    			$(".nav_depth1 li").eq(0).children("a").addClass("active");
+			    			$(".nav_depth1 ul.left_side li").eq(0).children("a").addClass("active");
 			    			console.log(this);
 			    			break;
 			    		case "annotation":
-			    			$(".nav_depth1 li").eq(1).children("a").addClass("active");
+			    			$(".nav_depth1 ul.left_side li").eq(1).children("a").addClass("active");
 			    			break;
 			    		case "trainer":
-			    			$(".nav_depth1 li").eq(2).children("a").addClass("active");
-			    			break;
-			    		case "comparison":
-			    			$(".nav_depth1 li").eq(3).children("a").addClass("active");
-			    			break;
-			    		case "setup":
-// 			    			$(".nav_depth1 li").eq(4).children("a").addClass("active");
-			    			$(".nav_depth1 li").eq(3).children("a").addClass("active");
+			    			$(".nav_depth1 ul.left_side li").eq(2).children("a").addClass("active");
 			    			break;
 			    		case "monitor":
 // 			    			$(".nav_depth1 li").eq(5).children("a").addClass("active");
-			    			$(".nav_depth1 li").eq(4).children("a").addClass("active");
+// 			    			$(".nav_depth1 li").eq(4).children("a").addClass("active");
+			    			$(".nav_depth1 ul.left_side li").eq(3).children("a").addClass("active");
 			    			break;
 						case "visualization":
 // 			    			$(".nav_depth1 li").eq(5).children("a").addClass("active");
-							$(".nav_depth1 li").eq(5).children("a").addClass("active");
+							$(".nav_depth1 ul.left_side li").eq(4).children("a").addClass("active");
 							break;
-			    		case "algorithm":
-			    			$(".nav_depth1 li").eq(6).children("a").addClass("active");			    			
+			    		case "setup":
+// 			    			$(".nav_depth1 li").eq(4).children("a").addClass("active");
+			    			$(".nav_depth1 ul.right_side li").eq(0).children("a").addClass("active");
 			    			break;
-			    		case "map":
-			    			$(".nav_depth1 li").eq(7).children("a").addClass("active");
-			    			break;
+// 			    		case "comparison":
+// 			    			$(".nav_depth1 ul.left_side li").eq().children("a").addClass("active");
+// 			    			break;
+// 			    		case "algorithm":
+// 			    			$(".nav_depth1 ul.left_side li").eq(6).children("a").addClass("active");			    			
+// 			    			break;
+// 			    		case "map":
+// 			    			$(".nav_depth1 ul.left_side li").eq(7).children("a").addClass("active");
+// 			    			break;
 			    }
 				/* nav hover event */
 				$(".nav_depth1 > ul > li").hover(
@@ -296,11 +307,12 @@
 										$("#header .nav_wrap.flex ul li").eq(0).children().html("Inspection");
 									}
 								} */
+								// military 20221125
 								var html = ""
 									+ "	<ul class='flex'> "
 // 									+"		<li menu=''><a href='<c:url value='/info' />' target='_blank' ><div class='help_btn'></div>help</a></li> "
 									+"		<li menu='' class='flex'><div class='state'></div><a href='<c:url value='/mypage' />' >"+res.result.data.account+"</a></li> "
-									+"		<li menu='' class='end'><a class='logout_btn cp filter_color'>Logout</a></li> "
+									+"		<li menu='' class='end'><a class='logout_btn cp filter_color'>Logout</a></li> ";
 									+ "	</ul> ";
 									
 								$("#header .account_wrap").html(html);

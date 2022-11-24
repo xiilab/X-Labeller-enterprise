@@ -9,6 +9,9 @@
 		#upload .border_box { padding: 0px 30px }
 		#upload .title_wrap { padding: 23px 0 14px 0; color: #5b666e; }
 		#upload .title_wrap div { font-size: 13px; font-weight: 400; color: #343434; }
+		#upload .title_wrap label { font-size: 12px; font-weight: bold; margin-left: 10px; color: #777; }
+		#upload .title_wrap label span{ color: red; }
+		
 		#upload .input_wrap { margin-bottom: 10px; }
 		#upload input[type='text'] { width: 100%; font-family: Open_Sans; font-size: 13px; font-weight: 300; color: #555555; border: 1px solid #dedcde; }
 		#upload input[type='text']:focus {border: 1px solid #4c84ff;}
@@ -105,6 +108,9 @@
 				</div>					
 				<div class="title_wrap flex">
 					<div>Add File</div>
+					<label class="comment">
+						 <span>JPG JPEG PNG</span> 형식의 이미지 파일만 업로드 가능합니다.
+					</label>
 				</div>
 				<div class="fileTab_wrap flex">
 					<div class="img_file tab active">ImageFile</div>
