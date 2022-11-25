@@ -89,8 +89,9 @@
 					<div class="media_type_wrap filter_color">
 						<span class="radioBtn selected" data-value="image"></span>
 						<span class="radio_label">Image</span>
- 						<span class="radioBtn" data-value="video"></span>
-						<span class="radio_label">Video</span>
+						<!-- military 20221125 : 비디오타입 임시 삭 -->
+<!--  						<span class="radioBtn" data-value="video"></span> -->
+<!-- 						<span class="radio_label">Video</span> -->
 					</div>
 				</div>				
 				<div class="title_wrap flex">

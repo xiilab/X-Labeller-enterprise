@@ -9,6 +9,8 @@
 		#addImg .border_box { padding: 0px 30px }
 		#addImg .title_wrap { padding: 23px 0 14px 0; color: #5b666e; }
 		#addImg .title_wrap div { font-size: 13px; font-weight: 400; color: #343434; }
+		#addImg .title_wrap label { font-size: 12px; font-weight: bold; margin-left: 10px; color: #777; }
+		#addImg .title_wrap label span{ color: red; }
 		#addImg .input_wrap { margin-bottom: 10px; }
 		
 		#addImg .fileTab_wrap .tab { width: 75px; border: 1px solid #dedcde; border-right: 0; background: #ffffff; line-height: 30px; text-align: center; font-size: 11px; font-weight: 400; color: #555555; cursor: pointer; }
@@ -65,6 +67,9 @@
 			<form id="fileForm" enctype="multipart/form-data">
 				<div class="title_wrap flex">
 					<div>Add File</div>
+					<label class="comment">
+						 <span>JPG JPEG PNG</span> 형식의 이미지 파일만 업로드 가능합니다.
+					</label>
 				</div>
 				<div class="fileTab_wrap flex">
 					<div class="img_file tab active">ImageFile</div>
