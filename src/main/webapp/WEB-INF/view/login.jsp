@@ -8,10 +8,13 @@
 	
 	<style>
 		@media screen and (min-width: 1800px){
-			#login .logo_img { background: url('images/img_login_big.png') no-repeat center; }
+			/* #login .logo_img { background: url('images/img_login_big.png') no-repeat center; } */
+			#login .logo_img { background: url('images/img_login_big_milnet.png') no-repeat center; }
 		}
 		@media screen and (max-width: 1800px){
-			#login .logo_img { background: url('images/img_login_normal.png') no-repeat center; }
+			/* #login .logo_img { background: url('images/img_login_normal.png') no-repeat center; } */
+			#login .logo_img { background: url('images/img_login_big_milnet.png') no-repeat center; }
+			
 		}
 		
 		#header { display: none; }
@@ -21,7 +24,8 @@
 		#login .contents { height: 100%; }
 		/* 기본 */
 		#login .logo_wrap { width: 65%; height: 100%; background-color: #2184ff; color: #ffffff; }
-		#login .logo_title { margin: 41px 44px; width: 108px; height: 29px; background: url('images/img-logo-x-labeller-copy-2.png') no-repeat center; } 
+		#login .logo_title { margin: 41px 44px; width: 190px; height: 19px; background: url('images/img-logo-milnet.png') no-repeat center; } 
+		/* #login .logo_title { margin: 41px 44px; width: 108px; height: 29px; background: url('images/img-logo-x-labeller-copy-2.png') no-repeat center; } */ 
 		/* */
 		/*성모*/
 		/* #login .logo_wrap { width: 65%; height: 100%; background-color: #2184ff; background-color : #fd6500; color: #ffffff; } 

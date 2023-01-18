@@ -243,7 +243,7 @@
       	#imgSeg .list_btn_wrap .data_list_btn { width: 30px; height: 30px; margin-right: 30px; background: url(images/icon_filter_normal.png) right; cursor: pointer; }
  		
 /*  		#imgSeg .quick_wrap { width: 100%; position: absolute; bottom: 0px; padding: 26.5px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; }        */
- 		#imgSeg .quick_wrap { width: 100%; bottom: 0px; padding: 26.5px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; }       
+ 		#imgSeg .quick_wrap { width: 100%; bottom: 0px; padding: 26.5px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; align-items : flex-end; }       
 
 /*  		#imgSeg .quick_wrap { width: calc(100% - 699px); position: absolute; bottom: 0px; padding: 25px 0; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; }        */
 /* 		#imgSeg .quick_wrap { width: 488px; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; position: absolute; top: -8px; left: 609px;}     */
@@ -310,8 +310,9 @@
 		#imgSeg .quick_btn {
 			width: 100px;
  			line-height: 36px; 
-			margin: 0 20px;
-			margin-top: 4px;
+ 			margin-left: 0px;
+			margin-right: 10px;
+			margin-bottom: 2px;
 /* 			padding: 6px; */
 			text-align: center;
 			border-radius: 5px;
@@ -945,7 +946,14 @@
 		#imgSeg section.tag .tag_wrap .tag.selected { background-color: #4c84ff; border-color: #2b65e6; color: #fff; box-shadow: 0 3px 4px 0 rgba(159, 189, 255, 0.7); }
 		#imgSeg .hover_box {border: 1px solid #d9d9d9; text-align: center; z-index: 9999; display: none; position: absolute; border-radius: 2px; box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.19); background-color: #ffffff; }
 		#imgSeg .hover_box div {font-family: Open_Sans; font-size: 13px; color: #555555;}
-		#imgSeg .hover_div div {word-break: break-word; margin: 2px 5px; white-space: normal; font-weight: 300; font-family: Open_Sans;}							
+		#imgSeg .hover_div div {word-break: break-word; margin: 2px 5px; white-space: normal; font-weight: 300; font-family: Open_Sans;}
+		
+		/* military - autoLabelling */
+		#imgSeg .semi_auto_labelling_wrap { display: flex; }							
+		#imgSeg .semi_auto_labelling_wrap .wrap { display: flex; flex-direction: column; margin-right: 10px;}
+		#imgSeg .semi_auto_labelling_wrap .wrap label { margin-bottom: 5px; }
+		#imgSeg .semi_auto_labelling_wrap .wrap select { width: 150px; }
+									
       </style>
    </head>
    <body id="page-top">
@@ -1036,6 +1044,33 @@
 	               		<div class="quick_wrap flex"> <!-- Quick Training & Inference Btn area start -->
 							<div id="quick_training_btn" class="quick_btn filter_color">Quick Training</div>
 							<div id="quick_inference_btn" class="quick_btn filter_color">Quick Inference</div>
+							
+							<!--  military - autoLabelling -->
+							<div class="semi_auto_labelling_wrap">
+								<div class="wrap">
+									<label>project</label>
+									<select id="">
+										<option value="">INSTANCE_SEGMENTATION_DATASET1_replica</option>
+										<option value="">INSTANCE_SEGMENTATION_DATASET2_replica</option>
+										<option value="">INSTANCE_SEGMENTATION_DATASET3_replica</option>
+									</select>
+								</div>
+								<div class="wrap">
+									<label>task</label>
+									<select id="">
+										<option value="">Quick_INSTANCE_SEGMENTATION_DATASET1_replica_Task1</option>
+										<option value="">INSTANCE_SEGMENTATION_TASK1</option>
+									</select>
+								</div>
+								<div class="wrap">
+									<label>model</label>
+									<select id="">
+										<option value="">YOLO</option>
+										<option value="">EFFICCIENTDET</option>
+									</select>
+								</div>
+							</div>
+							<div id="" class="quick_btn filter_color">Semi-auto</div>
 							
 							<!-- Quick Training -->
 							<div id="quick_training" class="quick_training filter_color">
