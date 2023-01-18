@@ -79,7 +79,7 @@
 					<div class="label_type_wrap">
 						<span class="radioBtn selected" data-value="box"></span>
 						<span class="radio_label">Bounding Box</span>
-<!-- 						<span class="radioBtn" data-value="polygon"></span> -->
+<%--						<span class="radioBtn" data-value="polygon"></span>--%>
 <!-- 						<span class="radio_label">Segmentation</span> -->
 					</div>
 				</div>					 

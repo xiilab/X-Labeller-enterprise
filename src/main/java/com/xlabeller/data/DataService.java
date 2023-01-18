@@ -369,7 +369,8 @@ public class DataService {
 //		insertDatasetVO.setMedia_type(datasetVO.getMedia_type());
 //		insertDatasetVO.setLabel_type(datasetVO.getLabel_type());
 		insertDatasetVO.setMedia_type("IMAGE");
-		insertDatasetVO.setLabel_type("IMAGE_BBOX");
+//		insertDatasetVO.setLabel_type("IMAGE_BBOX");
+		insertDatasetVO.setLabel_type(datasetVO.getLabel_type());
 		insertDatasetVO.setUser_id(userInfo.getUser_id());
 		insertDatasetVO.setStatus("1");
 		
