@@ -37,10 +37,6 @@ public class VisualizationService {
 	 * 해상도별 데이터 수량
 	 * */
 	public Object getDataQuantityPerResolution(VisualizationVO visualizationVO) {
-//		UserVO userInfo = SessionUtil.getUserInfo();
-//		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
-//			return Output.JsonOutput("3301","로그인 세션이 만료 되었습니다");
-//		}
 		if(visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
 			return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
@@ -53,10 +49,6 @@ public class VisualizationService {
 	 * 클래스별 데이터 수량
 	 * */
 	public Object getDataQuantityPerClass(VisualizationVO visualizationVO) {
-//		UserVO userInfo = SessionUtil.getUserInfo();
-//		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
-//			return Output.JsonOutput("3301","로그인 세션이 만료 되었습니다");
-//		}
 		if(visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
 			return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
@@ -69,10 +61,6 @@ public class VisualizationService {
 	 * 해상도별 객체 수량
 	 * */
 	public Object getClassQuantityPerResolution(VisualizationVO visualizationVO) {
-//		UserVO userInfo = SessionUtil.getUserInfo();
-//		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
-//			return Output.JsonOutput("3301","로그인 세션이 만료 되었습니다");
-//		}
 		if(visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
 			return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
