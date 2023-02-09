@@ -361,7 +361,9 @@
 			<if test='status != null and !status.equals("")'>AND d.STATUS = #{status}</if>
 			AND d.DATASET_ID = #{dataset_id} 
 		ORDER BY d.DATA_ID ASC
-		LIMIT ${page_num}, ${page_size}
+		<if test='(page_num != null and !page_num.equals("")) and (page_size != null and !page_size.equals(""))'>
+			LIMIT ${page_num}, ${page_size}
+		</if>
 	</select>
 
 

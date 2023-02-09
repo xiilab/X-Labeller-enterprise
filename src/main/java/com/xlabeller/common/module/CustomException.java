@@ -9,4 +9,8 @@ public class CustomException extends Exception{
 		super(errorMessage);
 		logger.error(errorMessage);
 	}
+
+	public CustomException(String errorMessage, String s) {
+
+	}
 }

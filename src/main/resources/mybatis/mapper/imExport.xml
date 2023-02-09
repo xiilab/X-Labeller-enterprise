@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlabeller.sql.imExport">
+    <select id="getExportAnnotationData" parameterType="ImExportVO" resultType="ImExportVO">
+		SELECT
+			da.DATASET_ID,
+			d.DATA_ID,
+			d.PATH,
+			d.WIDTH,
+			d.HEIGHT,
+			d.FILENAME,
+			m.META_ID,
+			m.LABEL,
+			m.LABEL_TYPE,
+			m.INFO
+		FROM DATASET da
+		JOIN DATA d ON da.DATASET_ID = d.DATASET_ID
+		JOIN META m ON d.DATA_ID = m.DATA_ID
+		WHERE da.DATASET_ID IN (${dataset_ids})
+	</select>
+</mapper>

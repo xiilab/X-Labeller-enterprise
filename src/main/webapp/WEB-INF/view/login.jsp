@@ -114,7 +114,7 @@
 					<div class="btn_wrap change_filter">
 						<button class="btn submit_btn">Login</button>
 						<div>
-							Don't have <span class="xlabeller_a">X-labeller</span> account? <a href="<c:url value="/join"/>">Sign up</a>
+							Don't have <span class="xlabeller_a">밀리터리넷 객체 라벨기</span> account? <a href="<c:url value="/join"/>">Sign up</a>
 						</div>
 					</div>
 					

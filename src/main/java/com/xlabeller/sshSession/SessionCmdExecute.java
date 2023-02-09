@@ -375,8 +375,9 @@ public class SessionCmdExecute implements Callable<Object> {
 					+ " --tid " + taskId
 					+ " --batch " + batch
 					+ " --subdivisions " + batch;
+			logger.info("1::" + cmd);
 		} else if (algorithmId.equals("7") || algorithmId.equals("8")) { // efficientdet:latest
-			String batch = null; 
+			String batch = null;
 			String epochs = null;
 			String model = null;
 			String learning_rate = null;
@@ -402,6 +403,7 @@ public class SessionCmdExecute implements Callable<Object> {
 					+ " --batch " + batch
 					+ " --epochs " + epochs
 					+ " --model " + model;
+			logger.info("2::" + cmd);
 		} else {
 			cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=t_" + projectId + "_"
 				+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " -v /xlabeller:/xlabeller ca_"
@@ -412,6 +414,7 @@ public class SessionCmdExecute implements Callable<Object> {
 				+ "/log/mAP.csv" + " --lossresult /xlabeller/workspace/" + projectId + "/" + taskId + "/log/loss.csv"
 				+ " --modelPath /xlabeller/workspace/" + projectId + "/" + taskId + "/model/"
 				+ " --label /xlabeller/workspace/" + projectId + "/" + taskId + "/class/classes";
+			logger.info("3::" + cmd);
 		}
 		logger.info(cmd);
 		String cmdResult = cmdExcute(cmd);
@@ -483,8 +486,8 @@ public class SessionCmdExecute implements Callable<Object> {
 			System.out.println("기본 학습모델 선택");
 			cmd += " --default True ";
 		}
-		
-		System.out.println(cmd);
+		logger.info("efficientdet command::" + cmd);
+		//System.out.println(cmd);
 		String cmdResult = cmdExcute(cmd);
 		JSONObject rObj = new JSONObject();
 		if (cmdResult == null) {
@@ -524,8 +527,9 @@ public class SessionCmdExecute implements Callable<Object> {
 				" --pid " + projectId + 
 				" --tid " + taskId +
 				" --data_type IMAGE";
-		
-		System.out.println(cmd);
+
+		logger.info("yolo image command::" + cmd);
+		// System.out.println(cmd);
 		String cmdResult = cmdExcute(cmd);
 		JSONObject rObj = new JSONObject();
 		if (cmdResult == null) {
@@ -553,7 +557,8 @@ public class SessionCmdExecute implements Callable<Object> {
 				" --pid " + projectId + 
 				" --tid " + taskId +
 				" --data_type VIDEO";
-		System.out.println(cmd);
+		logger.info("yolo video command::" + cmd);
+		//System.out.println(cmd);
 		String cmdResult = cmdExcute(cmd);
 		JSONObject rObj = new JSONObject();
 		if (cmdResult == null) {

@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 
 @Service
 public class LoginCheckIntercepter extends HandlerInterceptorAdapter {
-//	private static final Logger logger  =  Logger.getLogger(LoginCheckIntercepter.class);
+	//private static final Logger logger  =  Logger.getLogger(LoginCheckIntercepter.class);
 	
  
 	@Override

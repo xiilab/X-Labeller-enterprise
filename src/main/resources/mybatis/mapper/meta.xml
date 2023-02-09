@@ -51,6 +51,27 @@
 			,#{label_type}
 		)
 	</insert>
+
+	<insert id="insertMetaList" parameterType="MetaVO">
+		INSERT INTO META(
+						 DATA_ID
+						,USER_ID
+						,CREATED_DATE
+						,INFO
+						,LABEL
+						,LABEL_TYPE
+		) VALUES
+		<foreach collection="meta_list" item="item" separator=",">
+			(
+			#{item.data_id}
+			,#{item.user_id}
+			,now()
+			,#{item.info}
+			,#{item.label}
+			,#{item.label_type}
+			)
+		</foreach>
+	</insert>
 	
 	<update id="upsertMeta">
 		INSERT INTO META (

@@ -29,6 +29,7 @@
 		<typeAlias type="com.xlabeller.models.TableVO" alias="TableVO"/>
 		<typeAlias type="com.xlabeller.models.DatasetLogVO" alias="DatasetLogVO"/>
 		<typeAlias type="com.xlabeller.models.VisualizationVO" alias="VisualizationVO"/>
+		<typeAlias type="com.xlabeller.models.ImExportVO" alias="ImExportVO"/>
 		
 		
 		
