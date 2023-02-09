@@ -329,9 +329,9 @@ public class DataService {
 	
 	public Object insertDataset(DatasetVO datasetVO) throws Exception {
 		UserVO userInfo = SessionUtil.getUserInfo();
-		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
-			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
-		}
+//		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
+//			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
+//		}
 		
 		// 유효성검사.
 		if(datasetVO.getTitle() == null || datasetVO.getTitle().length() <= 0) {
@@ -371,7 +371,7 @@ public class DataService {
 		insertDatasetVO.setMedia_type("IMAGE");
 //		insertDatasetVO.setLabel_type("IMAGE_BBOX");
 		insertDatasetVO.setLabel_type(datasetVO.getLabel_type());
-		insertDatasetVO.setUser_id(userInfo.getUser_id());
+//		insertDatasetVO.setUser_id(userInfo.getUser_id());
 		insertDatasetVO.setStatus("1");
 		
 		// 파일 체크
@@ -406,6 +406,7 @@ public class DataService {
 			throw new CustomException("4001#데이터셋을 등록하는 과정중에 오류가 발생하였습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
 		String datasetId = insertDatasetVO.getDataset_id();
+		datasetVO.setDataset_id(datasetId);
 		if(datasetId == null || datasetId.length() <= 0) {
 			return Output.JsonOutput("4071","데이터셋을 등록하는 중에 오류가 발생하였습니다.\n새로고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}

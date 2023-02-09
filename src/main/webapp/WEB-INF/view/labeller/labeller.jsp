@@ -114,7 +114,7 @@
 				info : [
 					{expandNode : labeller.getDatasetList, drop : { area : "drop_area", onDrop : labeller.event.labelling, }, 
 // 						rMenu : { "Labelling TEST" : labeller.event.labelling, "DataList TEST" : labeller.event.list2, "LabelList TEST": labeller.event.labelList2, "Enrichment" : labeller.event.openNode,  "Data List": labeller.event.list, "Label List": labeller.event.labelList, "Modify" : labeller.event.modify, "Add File" : labeller.event.addImg, "Replicate︎" : {"Only Data" : labeller.event.replicate, "With Label" : labeller.event.replicateWith, }, "Delete︎" : {"Dataset": labeller.event.deleteNode, "Data": labeller.event.deleteDataList, "Label" : labeller.event.deleteMetaList}, }, },
-						rMenu : { "Enrichment" : labeller.event.labelling, "Data List" : labeller.event.list2, "Label List": labeller.event.labelList2, "Modify" : labeller.event.modify, "Add File" : labeller.event.addImg, "Replicate︎" : {"Only Data" : labeller.event.replicate, "With Label" : labeller.event.replicateWith, }, "Delete︎" : {"Dataset": labeller.event.deleteNode, "Data": labeller.event.deleteDataList, "Label" : labeller.event.deleteMetaList},}, },
+						rMenu : { "Enrichment" : labeller.event.labelling, "Data List" : labeller.event.list2, "Label List": labeller.event.labelList2, "Modify" : labeller.event.modify, "Add File" : labeller.event.addImg, "Replicate︎" : {"Only Data" : labeller.event.replicate, "With Label" : labeller.event.replicateWith, }, "Export" : labeller.event.labelling, "Delete︎" : {"Dataset": labeller.event.deleteNode, "Data": labeller.event.deleteDataList, "Label" : labeller.event.deleteMetaList},}, },
 				], 
 			};
 			workspace(setting);	//트리 그리기

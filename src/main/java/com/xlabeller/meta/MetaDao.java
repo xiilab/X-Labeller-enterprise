@@ -26,6 +26,10 @@ public class MetaDao {
 	public int insertMeta(MetaVO metaVO) {
         return sqlSession.insert("com.xlabeller.sql.meta.insertMeta",metaVO);
     }
+
+	public int insertMetaList(MetaVO metaVO) {
+		return sqlSession.insert("com.xlabeller.sql.meta.insertMetaList",metaVO);
+	}
 	
 	public int upsertMeta(MetaVO metaVO) {
 		return sqlSession.update("com.xlabeller.sql.meta.upsertMeta",metaVO);
