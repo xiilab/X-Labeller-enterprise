@@ -264,6 +264,14 @@ public class PageController {
 		return modelAndView;
 	}
 	
+	@RequestMapping("/labeller/exports")
+	public ModelAndView labllerExports() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("labeller/exports");
+		
+		return modelAndView;
+	}
+	
 	@RequestMapping("/labeller/dataList")
 	public ModelAndView labelerDataList() {
 		ModelAndView modelAndView = new ModelAndView();

@@ -31,10 +31,14 @@
 		#labeller .drop_area .section{ display: none; height: 100%; }
 		#labeller .drop_area .section.selected{ display: block; }
 		
+		#workspace #dir_wrap .btn_wrap { display:flex; flex-direction: column; justify-content: center; }
+		#workspace #dir_wrap .btn_wrap .half_wrap { display: flex; justify-content: space-between; margin-top: 10px; }
 		#workspace #dir_wrap .btn_wrap > div { width: 190px; margin: 0 auto;  font-size: 12px; color: #ffffff; cursor: pointer; }
-		#workspace #dir_wrap .btn_wrap .new_btn { width: 90px; margin-right: 10px; border-radius: 4px; background-color: #4c84ff; }
-		#workspace #dir_wrap .btn_wrap .import_btn { width: 90px; line-height: 36px; border-radius: 5px; background-color: #4c84ff;  }
+		#workspace #dir_wrap .btn_wrap .new_btn { border-radius: 4px; background-color: #4c84ff; }
+		#workspace #dir_wrap .btn_wrap .import_btn,
+		#workspace #dir_wrap .btn_wrap .export_btn { width: 90px; line-height: 36px; border-radius: 5px; background-color: #4c84ff;  }
 		#workspace #dir_wrap .btn_wrap > div > div:hover { background-color: #3A71E9; }
+		
 	</style>
 </head>
 <body>
@@ -62,6 +66,9 @@
 <!-- 					</div> -->
 					<div class="section imports">
 						<jsp:include page="/labeller/imports" flush="false" />
+					</div>
+					<div class="section exports">
+						<jsp:include page="/labeller/exports" flush="false" />
 					</div>
 					<div class="section list">
 						<jsp:include page="/labeller/dataList" flush="false" />
@@ -130,7 +137,11 @@
 		init : function() {
 			var that = this;
 			
-			var html = "<div class='flex'><div class='new_btn filter_color'>New +</div><div class='import_btn filter_color'>Import</div></div>";
+			var html =  "<div class='new_btn filter_color'>New +</div>"
+						+ "	<div class='half_wrap'>"
+						+ "		<div class='import_btn filter_color'>Import</div>"
+						+ "		<div class='export_btn filter_color'>Export</div>"
+						+ " </div>";
 // 			var html = "<div class='flex'><div class='new_btn filter_color' style='width: inherit; margin-right: 0px;'>New +</div></div>";
 			$("#workspace .btn_wrap").empty();
 			$("#workspace .btn_wrap").append(html);
@@ -140,6 +151,9 @@
 			});
 			$("#workspace .btn_wrap .import_btn").off("click").on("click", function(){
 				that.event.imports();
+			});
+			$("#workspace .btn_wrap .export_btn").off("click").on("click", function(){
+				that.event.exports();
 			});
 			that.bind.evtAll();
 		},
@@ -154,6 +168,18 @@
 					that.pt.find(node).addClass("selected");
 					imports.init();
 				}				
+			},
+			
+			// military : 20230210
+			exports : function() { 
+				var that = labeller;
+				var data_modified = that.dataModifiedCheck(); 
+				if(data_modified){
+					that.pt.find("div.section").removeClass("selected");
+					var node = ".section.exports";
+					that.pt.find(node).addClass("selected");
+					exports.init();					
+				}
 			},
 			
 			upload : function(){

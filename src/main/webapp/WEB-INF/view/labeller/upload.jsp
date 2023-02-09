@@ -89,7 +89,7 @@
 					<div class="media_type_wrap filter_color">
 						<span class="radioBtn selected" data-value="image"></span>
 						<span class="radio_label">Image</span>
-						<!-- military 20221125 : 비디오타입 임시 삭 -->
+						<!-- military 20221125 : 비디오타입 임시 삭제 -->
 <!--  						<span class="radioBtn" data-value="video"></span> -->
 <!-- 						<span class="radio_label">Video</span> -->
 					</div>
