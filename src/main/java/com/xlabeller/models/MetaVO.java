@@ -26,6 +26,7 @@ public class MetaVO {
 	private String page_size;
 	private String total_size;
 	private List<MetaVO> meta_list;
+	private String data_ids;
 //	private String segmentation;
 	
 	
@@ -140,6 +141,14 @@ public class MetaVO {
 
 	public void setMeta_list(List<MetaVO> meta_list) {
 		this.meta_list = meta_list;
+	}
+
+	public String getData_ids() {
+		return data_ids;
+	}
+
+	public void setData_ids(String data_ids) {
+		this.data_ids = data_ids;
 	}
 }
 	
