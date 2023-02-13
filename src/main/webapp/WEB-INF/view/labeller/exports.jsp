@@ -4,9 +4,9 @@
 <head>
 	<style>
 		#exports { width :100%; height: 100%; background-color: #f5f5f5; }
-		#exports .border_box { padding: 0px 30px }
-		#exports .title_wrap { padding: 23px 0 14px 0; color: #5b666e; }
-		#exports .title_wrap div { font-size: 13px; font-weight: 400; color: #343434; }
+		#exports .border_box { display: flex; flex-direction: column; height: 100%; padding: 0px 30px;  }
+		#exports .title_wrap { height: 5%; padding: 23px 0 14px 0; color: #5b666e; }
+		#exports .title_wrap label { font-size: 13px; font-weight: 400; color: #343434; }
 		#exports .input_wrap { margin-bottom: 10px; }
 		#exports input[type='text'] { width: 100%; font-family: Open_Sans; font-size: 13px; font-weight: 300; color: #555555; border: 1px solid #dedcde; }
 		#exports input[type='text']:focus {border: 1px solid #4c84ff;}
@@ -40,62 +40,95 @@
 		#exports .file_wrap .checkBox:hover { background-image: url("images/btn_checkbox_hover.png"); }
 		#exports .file_wrap .checkBox.selected { background-image: url("images/btn_checkbox_selected.png"); }
 		
-		#exports .input_wrap .btn_wrap { display: flex; display: -webkit-flex; }
-		#exports .input_wrap .btn_wrap div { cursor: pointer; width: 68px; line-height: 28px; text-align: center; background-color: #f8f8f8; font-size: 12px; font-weight: 300; color: #343434; border: 1px solid #dedcde; }
-		#exports .input_wrap .btn_wrap.fl div { margin-right: 10px; }
-		#exports .input_wrap .btn_wrap.fr div { background-color: #4c84ff; color: #ffffff; }
-		#exports .input_wrap .btn_wrap.fr div:hover { background-color: #3A71E9; } 
+		#exports .btn_wrap { display: flex; display: -webkit-flex; justify-content: flex-end; }
+		#exports .btn_wrap button { cursor: pointer; width: 68px; line-height: 28px; text-align: center; background-color: #f8f8f8; font-size: 12px; font-weight: 300; color: #343434; border: 1px solid #dedcde; }
+		
+		#exports .btn_wrap button { background-color: #4c84ff; color: #ffffff; }
+		#exports .btn_wrap button:hover { background-color: #3A71E9; } 
 		
 		#exports .btn_wrap span { margin-right: 8px; line-height: 28px; display: inline-block; font-size: 16px; }
 		#exports .btn_wrap input[type='radio'] { display: none; }
 		#exports .btn_wrap input[type='radio']+label { line-height: 28px; padding-left:18px; margin-right: 18px; font-size: 16px; background: url('images/btn_radio_normal.png') left no-repeat; cursor: pointer; }
 		#exports .btn_wrap input[type='radio']:checked+label { background: url('images/btn_radio_selected.png') left no-repeat; }
 		
-		#exports .label_type_wrap { margin-left: 15px; font-weight: 300 !important; }
-		#exports .label_type_wrap .radioBtn { position: relative; top: 2px; }
-		#exports .label_type_wrap .radio_label { margin-right: 10px; }	
+		#exports .label_type_wrap { flex-grow: 1; margin-left: 15px; font-weight: 300 !important; }
+		#exports .label_type_wrap .wrap { display: flex; align-items: center; margin-bottom: 10px; }
+		/* #exports .label_type_wrap .radioBtn { position: relative; top: 2px; } */
+		#exports .label_type_wrap .radio_label { margin-left: 10px; }
+		
+		#exports .half_wrapper { display: flex; height: 85%; align-items: flex-start; }
+		
+		#exports .half_wrap { display: flex; width : 50%; height: 100%; flex-direction: column; }
+		#exports .half_wrap .title_wrap { height : unset; padding-top: 0px; }
+		#exports .half_wrap .table_body { height: 85%; max-height: 85%; overflow: auto; }
+		#exports .half_wrap.left { padding-right: 20px; }
+		#exports .half_wrap.right { padding-left: 20px; }
+		
 	</style>
 </head>
 <body>
 	<div class="container" id="exports">
 		<div class="border_box">
-			<form id="fileForm" enctype="multipart/form-data">
-				<div class="title_wrap flex">
-					<div>Export</div>
+			<div class="title_wrap">
+				<label>Export</label>
+			</div>
+			
+			<div class="half_wrapper">
+				<div class="half_wrap left">
+					<div class="title_wrap">
+						<label>Select Dataset</label>
+					</div>
+					<div class="table_header">
+						<table class="anno_table">
+							<colgroup>
+								<col style="width: 10%;"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th></th>
+									<th>Dataset Name</th>
+									<th>Description</th>
+									<th>Media Type</th>
+									<th>Label Type</th>
+									<th>Created Date</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					<div class="table_body">
+						<table class="anno_table">
+							<colgroup>
+								<col style="width: 10%;"/>
+							</colgroup>
+							<tbody>
+								<!-- 데이터셋 목록 출력 -->
+							</tbody>
+						</table>
+					</div>
 				</div>
-				<div class="table_header">
-					<table class="anno_table">
-						<colgroup>
-							<col style="width: 10%;"/>
-						</colgroup>
-						<thead>
-							<tr>
-								<th></th>
-								<th>Dataset Name</th>
-								<th>Description</th>
-								<th>Media type</th>
-								<th>Label Type</th>
-							</tr>
-						</thead>
-					</table>
+				<div class="half_wrap right">
+					<div class="title_wrap">
+						<label>Type : </label>
+					</div>
+					<div class="label_type_wrap">
+						<div class="wrap">
+							<input id="dataset-coco" class="radioBtn" name="dataset-type" type="radio"/>
+							<label for="dataset-coco" class="radio_label">coco</label>
+						</div>
+						<div class="wrap">
+							<input id="dataset-voc" class="radioBtn" name="dataset-type" type="radio"/>
+							<label for="dataset-voc" class="radio_label">voc</label>
+						</div>
+						<div class="wrap">
+							<input id="dataset-virtual" class="radioBtn" name="dataset-type" type="radio"/>
+							<label for="dataset-virtual" class="radio_label">virtual</label>
+						</div>
+					</div>
+					<div class="btn_wrap">
+						<button>Save</button>
+					</div>
 				</div>
-				<div class="table_body">
-					<table class="anno_table">
-						<colgroup>
-							<col style="width: 10%;"/>
-						</colgroup>
-						<thead>
-							<tr>
-								<td>
-									<input name="dataset" type="radio" value="">
-									<div class="checkBox"></div>
-								</td>
-								<td></td>
-							</tr>
-						</thead>
-					</table>
-				</div>
-			</form>
+			</div>
 		</div>
 	</div>
 </body>
@@ -107,13 +140,29 @@
 				var that = this;
 				that.reset();
 				
-				that.listener();
+				// that.listener();
 				
-				that.comoputed.getDatasetList();
+				that.computed.getDatasetList();
 			},
 			reset : function() {
 				
 			},
+			
+			listener : fuction() {
+				
+				var that = exports;
+				
+				// ### 1 목록 선택했을떄 이벤
+				that.pt.find()
+				
+				// ### 2. 타입 선택했을떄 이벤트
+				
+				
+				
+				
+				
+			},
+			
 			computed : {
 				
 				getDatasetList : function() {
@@ -126,19 +175,54 @@
 						type : "GET",
 						traditional : true,
 						success : function (res) {
-							console.log("## getDatasetList success : ", res)
+							console.log("## getDatasetList success : ", res);
+							if(res.result.code == "200") {
+								that.render.renderDatasetList(res.result.data);
+							}
 						},
 						error : function (err) {
 							console.log("## getDatasetList err : ", err)
 							
 						}
 						
-					})
+					});
 					
 				},
+	
 				
+			},
+			
+			render : {
 				
-				
+				renderDatasetList : function(data) {
+					
+					var that = exports;
+					var result = '';
+					
+					if(data.length > 0) {
+						
+						for ( var i = 0; i < data.length; i++ ) {
+							result += '<tr>'
+									+ '	<td><input name="" type="radio" value="' + data[i].dataset_id + '"/></td>'
+									+ '	<td>' + data[i].title + '</td>'
+									+ '	<td>' + data[i].contents + '</td>'
+									+ '	<td>' + data[i].media_type + '</td>'
+									+ '	<td>' + data[i].label_type + '</td>'
+									+ '	<td>' + data[i].created_date + '</td>'
+									+ '</tr>';
+						}
+						
+						
+					} else {
+						
+						retult += '<tr>'
+						        + '	<td colspan="5">조회된 결과가 없습니다.</td>'
+						        + '</tr>';
+						
+					}
+					
+					that.pt.find('.table_body table.anno_table tbody').append(result)
+				},
 			}
 			
 			
