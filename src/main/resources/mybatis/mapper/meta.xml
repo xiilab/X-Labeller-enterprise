@@ -18,6 +18,10 @@
 		<if test='user_id != null and !user_id.equals("")'>
 			AND m.USER_ID = #{user_id}
 		</if>
+		<if test='data_ids != null and !data_ids.equals("")'>
+			AND m.DATA_ID IN (${data_ids})
+		</if>
+
 	</select>	
 	
 	<select id="getMetaByMetaId" resultType="MetaVO">

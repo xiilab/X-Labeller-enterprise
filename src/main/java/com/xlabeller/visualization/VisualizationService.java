@@ -1,71 +1,256 @@
 package com.xlabeller.visualization;
 
-import com.jcraft.jsch.Session;
-import com.xlabeller.common.module.CmdExector;
+import com.xlabeller.common.exception.HandlerCustomException;
 import com.xlabeller.common.module.Output;
-import com.xlabeller.common.module.SessionUtil;
 import com.xlabeller.data.DataDao;
-import com.xlabeller.gpuNode.GpuNodeDao;
+import com.xlabeller.meta.MetaDao;
 import com.xlabeller.models.*;
-import com.xlabeller.sshSession.SessionCmdExecute;
-import com.xlabeller.sshSession.SessionSingletone;
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import org.apache.log4j.Logger;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class VisualizationService {
-	@Autowired
-	VisualizationDao visualizationDao;
+    private final VisualizationDao visualizationDao;
+    private final DataDao dataDao;
+    private final MetaDao metaDao;
 
-	/**
-	 * 해상도별 데이터 수량
-	 * */
-	public Object getDataQuantityPerResolution(VisualizationVO visualizationVO) {
-		if(visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
-			return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
-		}
+    /**
+     * 해상도별 데이터 수량
+     */
+    public Object getDataQuantityPerResolution(VisualizationVO visualizationVO) {
+        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+            return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
 
-		Object result = visualizationDao.getDataQuantityPerResolution(visualizationVO);
-		return Output.JsonOutput("200", result);
-	}
+        Object result = visualizationDao.getDataQuantityPerResolution(visualizationVO);
+        return Output.JsonOutput("200", result);
+    }
 
-	/**
-	 * 클래스별 데이터 수량
-	 * */
-	public Object getDataQuantityPerClass(VisualizationVO visualizationVO) {
-		if(visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
-			return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
-		}
+    /**
+     * 클래스별 데이터 수량
+     */
+    public Object getDataQuantityPerClass(VisualizationVO visualizationVO) {
+        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+            return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
 
-		Object result = visualizationDao.getDataQuantityPerClass(visualizationVO);
-		return Output.JsonOutput("200", result);
-	}
+        Object result = visualizationDao.getDataQuantityPerClass(visualizationVO);
+        return Output.JsonOutput("200", result);
+    }
 
-	/**
-	 * 해상도별 객체 수량
-	 * */
-	public Object getClassQuantityPerResolution(VisualizationVO visualizationVO) {
-		if(visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
-			return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
-		}
+    /**
+     * 해상도별 객체 수량
+     */
+    public Object getClassQuantityPerResolution(VisualizationVO visualizationVO) {
+        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+            return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
 
-		Object result = visualizationDao.getClassQuantityPerResolution(visualizationVO);
-		return Output.JsonOutput("200", result);
-	}
+        Object result = visualizationDao.getClassQuantityPerResolution(visualizationVO);
+        return Output.JsonOutput("200", result);
+    }
+
+    /**
+     * 오브젝트 크기별 분포
+     */
+    public Object getDistributionByObjectSize(VisualizationVO visualizationVO) {
+        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+            return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
+        String datasetId = visualizationVO.getDataset_id();
+        // 반환할 객체, JSON객체가 담긴 list로 반환 ex) {width : 0.1, height : 0.1}, {width : 0.5, height : 0.3}, ...
+        List<JSONObject> resultList = new ArrayList<>();
+
+        // 1. 모든 이미지 목록을 가져와 width, height를 10으로 나눈 값으로 map반환
+        Map<String, JSONObject> imageWhMap = getDividedTenImageWhMap(datasetId);
+
+        // 2. imageWhMap Key에 해당하는 모든 라벨 목록을 가져옴
+        // imageWhMap의 key인 data_id를 다음과 같은 형태로 반환함 => ex) 1,2,3,4,5
+        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap);
+
+        // 3. 가져온 라벨 목록의 imageID와 동일한 imageWhMap Key가 있으면 value를 가져와 라벨의 width, height를 value의 width, height로 나눠 계산된 값으로 MAP로 생성
+        // MAP = KEY : "IMAGE_ID", VALUE : 계산된 값 배열
+        JSONParser segmentationInfoParser = new JSONParser();
+        metaListInDataId.forEach(metaVO -> {
+                            String dataId = metaVO.getData_id();
+                            String labelType = metaVO.getLabel_type();
+                            String info = metaVO.getInfo();
+                            JSONObject imageWhValue = imageWhMap.get(dataId);
+                            JSONObject resultObj = new JSONObject();
+                            double imageWhMapWidth = (double) imageWhValue.get("width");
+                            double imageWhMapHeight = (double) imageWhValue.get("height");
+
+                            // 라벨타입에 따라 width, height를 가져오는 방식이 다름
+                            if (labelType.equals("IMAGE_BBOX")) {
+                                resultObj = getLabelWhSizeScore(info, imageWhMapWidth, imageWhMapHeight);
+                            } else if (labelType.equals("IMAGE_SEGMENTATION")) {
+                                JSONArray segInfoJsonArray = null;
+                                try {
+                                    segInfoJsonArray = (JSONArray) segmentationInfoParser.parse(info);
+                                } catch (org.json.simple.parser.ParseException e) {
+                                    throw new HandlerCustomException("500", "JSON을 파싱하던 중 에러가 발생했습니다.");
+                                }
+                                String box = (String)((JSONObject) segInfoJsonArray.get(0)).get("box");
+                                resultObj = getLabelWhSizeScore(box, imageWhMapWidth, imageWhMapHeight);
+
+                            }
+
+                            resultList.add(resultObj);
+                        }
+                );
+
+        // JSON List 2차원 배열로 변환
+        double[][] resultArray = listTo2dDoubleArray(resultList);
+        return Output.JsonOutput("200", resultArray);
+    }
+
+    private static double[][] listTo2dDoubleArray(List<JSONObject> resultList) {
+        double[][] resultArray = new double[resultList.size()][];
+
+        for(int i = 0; i < resultList.size(); i++) {
+            JSONObject resultObj = resultList.get(i);
+            resultArray[i] = new double[resultObj.size()];
+            for(int j = 0; j < resultObj.size(); j++) {
+                resultArray[i][j] = (j % 2 == 0)? (double) resultObj.get("width") : (double) resultObj.get("height");
+            }
+        }
+        return resultArray;
+    }
+
+    /**
+     * Object width별 분포
+     * */
+    public Object getLabelCountByWidth(VisualizationVO visualizationVO) {
+        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+            return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
+        String datasetId = visualizationVO.getDataset_id();
+        // 반환할 객체, JSON객체가 담긴 list로 반환 ex) {width : 0.1, height : 0.1}, {width : 0.5, height : 0.3}, ...
+        Map<Double, Integer> resultMap = new HashMap<>();
+
+        // 1. 모든 이미지 목록을 가져와 width, height를 10으로 나눈 값으로 map반환
+        Map<String, JSONObject> imageWhMap = getDividedTenImageWhMap(datasetId);
+
+        // 2. imageWhMap Key에 해당하는 모든 라벨 목록을 가져옴
+        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap);
+
+        // 3. 가져온 라벨 목록의 imageID와 동일한 imageWhMap Key가 있으면 value를 가져와 라벨의 width, height를 value의 width, height로 나눠 계산된 값으로 MAP로 생성
+        // MAP = KEY : "IMAGE_ID", VALUE : 계산된 값 배열
+        JSONParser segmentationInfoParser = new JSONParser();
+        metaListInDataId.forEach(metaVO -> {
+                            String dataId = metaVO.getData_id();
+                            String labelType = metaVO.getLabel_type();
+                            String info = metaVO.getInfo();
+                            JSONObject imageWhValue = imageWhMap.get(dataId);
+                            JSONObject resultObj = null;
+                            double imageWhMapWidth = (double) imageWhValue.get("width");
+                            double imageWhMapHeight = (double) imageWhValue.get("height");
+                            double labelWidthSizeScore = 0;
+                            int count = 0;
+
+                            // 라벨타입에 따라 label width, height를 가져오는 방식이 다름
+                            if (labelType.equals("IMAGE_BBOX")) {
+                                resultObj = getLabelWhSizeScore(info, imageWhMapWidth, imageWhMapHeight);
+                                // label width 사이즈의 score를 가져옴, score = 0.1 ~ 1
+                                labelWidthSizeScore = (double)resultObj.get("width");
+
+                                // 중복되는 키가 있으면, value가져와서 +1
+                                if(resultMap.containsKey(labelWidthSizeScore)) {
+                                    count  = resultMap.get(labelWidthSizeScore) + 1;
+                                } else { // 중복되는 키가 없으면, 1
+                                    count  = 1;
+                                }
+
+                            } else if (labelType.equals("IMAGE_SEGMENTATION")) {
+                                JSONArray segInfoJsonArray = null;
+                                try {
+                                    segInfoJsonArray = (JSONArray) segmentationInfoParser.parse(info);
+                                } catch (org.json.simple.parser.ParseException e) {
+                                    throw new HandlerCustomException("500", "JSON을 파싱하던 중 에러가 발생했습니다.");
+                                }
+
+                                String box = (String)((JSONObject) segInfoJsonArray.get(0)).get("box");
+                                resultObj = getLabelWhSizeScore(box, imageWhMapWidth, imageWhMapHeight);
+                                // label width 사이즈의 score를 가져옴, score = 0.1 ~ 1
+                                labelWidthSizeScore = (double)resultObj.get("width");
+
+                                // 중복되는 키가 있으면, value가져와서 +1
+                                if(resultMap.containsKey(labelWidthSizeScore)) {
+                                    count  = resultMap.get(labelWidthSizeScore) + 1;
+                                } else { // 중복되는 키가 없으면, 1
+                                    count  = 1;
+                                }
+                            }
+
+                            resultMap.put(labelWidthSizeScore, count);
+                        }
+                );
+
+        // key를 오름차순으로 정렬
+        Map<Double, Integer> sortedMap = new TreeMap<>(resultMap);
+        return Output.JsonOutput("200", sortedMap);
+    }
+
+    private List<MetaVO> getMetaListInDataId(Map<String, JSONObject> imageWhMap) {
+        // imageWhMap의 key인 data_id를 다음과 같은 형태로 반환함 => ex) 1,2,3,4,5
+        String dataIdList = imageWhMap.keySet().stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        MetaVO selectMetaVO = new MetaVO();
+        selectMetaVO.setData_ids(dataIdList);
+        List<MetaVO> metaListInDataId = metaDao.getMetaByDataId(selectMetaVO);
+        return metaListInDataId;
+    }
+
+    // Label의 width, height를 image width, height를 10으로 나눈 값으로 각각 나눠서 계산된 값을 반환
+    private JSONObject getLabelWhSizeScore(String info, double imageWhMapWidth, double imageWhMapHeight) {
+        // x1, y1, width, height로 넘어오는 값을 ','기준으로 자름
+        double[] objectSize = Arrays.stream(info.split(","))
+                .mapToDouble(str -> Double.parseDouble(str))
+                .toArray();
+        // score = (label width or height) / 원본 이미지의 (width or height)를 10으로 나눈 값
+        double objectWidthScore = objectSize[2] / imageWhMapWidth;
+        double objectHeightScore = objectSize[3] / imageWhMapHeight;
+        JSONObject scoreJson = new JSONObject();
+        // 소수점 둘째자리까지 표현 후 json에 넣음
+        scoreJson.put("width", Math.floor(objectWidthScore * 10) / 100);
+        scoreJson.put("height", Math.floor(objectHeightScore * 10) / 100);
+        return scoreJson;
+    }
+
+    private Map<String, JSONObject> getDividedTenImageWhMap(String datasetId) {
+        // 1. 모든 이미지 목록을 가져옴
+        DataVO selectDataVO = new DataVO();
+        selectDataVO.setDataset_id(datasetId);
+        List<DataVO> dataList = dataDao.getDataList(selectDataVO);
+
+        // 2. Key가 "IMAGE_ID"이고, Value는 모든 이미지의 width, height를 각각 10으로 나눈 값을 JSON형식으로 저장
+        // ex) 1920 X 1080 기준 => MAP("30" : {width : 192, height : 108})
+        DecimalFormat df = new DecimalFormat("#####.00");
+        Map<String, JSONObject> imageWhMap = new HashMap<>();
+        for (DataVO dataVO : dataList) {
+            double imageWidthDividedByTen = 0;
+            double imageHeightDividedByTen = 0;
+            try {
+                imageWidthDividedByTen = df.parse(dataVO.getWidth()).doubleValue() / 10;
+                imageHeightDividedByTen = df.parse(dataVO.getHeight()).doubleValue() / 10;
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            JSONObject imageDividedWHJson = new JSONObject();
+            imageDividedWHJson.put("width", imageWidthDividedByTen);
+            imageDividedWHJson.put("height", imageHeightDividedByTen);
+            imageWhMap.put(dataVO.getData_id(), imageDividedWHJson);
+        }
+        return imageWhMap;
+    }
 }
