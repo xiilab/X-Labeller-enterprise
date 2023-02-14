@@ -69,7 +69,7 @@ public class VisualizationController {
 	/**
 	 * 오브젝트 크기별 분포
 	 * @param visualizationVO : datasetId
-	 * @return Double 2D Array => [[0.35,0.22], [0.5,0.4], ...]
+	 * @return double 2D Array => [[0.35,0.22], [0.5,0.4], ...]
 	 * */
 	@GetMapping("/getDistributionByObjectSize")
 	public ModelAndView getDistributionByObjectSize(VisualizationVO visualizationVO) {
@@ -89,6 +89,20 @@ public class VisualizationController {
 	public ModelAndView getLabelCountByWidth(VisualizationVO visualizationVO) {
 		ModelAndView modelAndView = new ModelAndView();
 		Object result = visualizationService.getLabelCountByWidth(visualizationVO);
+		modelAndView.addObject("result",  result);
+		return modelAndView;
+	}
+
+	/**
+	 * height별 수량
+	 * @param visualizationVO : datasetId
+	 * @return Map<Double, Integer> => (Key : [score], value : [count])
+	 * ex) (0.25, 1), (0.27, 3), (0.55, 4), ...
+	 * */
+	@GetMapping("/getLabelCountByHeight")
+	public ModelAndView getLabelCountByHeight(VisualizationVO visualizationVO) {
+		ModelAndView modelAndView = new ModelAndView();
+		Object result = visualizationService.getLabelCountByHeight(visualizationVO);
 		modelAndView.addObject("result",  result);
 		return modelAndView;
 	}
