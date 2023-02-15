@@ -77,10 +77,29 @@
  				<div class="title_wrap flex">
 					<div>Label Type :</div>
 					<div class="label_type_wrap">
-						<span class="radioBtn selected" data-value="box"></span>
+ 						<input id="label-type-box" class="radioBtn" name="lable-type" type="radio" value="box" checked/>
+ 						<label for="label-type-box" class="radio_label">Bounding Box</label>
+ 						<input id="label-type-polygon" class="radioBtn" name="lable-type" type="radio" value="polygon"/>
+ 						<label for="label-type-polygon" class="radio_label">Segmentation</label>
+						<!-- <span class="radioBtn selected" data-value="box"></span>
 						<span class="radio_label">Bounding Box</span>
-<%--						<span class="radioBtn" data-value="polygon"></span>--%>
-<!-- 						<span class="radio_label">Segmentation</span> -->
+						<span class="radioBtn" data-value="polygon"></span>
+ 						<span class="radio_label">Segmentation</span> -->
+					</div>
+				</div>	
+								 
+ 				<div class="title_wrap flex">
+					<div>Dataset Type :</div>
+					<div class="label_type_wrap">
+						<input id="dataset-virtual" class="radioBtn" name="dataset-type" type="radio" value="virtual" checked/>
+						<label for="dataset-virtual" class="radio_label">virtual</label>
+					
+						<input id="dataset-coco" class="radioBtn" name="dataset-type" type="radio" value="coco"/>
+						<label for="dataset-coco" class="radio_label">coco</label>
+					
+					
+						<input id="dataset-voc" class="radioBtn" name="dataset-type" type="radio" value="voc" disabled/>
+						<label for="dataset-voc" class="radio_label">voc</label>
 					</div>
 				</div>					 
 					
@@ -190,13 +209,28 @@
 			
 			//저장하기
 			that.pt.find(".save").off("click").on("click", function(){
+				 
+				// 라벨 타입
 				let label_type;
+				let selected_label_type = that.pt.find(".label_type_wrap .radioBtn[name=lable-type]:checked").val();
+				
+				if( selected_label_type == "box" ) {
+					label_type = "#IMAGE_BBOX";
+				} else if ( selected_label_type == "polygon" ) {
+					label_type = "#IMAGE_SEGMENTATION";
+				}
+				
+				/* let label_type;
 				let selected_type = that.pt.find(".label_type_wrap .radioBtn.selected");
 				if(selected_type.data("value") == "box"){
 					label_type = "#IMAGE_BBOX";
 				} else if (selected_type.data("value") == "polygon"){
 					label_type = "#IMAGE_SEGMENTATION";
 				}
+				 */
+				
+				
+				// 제목 & 설명
 							
 				if(that.pt.find("input[name='title']").val()==""){
 					alert("제목을 입력해주세요");
@@ -227,7 +261,30 @@
 				formData.append("is_new",is_new);
 				formData.append("label_type", label_type);
 				
-				$("#loader").show();
+				// 데이터셋 타입
+				var dataset_type = that.pt.find(".label_type_wrap .radioBtn[name=dataset-type]:checked").val();
+				
+				switch(dataset_type) {
+				
+					case 'virtual' :
+						that.computed.importVirtualDataset(formData);
+						break;
+					case 'coco' :
+						that.computed.importCocoDataset(formData);
+						break;
+					case 'voc' :
+						// that.computed.importVocDataset(formData);
+						break;
+						
+					default:
+						break;
+				}
+				
+				
+				
+				
+				// that.computed.importVirtualDataset
+				/* $("#loader").show();
 				$.ajax({
 				   	url :  baseUrl + "data/importDataset.json",
 				   	data : formData,
@@ -261,7 +318,8 @@
 				   		$("#loader").hide();
 				   		 console.log("ERROR!!", err);
 				   	}
-				});
+				}); */
+				
 			});
 			
 			//체크박스 전부선택
@@ -309,7 +367,7 @@
 			});
 
 			// label type 선택 
-			let radio_btn = that.pt.find(".label_type_wrap .radioBtn")
+			/* let radio_btn = that.pt.find(".label_type_wrap .radioBtn")
 			radio_btn.off("click").on("click",function() {
 				let radio_obj = {};
 				let btn = $(this)
@@ -319,7 +377,7 @@
 					that.pt.find(".label_type_wrap .radioBtn").removeClass("selected");
 					btn.addClass("selected");
 				}
-			});
+			}); */
 		},
 		
 		//파일 형태 체크
@@ -422,6 +480,96 @@
 		    else if(bytes < 1048576) return(bytes / 1024).toFixed(3) + " KB";
 		    else if(bytes < 1073741824) return(bytes / 1048576).toFixed(3) + " MB";
 		    else return(bytes / 1073741824).toFixed(3) + " GB";
+		},
+		
+		computed : {
+			
+			importVirtualDataset : function(formData) {
+				
+				var that = imports;
+				console.log("### importVirtualDataset : ", formData); 
+				
+				$("#loader").show();
+				$.ajax({
+				   	url :  baseUrl + "data/importDataset.json",
+				   	data : formData,
+				   	type : "POST",
+				   	processData : false,
+				   	contentType: false,
+				   	success : function(res){
+				   		$("#loader").hide();
+				   		
+				   		console.log("### importVirtualDataset success: ", res);
+						alert(res.result.data);
+						
+						if(res.result.code == "200"){
+							//트리초기화
+							$(".ztree").empty();
+							labeller.getDatasetList();
+							
+							that.reset();
+							
+							labeller.pt.find("div.section").removeClass("selected");
+							var node = ".section.info";
+							labeller.pt.find(node).addClass("selected");							
+						} else if (res.result.code == "2001") {
+							alert(res.result.data);
+							location.href = baseUrl + 'login';
+						} else {
+							alert(res.result.data);
+						}							
+				   	},
+				   	error : function(err){
+				   		$("#loader").hide();
+				   		 console.log("ERROR!!", err);
+				   	}
+				});
+				
+			},
+			
+			importCocoDataset : function(formData) {
+				
+				var that = imports;
+				console.log("### importCocoDataset : ", formData);
+				
+				$("#loader").show();
+				$.ajax({
+				   	url :  baseUrl + "/imExport/import/coco",
+				   	data : formData,
+				   	type : "POST",
+				   	processData : false,
+				   	contentType: false,
+				   	success : function(res){
+				   		$("#loader").hide();
+				   		
+						console.log("### importCocoDataset success: ", res);
+						alert(res.result.data);
+						
+						if(res.result.code == "200"){
+							//트리초기화
+							$(".ztree").empty();
+							labeller.getDatasetList();
+							
+							that.reset();
+							
+							labeller.pt.find("div.section").removeClass("selected");
+							var node = ".section.info";
+							labeller.pt.find(node).addClass("selected");							
+						} else if (res.result.code == "2001") {
+							alert(res.result.data);
+							location.href = baseUrl + 'login';
+						} else {
+							alert(res.result.data);
+						}							
+				   	},
+				   	error : function(err){
+				   		$("#loader").hide();
+				   		 console.log("ERROR!!", err);
+				   	}
+				});
+				
+			},
+			 
 		},
 		
 	};
