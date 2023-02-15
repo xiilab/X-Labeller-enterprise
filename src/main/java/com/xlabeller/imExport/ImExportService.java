@@ -22,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -69,19 +71,17 @@ public class ImExportService {
 		byte[] jsonBytes = exportCocoJson.toJSONString().getBytes();
 		ZipUtil zipUtil = new ZipUtil();
 		zipUtil.putEntry("coco.json", jsonBytes);
-		for(String filePath : imagePathList) {
-			InputStream in = new FileInputStream(filePath);
-			zipUtil.putEntry(filePath.split("/")[filePath.split("/").length - 1], IOUtils.toByteArray(in));
+		for(String imagePath : imagePathList) {
+			InputStream in = new FileInputStream(imagePath);
+			zipUtil.putEntry(Paths.get(imagePath).getFileName().toString(), IOUtils.toByteArray(in));
 		}
 		zipUtil.close();
 
 		response.setContentType("application/zip");
 		response.setHeader("Content-Disposition", "attachment; fileName=" + saveZipFileName);
-		response.getOutputStream().write(zipUtil.getZipOutputStream());
-		response.getOutputStream().flush();
-		response.getOutputStream().close();
-
-		logger.info(exportCocoJson.toJSONString());
+		try (OutputStream out = response.getOutputStream()) {
+			out.write(zipUtil.getZipOutputStream());
+		}
 	}
 
 	public Object importCoco(ImExportVO imExportVO) throws HandlerCustomException, IOException {
@@ -95,57 +95,65 @@ public class ImExportService {
 		getExtensionValid(new String[]{"zip"}, importZipFile.getOriginalFilename());
 
 		// 2. zip파일 압축해제 후 List<File>에 File객체 추가
-		ZipInputStream zis = null; // 업로드한 zip파일 inputStream
-		ZipEntry entry = null; // 업로드한 zip파일에 압축된 항목 하나씩 가져와 저장하는 변수
-		List<File> imageFiles = new ArrayList<>(); // 압축된 이미지 목록 저장하는 List
-		File cocoJson = null; // 압축된 json파일 저장하는 객체
+//		ZipInputStream zis = null; // 업로드한 zip파일 inputStream
+//		ZipEntry entry = null; // 업로드한 zip파일에 압축된 항목 하나씩 가져와 저장하는 변수
+		Map<String, byte[]> imageMap = new HashMap<>(); // 압축된 이미지 목록 저장하는 Map
 		boolean cocoJsonIsExists = false; // 압축파일에 json존재하는지 체크
+		String jsonContent = null;	// json 파일에 있는 내용 문자열로 변환하여 저장
 
-		try {
-			zis = new ZipInputStream(importZipFile.getInputStream());
+		try (ZipInputStream zis = new ZipInputStream(importZipFile.getInputStream())) {
+			ZipEntry entry;
 			while ((entry = zis.getNextEntry()) != null) {
-				// 압축된 파일 포맷 검사
-				String entryExtension = getExtensionValid(new String[]{"png", "jpg", "jpeg", "json"}, entry.getName());
+				if (entry.isDirectory()) {
+					continue;
+				}
+
+				// check if the entry is a valid image file
+				String[] validExtensions = {"png", "jpg", "jpeg", "json"};
+				String extension = getExtensionValid(validExtensions, entry.getName());
 
 				// json파일 있는지 검사
-				if(entryExtension.equals("json")) {
-					cocoJson = new File(entry.getName());
+				if(extension.equals("json")) {
+					jsonContent = IOUtils.toString(zis, StandardCharsets.UTF_8);
 					// json파일 있으면 boolean값 변경
 					cocoJsonIsExists = true;
 					// json 파일은 이미지 목록 리스트에 추가 X
 					continue;
 				}
 
-				// 위에 검증 로직 통과하면 image로 판단하여 list에 추가
-				File file = new File(entry.getName());
-				imageFiles.add(file);
+				// ZipEntry의 내용을 byte 배열로 가져옴
+				byte[] bytes = IOUtils.toByteArray(zis);
+
+//				// 위에 검증 로직 통과하면 image로 판단하여 map에 추가
+//				// imageMap = (key : fileName, value : image byte[])
+				imageMap.put(entry.getName(), bytes);
 			}
 		} catch (IOException e) {
-			throw new HandlerCustomException("4051", "import하려는 zip파일이 손상되어 압축 해제할 수 없습니다.\n다른 파일을 업로드해주세요.");
+			throw new HandlerCustomException("4051", "Failed to read the zip file");
 		}
 
 		// zip에 json파일 없으면 에러처리
 		if(!cocoJsonIsExists) {
 			throw new HandlerCustomException("4051", "zip파일에 json파일이 존재하지 않습니다.\nzip파일을 확인해주세요.");
 		}
+
 		// zip에 image 없으면 에러처리
-		if(imageFiles.size() <= 0) {
+		if(imageMap.size() <= 0) {
 			throw new HandlerCustomException("4051", "zip파일에 이미지파일이 존재하지 않습니다.\nzip파일을 확인해주세요.");
 		}
 
-		// 3. coco.json파일 읽어서 필요한 항목 추출
-		String content = FileUtils.readFileToString(cocoJson, "UTF-8");
+		// 3. json문자열 JSON형식으로 변환
 		// 읽어온 텍스트 json형식으로 변환
 		JSONParser cocoJsonParser = new JSONParser();
 		JSONObject cocoJsonObj = null;
 		try {
 			// coco.json읽어서 JSON형태로 변환
-			cocoJsonObj = (JSONObject)cocoJsonParser.parse(content);
+			cocoJsonObj = (JSONObject)cocoJsonParser.parse(jsonContent);
 		} catch (ParseException e) {
 			throw new HandlerCustomException("4051", "zip파일에 포함된 json파일이 손상되어 JSON형식으로 변환할 수 없습니다.\n파일을 다시 확인해주세요.");
 		}
 
-		// Coco모듈 형식에서 필요한 항목 추출
+		// 모듈에서 coco.json에서 필요한 항목 추출
 		CocoImportUtil cocoImportUtil = new CocoImportUtil(cocoJsonObj);
 		cocoImportUtil.readCocoJson(labelType);	// labelType별로 json파일에서 필요한 항목 읽어서 값 세팅
 		Map<String, JSONArray> cocoAnnotationImagesMap = cocoImportUtil.getAnnotationImagesMap();	// annotation-images 추출
@@ -154,13 +162,13 @@ public class ImExportService {
 		// file객체 MultipartFile로 변환
 		// why? Dataservice.insertDataset을 재활용하기 위함
 		List<MultipartFile> multipartFileList = new ArrayList<>();
-		for (File file : imageFiles) {
-			// 어노테이션 없는 이미지 파일이면 저장할 파일 목록에서 제외
-			if(cocoAnnotationImagesMap.containsKey(file.getName())) {
-				MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getPath(), "UTF-8", new FileInputStream(file));
+		imageMap.entrySet().forEach((map) -> {
+			if(cocoAnnotationImagesMap.containsKey(map.getKey())) {
+				MultipartFile multipartFile = new MockMultipartFile(map.getKey(), map.getKey(), "UTF-8", map.getValue());
 				multipartFileList.add(multipartFile);
 			}
-		}
+		});
+
 		MultipartFile[] imageFilesArray = multipartFileList.toArray(new MultipartFile[multipartFileList.size()]);
 
 		// Dataset 및 Data 등록
@@ -176,7 +184,7 @@ public class ImExportService {
 			throw new HandlerCustomException("500", "COCO Import 데이터셋 등록에 실패했습니다.");
 		}
 
-		// 5. annotation 등록, META테이블에 annotation 저장
+		// 5. label 등록, META테이블에 label 저장
 		// 등록한 데이터셋의 모든 이미지 목록 가져옴
 		DataVO selectDataVO = new DataVO();
 		selectDataVO.setDataset_id(insertDatasetVO.getDataset_id());

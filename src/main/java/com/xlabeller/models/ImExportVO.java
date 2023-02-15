@@ -1,5 +1,6 @@
 package com.xlabeller.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,7 @@ public class ImExportVO {
     String info;
     String path;
     String label_type;
+    @JsonIgnore
     MultipartFile import_zip_file;
     String title;
     String contents;
