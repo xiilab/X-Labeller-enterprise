@@ -129,12 +129,12 @@
                     </div>
                 </section>
                 <!-- 경계범위(bounding box)중심분포 -->
-                <!-- <section id="">
+                <section id="">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
-                </section> -->
+                </section>
                 <!-- width 별 분포-->
                 <section id="dataCountByWidth">
                     <div class="chart_wrap">
@@ -244,7 +244,9 @@
             that.computed.getDataCountByResolution();
             that.computed.getDataCountByClass();
             that.computed.getObjectCountByResolution();
+            that.computed.getBoundaryRangeCentroidDistribution();
             that.computed.getObjectDistributionBySize();
+            
 
             that.computed.getDataCountByWidth();
 
@@ -572,7 +574,7 @@
                     that.vis.procObjectDistributionBySize(result);
 
                 } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
-                    that.vis.update('objectDistributionBySize')
+                    that.vis.update('objectDistributionBySize', null, result)
 
                 }
 
@@ -584,7 +586,40 @@
                 }
             },
 
-            /* === 5. --- */
+            /* === 5. 경계범위 중심분포 */
+           	getBoundaryRangeCentroidDistribution : function() {
+           		
+           		var that = visualizationDetail;
+                var ajaxData = {
+                    dataset_id: that.data.datasetId,
+                };
+                
+                $.ajax({
+                    url: baseUrl + "visualization/getBoundaryRangeCentroidDistribution.json",
+                    data: ajaxData,
+                    type: "GET",
+                    traditional: true,
+                    // 					beforeSend: function() {},
+                    // 					complete: function () {},
+                    success: function (res) {
+                        if (res.result.code == "200") {
+                            /* sample data */
+                            // var result = [];
+                            // result = that.data.testData;
+                            result = res.result.data;
+                             console.log("getBoundaryRangeCentroidDistribution result::", result);
+                            
+
+                        } else {
+                            alert(res.result.data);
+                        }
+                    },
+                    error: function (err) {
+                        console.log()
+                    },
+                })
+           	},
+            
 
             /* === 6. width별 분포 (누적 그래프) */
             /*
@@ -613,8 +648,8 @@
                             let result = [];
                             let i = 0;
                             $.each(data, function(index, value) {
-                                console.log("index::", index);
-                                console.log("value::", value);
+                                // console.log("index::", index);
+                                // console.log("value::", value);
                                 result[i] = {
                                     type: index,
                                     count: value
@@ -667,7 +702,7 @@
 
                 } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
 
-                    that.vis.update('dataCountByWidth')
+                    that.vis.update('dataCountByWidth', type, count)
 
                 }
 
@@ -1119,8 +1154,8 @@
 
                 var chart = chartInfo[chartName];
                 var option = chart.getOption();
-
-                option.xAxis[0].data = xAsisData;
+				
+                if(xAsisData != null) option.xAxis[0].data = xAsisData;
                 option.series[0].data = seriesData;
 
                 chart.setOption(option);
