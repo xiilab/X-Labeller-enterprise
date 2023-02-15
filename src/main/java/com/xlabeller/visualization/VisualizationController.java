@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -103,6 +104,47 @@ public class VisualizationController {
 	public ModelAndView getLabelCountByHeight(VisualizationVO visualizationVO) {
 		ModelAndView modelAndView = new ModelAndView();
 		Object result = visualizationService.getLabelCountByHeight(visualizationVO);
+		modelAndView.addObject("result",  result);
+		return modelAndView;
+	}
+
+	/**
+	 * 경계범위 중심분포
+	 * @param visualizationVO : datasetId
+	 * @return double 2D Array => [[0.35,0.22], [0.5,0.4], ...]
+	 * */
+	@GetMapping("/getBoundaryRangeCentroidDistribution")
+	public ModelAndView getBoundaryRangeCentroidDistribution(VisualizationVO visualizationVO) {
+		ModelAndView modelAndView = new ModelAndView();
+		Object result = visualizationService.getBoundaryRangeCentroidDistribution(visualizationVO);
+		modelAndView.addObject("result",  result);
+		return modelAndView;
+	}
+
+	/**
+	 * centerX별 분포
+	 * @param visualizationVO : datasetId
+	 * @return Map<Double, Integer> => (Key : [score], value : [count])
+	 * ex) (0.25, 1), (0.27, 3), (0.55, 4), ...
+	 * */
+	@GetMapping("/getLabelCountByCenterX")
+	public ModelAndView getLabelCountByCenterX(VisualizationVO visualizationVO) {
+		ModelAndView modelAndView = new ModelAndView();
+		Object result = visualizationService.getLabelCountByCenterX(visualizationVO);
+		modelAndView.addObject("result",  result);
+		return modelAndView;
+	}
+
+	/**
+	 * centerY별 분포
+	 * @param visualizationVO : datasetId
+	 * @return Map<Double, Integer> => (Key : [score], value : [count])
+	 * ex) (0.25, 1), (0.27, 3), (0.55, 4), ...
+	 * */
+	@GetMapping("/getLabelCountByCenterY")
+	public ModelAndView getLabelCountByCenterY(VisualizationVO visualizationVO) {
+		ModelAndView modelAndView = new ModelAndView();
+		Object result = visualizationService.getLabelCountByCenterY(visualizationVO);
 		modelAndView.addObject("result",  result);
 		return modelAndView;
 	}

@@ -215,9 +215,9 @@
 				let selected_label_type = that.pt.find(".label_type_wrap .radioBtn[name=lable-type]:checked").val();
 				
 				if( selected_label_type == "box" ) {
-					label_type = "#IMAGE_BBOX";
+					label_type = "IMAGE_BBOX";
 				} else if ( selected_label_type == "polygon" ) {
-					label_type = "#IMAGE_SEGMENTATION";
+					label_type = "IMAGE_SEGMENTATION";
 				}
 				
 				/* let label_type;
@@ -246,7 +246,7 @@
 				var formData = new FormData();
 
 				for(var i = 0 ; i < that.fileList.length ; i++){
-					formData.append("files",that.fileList[i]);	
+					formData.append("import_zip_file",that.fileList[i]);
 				}
 				var is_new = true;
 // 				if(that.pt.find("input[name='is_new']:checked").val() == 0){

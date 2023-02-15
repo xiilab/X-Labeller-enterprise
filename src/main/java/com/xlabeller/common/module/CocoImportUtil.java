@@ -95,7 +95,7 @@ public class CocoImportUtil {
 
                 annotationObj.put("info", bbox.toJSONString().replaceAll("[\\[\\]]", ""));
                 /**
-                 * 저장형식
+                 * annotationObj 저장형식
                  * {
                  *      "label":"2355",
                  *      "info":"192.44679592026708,113.94716959707391,169.48221378150123,139.07111479523752"
@@ -128,7 +128,7 @@ public class CocoImportUtil {
                 infoObj.put("segmentation", pointSegmentation);
                 annotationObj.put("info", infoObj);
                 /**
-                 * 저장 형식
+                 * annotationObj 저장 형식
                  * {
                  * 	"label":"1234",
                  * 	"info":
@@ -145,7 +145,7 @@ public class CocoImportUtil {
             }
 
             annotationObj.put("label", labelName);
-            logger.info(annotationObj.toJSONString());
+//            logger.info(annotationObj.toJSONString());
 
             // resultMap에 annotationObj 넣음
             String fileName = this.imagesMap.get(imageId);
