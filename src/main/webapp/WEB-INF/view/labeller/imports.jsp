@@ -75,20 +75,6 @@
 				</div>
 				
  				<div class="title_wrap flex">
-					<div>Label Type :</div>
-					<div class="label_type_wrap">
- 						<input id="label-type-box" class="radioBtn" name="lable-type" type="radio" value="box" checked/>
- 						<label for="label-type-box" class="radio_label">Bounding Box</label>
- 						<input id="label-type-polygon" class="radioBtn" name="lable-type" type="radio" value="polygon"/>
- 						<label for="label-type-polygon" class="radio_label">Segmentation</label>
-						<!-- <span class="radioBtn selected" data-value="box"></span>
-						<span class="radio_label">Bounding Box</span>
-						<span class="radioBtn" data-value="polygon"></span>
- 						<span class="radio_label">Segmentation</span> -->
-					</div>
-				</div>	
-								 
- 				<div class="title_wrap flex">
 					<div>Dataset Type :</div>
 					<div class="label_type_wrap">
 						<input id="dataset-virtual" class="radioBtn" name="dataset-type" type="radio" value="virtual" checked/>
@@ -101,7 +87,22 @@
 						<input id="dataset-voc" class="radioBtn" name="dataset-type" type="radio" value="voc" disabled/>
 						<label for="dataset-voc" class="radio_label">voc</label>
 					</div>
-				</div>					 
+				</div>		
+							 
+ 				<div class="title_wrap flex">
+					<div>Label Type :</div>
+					<div class="label_type_wrap">
+ 						<input id="label-type-box" class="radioBtn" name="lable-type" type="radio" value="box" checked/>
+ 						<label for="label-type-box" class="radio_label">Bounding Box</label>
+ 						<input id="label-type-polygon" class="radioBtn hide" name="lable-type" type="radio" value="polygon"/>
+ 						<label for="label-type-polygon" class="radio_label hide">Segmentation</label>
+						<!-- <span class="radioBtn selected" data-value="box"></span>
+						<span class="radio_label">Bounding Box</span>
+						<span class="radioBtn" data-value="polygon"></span>
+ 						<span class="radio_label">Segmentation</span> -->
+					</div>
+				</div>	
+								 
 					
 				<div class="title_wrap flex">
 					<div>Add File</div>
@@ -204,6 +205,23 @@
 				if(e.keyCode == 13){
 					e.preventDefault();
 					that.pt.find("textarea[name='contents']").focus();
+				}
+			});
+			
+			// virtual 선택시, seg 선택 불가,
+			that.pt.find("input[name='dataset-type']").off("change").on("change", function(e){
+				
+				console.log(" ### RADIO  ", e.target.value)
+				
+				var value = e.target.value;
+				
+				if(value == 'virtual') {
+					that.pt.find("input#label-type-polygon").addClass("hide");
+					that.pt.find("label[for=label-type-polygon]").addClass("hide");
+					that.pt.find("input#label-type-box").trigger("click");
+				} else {
+					that.pt.find("input#label-type-polygon").removeClass("hide");
+					that.pt.find("label[for=label-type-polygon]").removeClass("hide");
 				}
 			});
 			

@@ -182,7 +182,7 @@
 			addNode : function(pNode, config) {
 				var that = this;
 				
-				console.log("### addNode : ", this)
+				// console.log("### addNode : ", this)
 				//console.log("config::", config);
 				that.dir.addNodes(pNode, config);
 
@@ -236,7 +236,7 @@
 				var node = that.dir.getSelectedNodes()[0];
 				that.dir.removeChildNodes(node);
 				
-				console.log("### expandNode ::", node);
+				// console.log("### expandNode ::", node);
 
 				if (!node) {
 					//선택된 노드가 없을때 => 처음 실행했을때

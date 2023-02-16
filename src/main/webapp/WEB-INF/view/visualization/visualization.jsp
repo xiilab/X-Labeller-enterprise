@@ -217,7 +217,7 @@
                 let detail_id = wsObj[setting.key].dir.getSelectedNodes()[0].id;
                 let title = wsObj[setting.key].dir.getSelectedNodes()[0].title;
                 
-                console.log("title / datasetId : ", title, detail_id);
+                // console.log("title / datasetId : ", title, detail_id);
 
                 that.event.hideView();
                 that.event.addView($(".detail"));
@@ -260,8 +260,8 @@
                     data: ajaxData,
                     success: function (res) {
 
-                        console.log("=====getDataList=====", res)
-                        console.log("==========res=========");
+                        // console.log("=====getDataList=====", res)
+                        // console.log("==========res=========");
                         if (res.result.code == "200") {
                             if (res.datasetVO != undefined) {
                                 that.render.setDataSetJson(res);

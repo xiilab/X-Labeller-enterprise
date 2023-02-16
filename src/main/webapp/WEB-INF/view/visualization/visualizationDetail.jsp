@@ -4,6 +4,7 @@
 
 
 <head>
+	<script src="<c:url value="/js/graphInfo.js"/>"></script>
     <style>
         #visualizationDetail {
             height: 100%;
@@ -85,6 +86,20 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+        #visualizationDetail section .chart_wrap .loading {
+            position: absolute;
+		    width: 100%;
+		    height: 100%;
+		    top: 50%;
+		    left: 50%;
+		    transform: translate(-50%, -50%);
+		    background-image: url('./images/loader.gif');
+		    background-repeat: no-repeat;
+		    background-position: center;
+		    background-size: 50px 50px;
+		    background-color : #4c84ff4a;
+        }
+        
     </style>
 </head>
 <body>
@@ -99,21 +114,21 @@
             </div>
             <div class="body">
                 <!-- 해상도별 데이터 수량  -->
-                <section id="dataCountByResolution">
+                <section id="dataQuantityPerResolution">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
                 </section>
                 <!-- 클래스별 데이터 수량 TOP 10 -->
-                <section id="dataCountByClass">
+                <section id="dataQuantityPerClass">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
                 </section>
                 <!-- 해상도별 객체 수량 -->
-                <section id="objectCountByResolution">
+                <section id="classQuantityPerResolution">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
@@ -122,21 +137,21 @@
                 <!-- ========================================================= -->
 
                 <!-- Object 크기별 분포 -->
-                <section id="objectDistributionBySize">
+                <section id="distributionByObjectSize">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
                 </section>
                 <!-- 경계범위(bounding box)중심분포 -->
-                <section id="">
+                <section id="boundaryRangeCentroidDistribution">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
                 </section>
                 <!-- width 별 분포-->
-                <section id="dataCountByWidth">
+                <section id="labelCountByWidth">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
@@ -145,14 +160,26 @@
                 <!-- ========================================================= -->
 
                 <!-- heigh별 분포 -->
-                <!-- <section id="">
+                <section id="labelCountByHeight">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
-                </section> -->
+                </section>
                 <!-- center y별 분포 -->
+                <section id="labelCountByCenterY">
+                    <div class="chart_wrap">
+                        <div class="chart"></div>
+                        <div class='no_result'>조회된 결과가 없습니다.</div>
+                    </div>
+                </section>
                 <!-- center x별 분포 -->
+                <section id="labelCountByCenterX">
+                    <div class="chart_wrap">
+                        <div class="chart"></div>
+                        <div class='no_result'>조회된 결과가 없습니다.</div>
+                    </div>
+                </section>
 
             </div>
         </div>
@@ -241,15 +268,15 @@
             that.pt.find("#datasetName").text(datasetName);
 
             // 차트 데이터 호출
-            that.computed.getDataCountByResolution();
-            that.computed.getDataCountByClass();
-            that.computed.getObjectCountByResolution();
+            that.computed.getDataQuantityPerResolution();
+            that.computed.getDataQuantityPerClass();
+            that.computed.getClassQuantityPerResolution();
             that.computed.getBoundaryRangeCentroidDistribution();
-            that.computed.getObjectDistributionBySize();
-            
-
-            that.computed.getDataCountByWidth();
-
+            that.computed.getDistributionByObjectSize();
+            that.computed.getLabelCountByWidth();
+           	that.computed.getLabelCountByHeight();
+			that.computed.getLabelCountByCenterY();
+			that.computed.getLabelCountByCenterX();
 
             that.bind.listener();
 
@@ -281,7 +308,7 @@
                 - x축 : hd이하,hd,fhd,QHD,4k이상
                 - y축 : count
             */
-            getDataCountByResolution: function () {
+            getDataQuantityPerResolution: function () {
 
                 var that = visualizationDetail;
                 var ajaxData = {
@@ -293,9 +320,14 @@
                     data: ajaxData,
                     type: "GET",
                     traditional: true,
-// 					beforeSend: function() {},
-// 					complete: function () {},
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("dataQuantityPerResolution");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("dataQuantityPerResolution")
+                    },
                     success: function (res) {
+                    	console.log("### 1. getDataQuantityPerResolution : ", res.result.data);
                         if (res.result.code == "200") {
                             const data = res.result.data;
                             /* sample data */
@@ -310,8 +342,8 @@
                                 {type: '4K이상', count: Math.floor(data.fk_data_cnt)}
                             ]
 
-                            // that.computed.initDataCountByResolution(result);
-                            that.computed.initDataCountByResolution(result)
+                            // that.computed.initDataQuantityPerResolution(result);
+                            that.computed.initDataQuantityPerResolution(result)
                         } else {
                             alert(res.result.data);
                         }
@@ -323,7 +355,7 @@
 
             },
 
-            initDataCountByResolution: function (result) {
+            initDataQuantityPerResolution: function (result) {
 
                 var that = visualizationDetail;
                 var chartInfo = that.vis.chartInfo;
@@ -337,21 +369,21 @@
                     dataCount[i] = resultData['count'];
                 }
 
-                if (chartInfo['dataCountByResolution'] == undefined) {
+                if (chartInfo['dataQuantityPerResolution'] == undefined) {
 
-                    that.vis.procDataCountByResolution(resolutionType, dataCount);
-
+                    that.vis.drawChart(procDataCountByResolution(resolutionType, dataCount)); // graphInfo.js
+                    
                 } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
 
-                    that.vis.update('dataCountByResolution', resolutionType, dataCount)
+                    that.vis.update('dataQuantityPerResolution', resolutionType, dataCount)
 
                 }
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#dataCountByClass .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#dataQuantityPerResolution .chart_wrap .no_result").css("visibility", "hide");
                 } else {
-                    that.pt.find("section#dataCountByClass .chart_wrap .no_result").css("visibility", "visible");
+                    that.pt.find("section#dataQuantityPerResolution .chart_wrap .no_result").css("visibility", "visible");
                 }
 
             },
@@ -360,7 +392,7 @@
             /*
                 - 클래스별 수량 top 10만 표출
             */
-            getDataCountByClass: function () {
+            getDataQuantityPerClass: function () {
 
                 var that = visualizationDetail;
                 var ajaxData = {
@@ -372,11 +404,15 @@
                     data: ajaxData,
                     type: "GET",
                     traditional: true,
-// 					beforeSend: function() {},
-// 					complete: function () {},
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("dataQuantityPerClass");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("dataQuantityPerClass")
+                    },
                     success: function (res) {
+                    	console.log("### 2. getDataQuantityPerClass : ", res.result.data)
                         if (res.result.code == "200") {
-                            console.log("getDataCountByClass::", res.result.data);
                             const data = res.result.data;
                             const result = data.map((data) => {
                                 return {type: data.label, count: Math.floor(data.class_cnt)}
@@ -388,7 +424,7 @@
                             // 	return { type: item, count: Math.floor(Math.random() * 1000) }
                             // });
 
-                            that.computed.initDataCountByClass(result);
+                            that.computed.initDataQuantityPerClass(result);
 
 // 							that.computed.initDataCountByResolution(res.result.data)
 
@@ -403,7 +439,7 @@
 
             },
 
-            initDataCountByClass: function (result) {
+            initDataQuantityPerClass: function (result) {
 
                 var that = visualizationDetail;
                 var chartInfo = that.vis.chartInfo;
@@ -419,21 +455,22 @@
 
 
                 // 차트가 생성되어있지 않을때 - 차트 생성
-                if (chartInfo['dataCountByClass'] == undefined) {
+                if (chartInfo['dataQuantityPerClass'] == undefined) {
 
-                    that.vis.procDataCountByClass(classType, dataCount);
+                    // that.vis.procDataCountByClass(classType, dataCount);
+                    that.vis.drawChart(procDataCountByClass(classType, dataCount)); // graphInfo.js
 
                 } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
 
-                    that.vis.update('dataCountByClass', classType, dataCount)
+                    that.vis.update('dataQuantityPerClass', classType, dataCount)
 
                 }
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#dataCountByClass .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#dataQuantityPerClass .chart_wrap .no_result").css("visibility", "hide");
                 } else {
-                    that.pt.find("section#dataCountByClass .chart_wrap .no_result").css("visibility", "visible");
+                    that.pt.find("section#dataQuantityPerClass .chart_wrap .no_result").css("visibility", "visible");
                 }
 
             },
@@ -445,7 +482,7 @@
                 - x 축 범주 : 4k기준을 최대치로 설정, hd이하,hd,fhd,QHD,4k이상
              */
 
-            getObjectCountByResolution: function () {
+            getClassQuantityPerResolution: function () {
 
                 var that = visualizationDetail;
                 var ajaxData = {
@@ -457,9 +494,14 @@
                     data: ajaxData,
                     type: "GET",
                     traditional: true,
-                    // 					beforeSend: function() {},
-                    // 					complete: function () {},
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("classQuantityPerResolution");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("classQuantityPerResolution")
+                    },
                     success: function (res) {
+                    	console.log("### 3. getClassQuantityPerResolution : ", res.result)
                         if (res.result.code == "200") {
                             const data = res.result.data;
                             /* sample data */
@@ -475,8 +517,8 @@
                                 , {type: '4K이상', count: Math.floor(data.fk_meta_cnt)}
                             ]
 
-                            that.computed.initObjectCountByResolution(result);
-//	 							that.computed.initObjectCountByResolution(res.result.data)
+                            that.computed.initClassQuantityPerResolution(result);
+//	 							that.computed.initClassQuantityPerResolution(res.result.data)
                         } else {
                             alert(res.result.data);
                         }
@@ -487,7 +529,7 @@
                 })
             },
 
-            initObjectCountByResolution: function (result) {
+            initClassQuantityPerResolution: function (result) {
 
                 var that = visualizationDetail;
                 var chartInfo = that.vis.chartInfo;
@@ -502,21 +544,22 @@
                 }
 
                 // 차트가 생성되어있지 않을때 - 차트 생성
-                if (chartInfo['objectCountByResolution'] == undefined) {
+                if (chartInfo['classQuantityPerResolution'] == undefined) {
 
-                    that.vis.procObjectCountByResolution(resolutionType, objectCount);
+                    // that.vis.procObjectCountByResolution(resolutionType, objectCount);
+                    that.vis.drawChart(procObjectCountByResolution(resolutionType, objectCount)); // graphInfo.js
 
                 } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
 
-                    that.vis.update('objectCountByResolution', resolutionType, objectCount)
+                    that.vis.update('classQuantityPerResolution', resolutionType, objectCount)
 
                 }
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#dataCountByClass .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#classQuantityPerResolution .chart_wrap .no_result").css("visibility", "hide");
                 } else {
-                    that.pt.find("section#dataCountByClass .chart_wrap .no_result").css("visibility", "visible");
+                    that.pt.find("section#classQuantityPerResolution .chart_wrap .no_result").css("visibility", "visible");
                 }
 
 
@@ -528,7 +571,7 @@
                 - x축 : width
                 - y축 : height
             */
-            getObjectDistributionBySize: function () {
+            getDistributionByObjectSize: function () {
 
                 var that = visualizationDetail;
                 var ajaxData = {
@@ -540,15 +583,17 @@
                     data: ajaxData,
                     type: "GET",
                     traditional: true,
-                    // 					beforeSend: function() {},
-                    // 					complete: function () {},
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("distributionByObjectSize");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("distributionByObjectSize")
+                    },
                     success: function (res) {
+                    	console.log("### 4. getDistributionByObjectSize : ", res.result.data)
                         if (res.result.code == "200") {
-                            /* sample data */
-                            // var result = [];
-                            // result = that.data.testData;
+                        	
                             result = res.result.data;
-                            // console.log("getObjectDistributionBySize result::", result);
                             that.computed.initObjectDistributionBySize(result);
 
                         } else {
@@ -570,19 +615,21 @@
                 var chartInfo = that.vis.chartInfo;
 
                 // 차트가 생성되어있지 않을때 - 차트 생성
-                if (chartInfo['objectDistributionBySize'] == undefined) {
-                    that.vis.procObjectDistributionBySize(result);
+                if (chartInfo['distributionByObjectSize'] == undefined) {
+                	
+                    // that.vis.procObjectDistributionBySize(result);
+                    that.vis.drawScatterChart(procObjectDistributionBySize(result)); // graphInfo.js
 
                 } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
-                    that.vis.update('objectDistributionBySize', null, result)
+                    that.vis.update('distributionByObjectSize', null, result)
 
                 }
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#dataCountByClass .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#distributionByObjectSize .chart_wrap .no_result").css("visibility", "hide");
                 } else {
-                    that.pt.find("section#dataCountByClass .chart_wrap .no_result").css("visibility", "visible");
+                    that.pt.find("section#distributionByObjectSize .chart_wrap .no_result").css("visibility", "visible");
                 }
             },
 
@@ -599,15 +646,19 @@
                     data: ajaxData,
                     type: "GET",
                     traditional: true,
-                    // 					beforeSend: function() {},
-                    // 					complete: function () {},
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("boundaryRangeCentroidDistribution");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("boundaryRangeCentroidDistribution")
+                    },
                     success: function (res) {
+                    	
+                    	console.log("### 5. getBoundaryRangeCentroidDistribution : ", res.result.data)
                         if (res.result.code == "200") {
-                            /* sample data */
-                            // var result = [];
-                            // result = that.data.testData;
+                        	
                             result = res.result.data;
-                             console.log("getBoundaryRangeCentroidDistribution result::", result);
+                            that.computed.initBoundaryRangeCentroidDistribution(result);
                             
 
                         } else {
@@ -619,14 +670,37 @@
                     },
                 })
            	},
-            
+           	
+           	initBoundaryRangeCentroidDistribution : function() {
+           	
+           		var that = visualizationDetail;
+                var chartInfo = that.vis.chartInfo;
+
+                // 차트가 생성되어있지 않을때 - 차트 생성
+                if (chartInfo['boundaryRangeCentroidDistribution'] == undefined) {
+                    // that.vis.procBoundaryRangeCentroidDistribution(result);
+                    that.vis.drawScatterChart(procBoundaryRangeCentroidDistribution(result)); // graphInfo.js
+
+                } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
+                    that.vis.update('boundaryRangeCentroidDistribution', null, result)
+
+                }
+
+                // 조회된 결과가 없을 경우
+                if (result.length > 0) {
+                    that.pt.find("section#boundaryRangeCentroidDistribution .chart_wrap .no_result").css("visibility", "hide");
+                } else {
+                    that.pt.find("section#boundaryRangeCentroidDistribution .chart_wrap .no_result").css("visibility", "visible");
+                }
+                
+           	},
 
             /* === 6. width별 분포 (누적 그래프) */
             /*
                 - x축 : width
                 - y축 : 수량
             */
-            getDataCountByWidth: function () {
+            getLabelCountByWidth: function () {
 
                 var that = visualizationDetail;
                 var ajaxData = {
@@ -638,37 +712,29 @@
                     data: ajaxData,
                     type: "GET",
                     traditional: true,
-                    // 					beforeSend: function() {},
-                    // 					complete: function () {},
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("labelCountByWidth");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("labelCountByWidth")
+                    },
                     success: function (res) {
+                    	
+                    	console.log("### 6. getLabelCountByWidth : ", res.result.data);
                         if (res.result.code == "200") {
                             data = res.result.data;
-                            console.log("getDataCountByWidth result::", data);
-                            console.log("getDataCountByWidth result.size::", data);
+                            
                             let result = [];
                             let i = 0;
                             $.each(data, function(index, value) {
-                                // console.log("index::", index);
-                                // console.log("value::", value);
                                 result[i] = {
                                     type: index,
                                     count: value
                                 }
                                 i += 1;
                             })
-                            // that.computed.initObjectDistributionBySize(result);
-                            that.computed.initDataCountByWidth(result);
-
-                            /* sample data */
-
-                            // var result = [];
-                            // j.seo (width별 수량)
-                            // for (var i = 0; i < 10000; i++) {
-                            //     result[i] = {
-                            //         type: Math.floor(Math.random() * 100),
-                            //         count: Math.floor(Math.random() * 100),
-                            //     }
-                            // }
+                            
+                            that.computed.initLabelCountByWidth(result);
 
                         } else {
                             alert(res.result.data);
@@ -681,7 +747,7 @@
 
             },
 
-            initDataCountByWidth: function (result) {
+            initLabelCountByWidth: function (result) {
 
                 var that = visualizationDetail;
                 var chartInfo = that.vis.chartInfo;
@@ -696,225 +762,296 @@
                 }
 
                 // 차트가 생성되어있지 않을때 - 차트 생성
-                if (chartInfo['dataCountByWidth'] == undefined) {
+                if (chartInfo['labelCountByWidth'] == undefined) {
 
-                    that.vis.procDataCountByWidth(type, count);
+                    // that.vis.procDataCountByWidth(type, count);
+                    that.vis.drawChart(procDataCountByWidth(type, count)); // graphInfo.js
 
                 } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
 
-                    that.vis.update('dataCountByWidth', type, count)
+                    that.vis.update('labelCountByWidth', type, count)
 
                 }
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#dataCountByWidth .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#labelCountByWidth .chart_wrap .no_result").css("visibility", "hide");
                 } else {
-                    that.pt.find("section#dataCountByWidth .chart_wrap .no_result").css("visibility", "visible");
+                    that.pt.find("section#labelCountByWidth .chart_wrap .no_result").css("visibility", "visible");
+                }
+                
+            },
+            
+		   /* === 7. height별 분포 (누적 그래프) */
+            getLabelCountByHeight : function() {
+            	
+            	var that = visualizationDetail;
+                var ajaxData = {
+                    dataset_id: that.data.datasetId,
+                };
+
+                $.ajax({
+                    url: baseUrl + "visualization/getLabelCountByHeight.json",
+                    data: ajaxData,
+                    type: "GET",
+                    traditional: true,
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("labelCountByHeight");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("labelCountByHeight")
+                    },
+                    success: function (res) {
+                    	
+                    	console.log("### 7. getLabelCountByHeight : ", res.result.data);
+                        if (res.result.code == "200") {
+                            data = res.result.data;
+                            
+                            let result = [];
+                            let i = 0;
+                            $.each(data, function(index, value) {
+                                result[i] = {
+                                    type: index,
+                                    count: value
+                                }
+                                i += 1;
+                            })
+                            
+                            that.computed.initLabelCountByHeight(result);
+
+                        } else {
+                            alert(res.result.data);
+                        }
+                    },
+                    error: function (err) {
+                        console.log()
+                    },
+                });
+            },
+            
+            initLabelCountByHeight : function(result) {
+            	
+            	var that = visualizationDetail;
+                var chartInfo = that.vis.chartInfo;
+
+                var type = [];
+                var count = []
+
+                for (var i = 0; i < result.length; i++) {
+                    var resultData = result[i];
+                    type[i] = resultData['type'];
+                    count[i] = resultData['count'];
+                }
+
+                // 차트가 생성되어있지 않을때 - 차트 생성
+                if (chartInfo['labelCountByHeight'] == undefined) {
+
+                    that.vis.drawChart(procLabelCountByHeight(type, count)); // graphInfo.js
+
+                } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
+
+                    that.vis.update('labelCountByHeight', type, count)
+
+                }
+
+                // 조회된 결과가 없을 경우
+                if (result.length > 0) {
+                    that.pt.find("section#labelCountByHeight .chart_wrap .no_result").css("visibility", "hide");
+                } else {
+                    that.pt.find("section#labelCountByHeight .chart_wrap .no_result").css("visibility", "visible");
                 }
             },
+            
+            /* === 8. centerY별 분포 */
+           	getLabelCountByCenterY : function() {
+           		
+           		var that = visualizationDetail;
+                var ajaxData = {
+                    dataset_id: that.data.datasetId,
+                };
+                
+                $.ajax({
+                    url: baseUrl + "visualization/getLabelCountByCenterY.json",
+                    data: ajaxData,
+                    type: "GET",
+                    traditional: true,
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("labelCountByCenterY");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("labelCountByCenterY")
+                    },
+                    success: function (res) {
+                    	console.log("### 8. getLabelCountByCenterY : ", res.result.data);
+                        if (res.result.code == "200") {
+                            
+                            data = res.result.data;
+                            
+                            let result = [];
+                            let i = 0;
+                            $.each(data, function(index, value) {
+                                result[i] = {
+                                    type: index,
+                                    count: value
+                                }
+                                i += 1;
+                            })
+                            that.computed.initLabelCountByCenterY(result);
+                            
 
+                        } else {
+                            alert(res.result.data);
+                        }
+                    },
+                    error: function (err) {
+                        console.log()
+                    },
+                })
+           	},
+           	
+           	initLabelCountByCenterY : function(result) {
+           	
+           		var that = visualizationDetail;
+                var chartInfo = that.vis.chartInfo;
+                
+                var type = [];
+                var count = []
 
-        },
+                for (var i = 0; i < result.length; i++) {
+                    var resultData = result[i];
+                    type[i] = resultData['type'];
+                    count[i] = resultData['count'];
+                }
+
+                // 차트가 생성되어있지 않을때 - 차트 생성
+                if (chartInfo['labelCountByCenterY'] == undefined) {
+                    
+                    that.vis.drawChart(procLabelCountByCenterY(type, count)); // graphInfo.js
+
+                } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
+                    that.vis.update('labelCountByCenterY', type, count)
+
+                }
+
+                // 조회된 결과가 없을 경우
+                if (result.length > 0) {
+                    that.pt.find("section#labelCountByCenterY .chart_wrap .no_result").css("visibility", "hide");
+                } else {
+                    that.pt.find("section#labelCountByCenterY .chart_wrap .no_result").css("visibility", "visible");
+                }
+                
+           	},
+           	
+           	/* === 9. centerX별 분포 */
+           	getLabelCountByCenterX : function() {
+           		
+           		var that = visualizationDetail;
+                var ajaxData = {
+                    dataset_id: that.data.datasetId,
+                };
+                
+                $.ajax({
+                    url: baseUrl + "visualization/getLabelCountByCenterX.json",
+                    data: ajaxData,
+                    type: "GET",
+                    traditional: true,
+                    beforeSend: function() {
+                    	that.render.drawLoadingArea("labelCountByCenterX");
+                    },
+                    complete : function() {
+                    	that.render.removeLoadingArea("labelCountByCenterX")
+                    },
+                    success: function (res) {
+                    	console.log("### 9. getLabelCountByCenterX : ", res.result.data);
+                        if (res.result.code == "200") {
+                            
+                            data = res.result.data;
+                            
+                            let result = [];
+                            let i = 0;
+                            $.each(data, function(index, value) {
+                                result[i] = {
+                                    type: index,
+                                    count: value
+                                }
+                                i += 1;
+                            })
+                            that.computed.initLabelCountByCenterX(result);
+                            
+
+                        } else {
+                            alert(res.result.data);
+                        }
+                    },
+                    error: function (err) {
+                        console.log()
+                    },
+                })
+           	}, 
+           	
+           	initLabelCountByCenterX : function(result) {
+           		
+           		var that = visualizationDetail;
+                var chartInfo = that.vis.chartInfo;
+                
+                var type = [];
+                var count = []
+
+                for (var i = 0; i < result.length; i++) {
+                    var resultData = result[i];
+                    type[i] = resultData['type'];
+                    count[i] = resultData['count'];
+                }
+
+                // 차트가 생성되어있지 않을때 - 차트 생성
+                if (chartInfo['labelCountByCenterX'] == undefined) {
+                    
+                    that.vis.drawChart(procLabelCountByCenterX(type, count)); // graphInfo.js
+
+                } else { // 차트가 생성되어 있을떄 - 차트에서 값만 update 함.
+                    that.vis.update('labelCountByCenterX', type, count)
+
+                }
+
+                // 조회된 결과가 없을 경우
+                if (result.length > 0) {
+                    that.pt.find("section#labelCountByCenterX .chart_wrap .no_result").css("visibility", "hide");
+                } else {
+                    that.pt.find("section#labelCountByCenterX .chart_wrap .no_result").css("visibility", "visible");
+                }
+                
+           	},
+           	
+
+        }, // computed end
+        
+        
+       	render : {
+       		
+       		drawLoadingArea : function(graphId) {
+       			
+       			
+       			var that = visualizationDetail;
+       			
+       			var area = that.pt.find("section#" + graphId + " .chart_wrap")
+       			var loadingContent = '<div class="loading"></div>';
+       			
+       			area.append(loadingContent);       			
+       		},
+       		
+       		removeLoadingArea : function(graphId) {
+       			
+       			var that = visualizationDetail;
+       			that.pt.find("section#" + graphId + " .chart_wrap .loading").remove();
+       			
+       		},
+       		
+       	},
 
         vis: {
 
             chartInfo: {},
-            init: function () {
-            },
-
-
-            procDataCountByResolution: function (resolutionType, dataCount) {
-                var that = visualizationDetail;
-
-                var optionObj = {
-                    chartTitle: "",
-                    chartName: "",
-                    target: "",
-                    xAxisName: "",
-                    xAxisData: [],
-                    yAxisName: "",
-                    legendData: null,
-                    series: []
-                };
-
-
-                optionObj['chartTitle'] = "해상도별 데이터 수량";
-                optionObj['chartName'] = "dataCountByResolution";
-                optionObj['target'] = "section#dataCountByResolution .chart_wrap";
-                optionObj['xAxisName'] = "해상도";
-                optionObj['xAxisData'] = resolutionType;
-                optionObj['yAxisName'] = "데이터 수량";
-                optionObj['series'] = [
-                    {
-                        name: '해상도별 데이터 수량',
-                        type: 'bar',
-                        barWidth: '8%',
-                        data: dataCount,
-                        itemStyle: {
-                            emphasis: {colo: "#fcaf17", barBorderRadius: [10, 10, 0, 0]},
-                            normal: {color: "#fcaf17", barBorderRadius: [10, 10, 0, 0]},
-                        }
-                    }
-                ];
-
-                that.vis.drawChart(optionObj);
-
-            },
-
-            procDataCountByClass: function (classType, dataCount) {
-
-                var that = visualizationDetail;
-
-                var optionObj = {
-                    chartTitle: "",
-                    chartName: "",
-                    target: "",
-                    xAxisName: "",
-                    xAxisData: [],
-                    yAxisName: "",
-                    legend: false,
-                    series: []
-                };
-
-                optionObj['chartTitle'] = "클래스별 데이터 수량 TOP 10"
-                optionObj['chartName'] = "dataCountByClass";
-                optionObj['target'] = "section#dataCountByClass .chart_wrap";
-                optionObj['xAxisName'] = "클래스";
-                optionObj['xAxisData'] = classType;
-                optionObj['yAxisName'] = "데이터 수량";
-                optionObj['series'] = [
-                    {
-                        name: '클래스별 수량',
-                        type: 'bar',
-                        barWidth: '8%',
-                        data: dataCount,
-                        itemStyle: {
-                            emphasis: {colo: "#517be5", barBorderRadius: [10, 10, 0, 0]},
-                            normal: {color: "#517be5", barBorderRadius: [10, 10, 0, 0]},
-                        }
-                    }
-                ];
-
-                that.vis.drawChart(optionObj);
-
-            },
-
-            procObjectCountByResolution: function (classType, objectCount) {
-
-                var that = visualizationDetail;
-
-                var optionObj = {
-                    chartTitle: "",
-                    chartName: "",
-                    target: "",
-                    xAxisName: "",
-                    xAxisData: [],
-                    yAxisName: "",
-                    legend: false,
-                    series: []
-                };
-
-                optionObj['chartTitle'] = "해상도별 객체 수량"
-                optionObj['chartName'] = "objectCountByResolution";
-                optionObj['target'] = "section#objectCountByResolution .chart_wrap";
-                optionObj['xAxisName'] = "해상도";
-                optionObj['xAxisData'] = classType;
-                optionObj['yAxisName'] = "객체 수량";
-                optionObj['series'] = [
-                    {
-                        name: '해상도별 객체 수량',
-                        type: 'bar',
-                        barWidth: '8%',
-                        data: objectCount,
-                        itemStyle: {
-                            emphasis: {colo: "#f35353", barBorderRadius: [10, 10, 0, 0]},
-                            normal: {color: "#f35353", barBorderRadius: [10, 10, 0, 0]},
-                        }
-                    }
-                ];
-
-                that.vis.drawChart(optionObj);
-
-            },
-
-            procObjectDistributionBySize: function (result) {
-
-                var that = visualizationDetail;
-                var optionObj = {
-                    chartTitle: "",
-                    chartName: "",
-                    target: "",
-                    xAxisName: "",
-                    xAxisData: [],
-                    yAxisName: "",
-                    legendData: null,
-                    series: []
-                };
-
-                optionObj['chartTitle'] = "오브젝트 크기별 분포";
-                optionObj['chartName'] = "ObjectDistributionBySize";
-                optionObj['target'] = "section#objectDistributionBySize .chart_wrap";
-                optionObj['xAxisName'] = "width";
-                optionObj['xAxisData'] = null;
-                optionObj['yAxisName'] = "height";
-                optionObj['series'] = [
-                    {
-                        name: '오브젝트 크기별 분포',
-                        type: 'scatter',
-                        data: result,
-                        itemStyle: {
-                            opacity: 0.8
-                        },
-                        symbolSize: 3,
-
-                        large: true,
-                        largeThreshold: 500,
-
-                    }
-                ];
-
-
-                that.vis.drawScatterChart(optionObj);
-            },
-
-            procDataCountByWidth: function (type, count) {
-                var that = visualizationDetail;
-
-                var optionObj = {
-                    chartTitle: "",
-                    chartName: "",
-                    target: "",
-                    xAxisName: "",
-                    xAxisData: [],
-                    yAxisName: "",
-                    legend: false,
-                    series: []
-                };
-
-                optionObj['chartTitle'] = "width별 수량"
-                optionObj['chartName'] = "dataCountByWidth";
-                optionObj['target'] = "section#dataCountByWidth .chart_wrap";
-                optionObj['xAxisName'] = "width";
-                optionObj['xAxisData'] = type;
-                optionObj['yAxisName'] = "수량";
-                optionObj['series'] = [
-                    {
-                        name: 'width별 수량',
-                        type: 'bar',
-                        barWidth: '8%',
-                        data: count,
-                        itemStyle: {
-                            emphasis: {colo: "#f35353", barBorderRadius: [10, 10, 0, 0]},
-                            normal: {color: "#f35353", barBorderRadius: [10, 10, 0, 0]},
-                        }
-                    }
-                ];
-                optionObj['zoomOption'] = true;
-                optionObj['stacked'] = true;
-
-                that.vis.drawChart(optionObj);
-            },
+            init: function () { },
 
             /* ### 일반 막대그래프 */
             drawChart: function (optionObj) {
@@ -1088,6 +1225,8 @@
 //	 								}						
                             },
                             axisLine: {onZero: false, lineStyle: {color: "#e4e4e4"}},
+                            min : 0,
+                            max : 1,
                         }
                     ],
                     yAxis: [
@@ -1110,12 +1249,14 @@
 //	 								}						
                             },
                             axisLine: {onZero: false, lineStyle: {color: "#e4e4e4"}},
+                            min : 0,
+                            max : 1,
                         }
                     ],
 
                     tooltip: {
                         formatter: function (params) {
-                            console.log("value", params.value)
+                            // console.log("value", params.value)
                             var text =
                                 optionObj['xAxisName'] + ' : ' + params.value[0] + '<br/>' +
                                 optionObj['yAxisName'] + ' : ' + params.value[1];
@@ -1133,7 +1274,7 @@
 
             set: function (target, chartOption, chartName) {
 
-                console.log("### charcOption : ", chartOption.title)
+                // console.log("### charcOption : ", chartOption.title)
 
                 var that = visualizationDetail;
                 var chart = echarts.init($(target)[0]);
@@ -1162,6 +1303,8 @@
 
 
             },
+            
+            
 
 
         }
