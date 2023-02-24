@@ -370,12 +370,11 @@ public class SessionCmdExecute implements Callable<Object> {
 			batch = String.valueOf(jsonObj.get("batch_size"));
 			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
 					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
-					+ taskId + " -v /xlabeller:/xlabeller xlabeller_yolov4:2.0 " + "python3 xlabeller_yolov4_train.py"
+					+ taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller xlabeller_yolov4:2.0 " + "python3 xlabeller_yolov4_train.py"
 					+ " --pid " + projectId
 					+ " --tid " + taskId
 					+ " --batch " + batch
 					+ " --subdivisions " + batch;
-			logger.info("1::" + cmd);
 		} else if (algorithmId.equals("7") || algorithmId.equals("8")) { // efficientdet:latest
 			String batch = null;
 			String epochs = null;
@@ -396,17 +395,16 @@ public class SessionCmdExecute implements Callable<Object> {
 			
 			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
 					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
-					+ taskId + " --ipc=host -v /xlabeller:/xlabeller efficientdet:latest " + "python3 run_efficientdet.py"
+					+ taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller efficientdet:latest " + "python3 run_efficientdet.py"
 					+ " --pid " + projectId
 					+ " --tid " + taskId
 					+ " --learning_rate " + learning_rate
 					+ " --batch " + batch
 					+ " --epochs " + epochs
 					+ " --model " + model;
-			logger.info("2::" + cmd);
 		} else {
 			cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=t_" + projectId + "_"
-				+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " -v /xlabeller:/xlabeller ca_"
+				+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller ca_"
 				+ algorithmId + ":latest" + " python -u run_custom_model.py --action train --mode " + mode
 				+ " --params \"" + config + "\" --gpu_id " + gpuIndex + " --log_path /xlabeller/workspace/" + projectId
 				+ "/" + taskId + "/log/run.log" + " --annotation /xlabeller/workspace/" + projectId + "/" + taskId
@@ -414,9 +412,8 @@ public class SessionCmdExecute implements Callable<Object> {
 				+ "/log/mAP.csv" + " --lossresult /xlabeller/workspace/" + projectId + "/" + taskId + "/log/loss.csv"
 				+ " --modelPath /xlabeller/workspace/" + projectId + "/" + taskId + "/model/"
 				+ " --label /xlabeller/workspace/" + projectId + "/" + taskId + "/class/classes";
-			logger.info("3::" + cmd);
 		}
-		logger.info(cmd);
+		logger.info("docker cmd : " + cmd);
 		String cmdResult = cmdExcute(cmd);
 		
 		if (cmdResult == null) {
@@ -437,7 +434,7 @@ public class SessionCmdExecute implements Callable<Object> {
 	public Object callCustomInference(String projectId, String taskId, String algorithmId, String gpuIndex, String mode,
 			String modelName, String csvFileName, String parameterJson) {
 		String cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_"
-				+ taskId + " --name xlabeller_i_" + projectId + "_" + taskId + " -v /xlabeller:/xlabeller ca_"
+				+ taskId + " --name xlabeller_i_" + projectId + "_" + taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller ca_"
 				+ algorithmId + ":latest" + " python -u run_custom_model.py --action inference --mode " + mode
 				+ " --params \"" + parameterJson + "\" --gpu_id " + gpuIndex + " --dataPath /xlabeller/workspace/"
 				+ projectId + "/" + taskId + "/imagepath/imagepath.csv" + " --labels /xlabeller/workspace/" + projectId
@@ -468,9 +465,9 @@ public class SessionCmdExecute implements Callable<Object> {
 			String csvFileName) {
 		
 		
-		String cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
+		String cmd = "docker run --ipc host --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId +
 				" --name xlabeller_i_" + projectId + "_" + taskId + 
-				" -v /xlabeller:/xlabeller " + 
+				" --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller " +
 				" --ipc=host " + 
 				" efficientdet:latest" + 
 				" python3 run_visualization.py" +
@@ -516,9 +513,9 @@ public class SessionCmdExecute implements Callable<Object> {
 		
 		
 		
-		String cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +"  --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
+		String cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +"  --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId +
 				" --name xlabeller_i_" + projectId + "_" + taskId + 
-				" -v /xlabeller:/xlabeller" + 
+				" --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller" +
 				" xlabeller_yolov4:2.0" + 
 				" python3 /workspace/darknet/xlabeller_inference.py" +
 				" --thresh " + classificationThreshold +
@@ -546,9 +543,9 @@ public class SessionCmdExecute implements Callable<Object> {
 	// s.kim 210602
 	public Object callCustomYolov4VideoInference(String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String classificationThreshold) {
 
-		String cmd = "docker run --rm -itd --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
+		String cmd = "docker run --rm -itd --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId +
 				" --name xlabeller_i_" + projectId + "_" + taskId + 
-				" -v /xlabeller:/xlabeller" + 
+				" --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller" +
 				" xlabeller_yolov4:2.0" + 
 				" python3 /workspace/darknet/xlabeller_inference.py" +
 				" --thresh " + classificationThreshold +

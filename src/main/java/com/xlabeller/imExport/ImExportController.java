@@ -37,7 +37,6 @@ public class ImExportController {
 		imExportService.exportCoco(imExportVO, response);
 		modelAndView.addObject("result",  "COCO형식으로 Export가 완료되었습니다.");
 		return modelAndView;
-
 	}
 
 	@PostMapping("/import/coco")
@@ -46,7 +45,14 @@ public class ImExportController {
 		Object result = imExportService.importCoco(imExportVO);
 		modelAndView.addObject("result",  result);
 		return modelAndView;
+	}
 
+	@GetMapping("/export/voc")
+	public ModelAndView exportVoc(ImExportVO imExportVO, HttpServletResponse response) throws IOException {
+		ModelAndView modelAndView = new ModelAndView();
+		imExportService.exportVoc(imExportVO, response);
+		modelAndView.addObject("result",  "VOC형식으로 Export가 완료되었습니다.");
+		return modelAndView;
 	}
 
 }

@@ -20,7 +20,7 @@ import java.util.*;
 
 
 
-public class CocoUtil{
+public class CocoExportUtil {
 	
 	private List<String> imageList = new ArrayList<String>();
 	private Map<String,Integer> imageMap = new HashMap<String,Integer>();

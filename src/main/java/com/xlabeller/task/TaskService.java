@@ -15,7 +15,6 @@ import com.xlabeller.sshSession.SSHSessionConnection;
 import com.xlabeller.sshSession.SessionCmdExecute;
 import com.xlabeller.sshSession.SessionSingletone;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -2887,7 +2886,7 @@ public class TaskService {
 			logger.error("ParseException Error!", e);
 			return null;
 		}
-		CocoUtil cu = new CocoUtil();
+		CocoExportUtil cu = new CocoExportUtil();
 		Object resultJson = cu.createAll(dataArr);
 
 		return resultJson;

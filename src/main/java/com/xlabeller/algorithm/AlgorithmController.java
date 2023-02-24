@@ -190,7 +190,6 @@ public class AlgorithmController {
 		Object result = algorithmService.deployAlgorithm(algorithmVO);
 		modelAndView.addObject("result",  result);
 		return modelAndView;
-		
 	}
 
 	/**
