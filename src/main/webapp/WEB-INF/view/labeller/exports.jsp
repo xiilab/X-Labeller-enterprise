@@ -120,16 +120,16 @@
 						<label>STEP2. Select Type</label>
 					</div>
 					<div class="label_type_wrap">
-						<div class="wrap">
+						<!-- <div class="wrap">
 							<input id="dataset-virtual" class="radioBtn" name="dataset-type" type="radio" value="" disabled/>
 							<label for="dataset-virtual" class="radio_label">virtual</label>
-						</div>
+						</div> -->
 						<div class="wrap">
 							<input id="dataset-coco" class="radioBtn" name="dataset-type" type="radio" value="coco" checked/>
 							<label for="dataset-coco" class="radio_label">coco</label>
 						</div>
 						<div class="wrap">
-							<input id="dataset-voc" class="radioBtn" name="dataset-type" type="radio" value="voc" disabled/>
+							<input id="dataset-voc" class="radioBtn" name="dataset-type" type="radio" value="voc"/>
 							<label for="dataset-voc" class="radio_label">voc</label>
 						</div>
 					</div>
@@ -224,9 +224,9 @@
 						})).toString();
 						
 						switch(typeValue) {
-						
-							case "voc" :
 								
+							case "voc" :
+								that.computed.callExportApiVoc(checkedDatasetId);
 								break;
 						
 							case "coco" :
@@ -360,6 +360,56 @@
 					that.pt.find("label.loading").removeClass("hide");
 					xhr.send();
 					
+				},
+				
+				callExportApiVoc : function (checkedDatasetId) {
+					
+					var that = exports;
+					
+					var xhr = new XMLHttpRequest();
+					
+					xhr.open(
+						"GET",
+						baseUrl + "imExport/export/voc?dataset_ids=" + checkedDatasetId,
+						true
+					);
+					xhr.responseType = "blob";
+					xhr.onreadystatechange = function () {
+						
+						console.log("## onreadystatechange : " , this.readyState, this.status );
+						if(this.readyState == 4 && this.status == 200 ) {
+							
+							that.pt.find("label.loading").addClass("hide")
+							
+							alert("파일 생성이 완료되었습니다.")
+							
+							var fileName = "";
+							var disposition = xhr.getResponseHeader('Content-Disposition');
+							
+							if(disposition && disposition.indexOf('attachment') !== -1) {
+								 var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/i;
+					             var matches = filenameRegex.exec(disposition);
+					             if (matches != null && matches[1]) fileName = matches[1].replace(/['"]/g, '');
+					             
+							}
+							
+							var a = that.pt.find("a.download_link");
+ 							a.attr("href", URL.createObjectURL(this.response));
+ 							a.attr("download", fileName);
+ 							a.removeClass("hide");
+							
+						} else if(this.readyState == 4 && this.status != 200 ) {
+							
+							alert("다운로드 중 오류가 발생했습니다.")
+							that.pt.find("a.download_link").addClass("hide");
+							that.pt.find("label.loading").addClass("hide");
+							
+						}
+					}
+					
+					that.pt.find("a.download_link").addClass("hide");
+					that.pt.find("label.loading").removeClass("hide");
+					xhr.send();
 				},
 			},
 			
