@@ -239,7 +239,6 @@ public class ImExportService {
         Map<String, byte[]> exportSegObjectImageMap = vocExportUtil.getExportSegObjectImageMap();
 
         // 4. Zip파일에 디렉토리 추가
-        String saveZipFileName = "exports_voc.zip";
         String rootDir = "exports_voc/";
         String vocDir = rootDir + "VOC/";
         String annotationsDir = vocDir + "Annotations/";
@@ -258,25 +257,25 @@ public class ImExportService {
         zipUtil.putDirectoryEntry(jpegImagesDir);
         zipUtil.putDirectoryEntry(segmentationObjectDir);
 
-        // Annotation 디렉토리에 바운딩박스 정보 xml파일로 생성
+        // 5. Annotation 디렉토리에 바운딩박스 정보 xml파일로 생성
         exportVocXmlMap.entrySet().forEach((map) -> {
             String fileFullPath = annotationsDir + map.getKey() + ".xml";
             zipUtil.putEntry(fileFullPath, map.getValue());
         });
 
-        // ImageSets/Main 디렉토리에 모든 파일명 목록 저장
+        // 6. ImageSets/Main 디렉토리에 모든 파일명 목록 저장
         List<String> allImageNameList = new ArrayList<>(exportAllImageNameMap.keySet());
         String allImageName = String.join("\n", allImageNameList);
         String allImageTxtPath = mainDir + "VOC.txt";
         zipUtil.putEntry(allImageTxtPath, allImageName.getBytes());
 
-        // ImageSets/Main 디렉토리에 모든 파일명 목록 저장
+        // 7. ImageSets/Segmentation 디렉토리에 세그멘테이션 생성된 파일명 목록 저장
         List<String> allSegImageNameList = new ArrayList<>(exportSegImageLabelInfoMap.keySet());
         String allSegImageName = String.join("\n", allSegImageNameList);
         String allSegImageTxtPath = segmentationDir + "VOC.txt";
         zipUtil.putEntry(allSegImageTxtPath, allSegImageName.getBytes());
 
-        // JPEGImages 디렉토리에 모든 이미지 파일 저장
+        // 8. JPEGImages 디렉토리에 모든 이미지 파일 저장
         exportAllImageNameMap.values().forEach((value) -> {
             try {
                 InputStream in = new FileInputStream(value);
@@ -286,7 +285,7 @@ public class ImExportService {
             }
         });
 
-        // Annotation 디렉토리에 바운딩박스 정보 xml파일로 생성
+        // 9. SegmentationObject 디렉토리에 이미지 파일 저장
         exportSegObjectImageMap.entrySet().forEach((map) -> {
             String fileFullPath = segmentationObjectDir + map.getKey() + ".png";
             zipUtil.putEntry(fileFullPath, map.getValue());
@@ -294,6 +293,7 @@ public class ImExportService {
 
 		zipUtil.close();
 
+        String saveZipFileName = "exports_voc.zip";
 		response.setContentType("application/zip");
 		response.setHeader("Content-Disposition", "attachment; fileName=" + saveZipFileName);
 		try (OutputStream out = response.getOutputStream()) {
