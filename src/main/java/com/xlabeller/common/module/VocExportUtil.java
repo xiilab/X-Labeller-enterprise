@@ -2,9 +2,11 @@ package com.xlabeller.common.module;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xlabeller.common.configuration.AnnotationExceptionHandler;
 import com.xlabeller.common.exception.HandlerCustomException;
 import com.xlabeller.enums.PathEnum;
 import com.xlabeller.models.ImExportVO;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,13 +28,15 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.*;
 
-import static org.opencv.imgproc.Imgproc.*;
+import org.opencv.imgproc.Imgproc.*;
 
 public class VocExportUtil {
-    static {
-        nu.pattern.OpenCV.loadShared();
-        System.loadLibrary(org.opencv.core.Core.NATIVE_LIBRARY_NAME);
-    }
+    private static Logger logger = Logger.getLogger(VocExportUtil.class);
+
+    //    static {
+//        nu.pattern.OpenCV.loadShared();
+//        System.loadLibrary(org.opencv.core.Core.NATIVE_LIBRARY_NAME);
+//    }
     // Annotation디렉토리에 저장할 Map(key : fileName, value : xml로 작성할 문자열 baos)
     private Map<String, byte[]> exportVocXmlMap;
     // 이미지 정보 저장된 Map(key : fileName, value : ex) {width : 100, height : 100})
@@ -87,7 +91,7 @@ public class VocExportUtil {
             addImageInfoMap(allImageInfoMap, fileName, imageWidth, imageHeight);
             // 모든 이미지에 존재하는 라벨 정보 추가
             addImageLabelMap(imageLabelMappingMap, fileName, labelType, labelName, labelInfo);
-            if("IMAGE_SEGMENTATION".equals(labelType)) {
+            if ("IMAGE_SEGMENTATION".equals(labelType)) {
                 addSegImageLabelInfoMap(segImageLabelInfoMap, labelInfo, fileName);
             }
         }
@@ -103,19 +107,27 @@ public class VocExportUtil {
         JSONParser jsonParser = new JSONParser();
         JSONArray infoArray = null;
         try {
-            infoArray = (JSONArray)jsonParser.parse(info);
+            infoArray = (JSONArray) jsonParser.parse(info);
         } catch (ParseException e) {
-            throw new HandlerCustomException("500", "라벨 정보를 파싱하는 중 오류가 발생했습니다.");
+            throw new HandlerCustomException("500", "라벨 정보를 파싱하는 중 오류가 발생했습니다.", e);
         }
         JSONObject infoObj = (JSONObject) infoArray.get(0);
         JSONArray infoSegmentationArray = (JSONArray) infoObj.get("segmentation");
 
         // 세그멘테이션의 좌표값 가져와서 double[]형태로 변환
         List<Double> objectPointsList = new ArrayList<>();
-        for(int i = 0; i < infoSegmentationArray.size(); i++) {
+        for (int i = 0; i < infoSegmentationArray.size(); i++) {
             JSONObject infoSegObj = (JSONObject) infoSegmentationArray.get(i);
-            double x = Math.floor((double)infoSegObj.get("x") * 10) / 10;
-            double y = Math.floor((double)infoSegObj.get("y") * 10) / 10;
+            double x = 0.0;
+            double y = 0.0;
+            try {
+                x = Math.floor(Double.parseDouble(infoSegObj.get("x").toString()) * 10) / 10;
+                y = Math.floor(Double.parseDouble(infoSegObj.get("y").toString()) * 10) / 10;
+            } catch (Exception e) {
+                logger.error("infoSegObj.get(\"x\") : " + infoSegObj.get("x"));
+                logger.error("infoSegObj.get(\"y\") : " + infoSegObj.get("y"));
+                throw new HandlerCustomException("500", "VOC export 과정 중에 에러가 발생했습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.", e);
+            }
             objectPointsList.add(x);
             objectPointsList.add(y);
         }
@@ -126,7 +138,7 @@ public class VocExportUtil {
 
         JSONArray valueArray = new JSONArray();
         // 동일한 이미지에 이미 추가된 라벨 있으면 가져와서 add
-        if(segImageLabelInfoMap.containsKey(fileName)) {
+        if (segImageLabelInfoMap.containsKey(fileName)) {
             valueArray = segImageLabelInfoMap.get(fileName);
             valueArray.add(pointsInfoObj);
         } else {
@@ -139,7 +151,7 @@ public class VocExportUtil {
     private void addImageLabelMap(Map<String, JSONArray> imageLabelMappingMap, String fileName, String labelType, String label, String info) {
         JSONObject jsonObject = new JSONObject();
 //        String label = imExportVO.getLabel();
-        if("IMAGE_BBOX".equals(labelType)) {
+        if ("IMAGE_BBOX".equals(labelType)) {
             JSONObject bbox = getBboxInfoToStringArray(info);
             jsonObject.put("label", label);
             jsonObject.put("bbox", bbox);
@@ -147,9 +159,9 @@ public class VocExportUtil {
             JSONParser jsonParser = new JSONParser();
             JSONArray segInfoJsonArray = null;
             try {
-                segInfoJsonArray = (JSONArray)jsonParser.parse(info);
+                segInfoJsonArray = (JSONArray) jsonParser.parse(info);
             } catch (ParseException e) {
-                throw new HandlerCustomException("500", "XML파일을 생성하는 중 오류가 발생했습니다.");
+                throw new HandlerCustomException("500", "XML파일을 생성하는 중 오류가 발생했습니다.", e);
             }
             JSONObject segInfoObj = (JSONObject) segInfoJsonArray.get(0);
             String bboxInfo = (String) segInfoObj.get("box");
@@ -158,7 +170,7 @@ public class VocExportUtil {
             jsonObject.put("bbox", bbox);
         }
 
-        if(imageLabelMappingMap.containsKey(fileName)) {
+        if (imageLabelMappingMap.containsKey(fileName)) {
             imageLabelMappingMap.get(fileName).add(jsonObject);
         } else {
             imageLabelMappingMap.put(fileName, new JSONArray());
@@ -169,17 +181,17 @@ public class VocExportUtil {
     private JSONObject getBboxInfoToStringArray(String imExportVO) {
         JSONObject resultObj = new JSONObject();
         String[] bboxInfo = imExportVO.split(",");
-        int x1 = (int)Math.floor(Double.parseDouble(bboxInfo[0]));
-        int y1 = (int)Math.floor(Double.parseDouble(bboxInfo[1]));
-        int width = (int)Math.floor(Double.parseDouble(bboxInfo[2]));
-        int height = (int)Math.floor(Double.parseDouble(bboxInfo[3]));
+        int x1 = (int) Math.floor(Double.parseDouble(bboxInfo[0]));
+        int y1 = (int) Math.floor(Double.parseDouble(bboxInfo[1]));
+        int width = (int) Math.floor(Double.parseDouble(bboxInfo[2]));
+        int height = (int) Math.floor(Double.parseDouble(bboxInfo[3]));
         int x2 = x1 + width;
         int y2 = y1 + height;
-        resultObj.put("xmin", String.valueOf(x1));
-        resultObj.put("ymin", String.valueOf(y1));
-        resultObj.put("xmax", String.valueOf(x2));
-        resultObj.put("ymax", String.valueOf(y2));
-        //String[] bbox = new String[]{String.valueOf(x1), String.valueOf(y1), String.valueOf(x2), String.valueOf(y2)};
+        resultObj.put("xmin", String.valueOf(Math.max(x1, 0)));
+        resultObj.put("ymin", String.valueOf(Math.max(y1, 0)));
+        resultObj.put("xmax", String.valueOf(Math.max(x2, 0)));
+        resultObj.put("ymax", String.valueOf(Math.max(y2, 0)));
+
         return resultObj;
     }
 
@@ -197,13 +209,15 @@ public class VocExportUtil {
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            throw new HandlerCustomException("500", "XML파일을 생성하던 중 오류가 발생했습니다.");
+            throw new HandlerCustomException("500", "XML파일을 생성하던 중 오류가 발생했습니다.", e);
         }
 
         //allImageInfoMap
-        for(Map.Entry<String, JSONObject> entry: allImageInfoMap.entrySet()) {
+        for (Map.Entry<String, JSONObject> entry : allImageInfoMap.entrySet()) {
             String fileNameStr = entry.getKey();
-            JSONObject fileInfo = (JSONObject)entry.getValue();
+            String fileOgName = exportAllImageNameMap.get(fileNameStr).split("dataset/")[1];
+            fileOgName = fileOgName.substring(0, fileOgName.indexOf("."));
+            JSONObject fileInfo = (JSONObject) entry.getValue();
             Document doc = dBuilder.newDocument();
             // 루트 엘리먼트 생성
             Element rootElement = doc.createElement("annotation");
@@ -216,32 +230,32 @@ public class VocExportUtil {
 
             // filename 엘리먼트 생성
             Element fileName = doc.createElement("fileName");
-            fileName.appendChild(doc.createTextNode(fileNameStr));
+            fileName.appendChild(doc.createTextNode(fileOgName));
             rootElement.appendChild(fileName);
 
             // size 엘리먼트 생성
             Element size = doc.createElement("size");
             // size - width 엘리먼트 생성
             Element width = doc.createElement("width");
-            width.appendChild(doc.createTextNode((String)fileInfo.get("width")));
+            width.appendChild(doc.createTextNode((String) fileInfo.get("width")));
             // size - height 엘리먼트 생성
             Element height = doc.createElement("height");
-            height.appendChild(doc.createTextNode((String)fileInfo.get("height")));
+            height.appendChild(doc.createTextNode((String) fileInfo.get("height")));
             size.appendChild(width);
             size.appendChild(height);
             rootElement.appendChild(size);
 
             // segemnted 엘리먼트 생성, 세그멘테이션 있으면 1, 없으면 0
             Element segmented = doc.createElement("segmented");
-            segmented.appendChild(doc.createTextNode(exportSegImageLabelInfoMap.containsKey(fileNameStr)? "1" : "0"));
+            segmented.appendChild(doc.createTextNode(exportSegImageLabelInfoMap.containsKey(fileNameStr) ? "1" : "0"));
             rootElement.appendChild(segmented);
             // Object 엘리먼트 생성
             JSONArray objectValueArray = imageLabelMappingMap.get(fileNameStr);
-            for(int i = 0; i < objectValueArray.size(); i++) {
+            for (int i = 0; i < objectValueArray.size(); i++) {
                 // {label : "", box : ["[x1]","[y2]","[x2]","[y2]"]}
                 JSONObject objectValue = (JSONObject) objectValueArray.get(i);
-                String label = (String)objectValue.get("label");
-                JSONObject box = (JSONObject)objectValue.get("bbox");
+                String label = (String) objectValue.get("label");
+                JSONObject box = (JSONObject) objectValue.get("bbox");
                 // Object 엘리먼트 생성
                 Element object = doc.createElement("object");
                 // Object - name 엘리먼트 생성
@@ -252,19 +266,19 @@ public class VocExportUtil {
                 Element bndbox = doc.createElement("bndbox");
                 // Object - bndbox - xmin 엘리먼트 생성
                 Element xmin = doc.createElement("xmin");
-                xmin.appendChild(doc.createTextNode((String)box.get("xmin")));
+                xmin.appendChild(doc.createTextNode((String) box.get("xmin")));
                 bndbox.appendChild(xmin);
                 // Object - bndbox - ymin 엘리먼트 생성
                 Element ymin = doc.createElement("ymin");
-                ymin.appendChild(doc.createTextNode((String)box.get("ymin")));
+                ymin.appendChild(doc.createTextNode((String) box.get("ymin")));
                 bndbox.appendChild(ymin);
                 // Object - bndbox - xmax 엘리먼트 생성
                 Element xmax = doc.createElement("xmax");
-                xmax.appendChild(doc.createTextNode((String)box.get("xmax")));
+                xmax.appendChild(doc.createTextNode((String) box.get("xmax")));
                 bndbox.appendChild(xmax);
                 // Object - bndbox - ymax 엘리먼트 생성
                 Element ymax = doc.createElement("ymax");
-                ymax.appendChild(doc.createTextNode((String)box.get("ymax")));
+                ymax.appendChild(doc.createTextNode((String) box.get("ymax")));
                 bndbox.appendChild(ymax);
 
                 object.appendChild(bndbox);
@@ -280,9 +294,9 @@ public class VocExportUtil {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 transformer.transform(new DOMSource(doc), new StreamResult(outputStream));
             } catch (Exception e) {
-                throw new HandlerCustomException("500", "XML파일을 생성하던 중 오류가 발생했습니다.");
+                throw new HandlerCustomException("500", "XML파일을 생성하던 중 오류가 발생했습니다.", e);
             } finally {
-                // 파일로 저장
+                // 파일로 저장 (테스트용)
 //                try {
 //                    FileOutputStream fos = new FileOutputStream("/Users/juno/Desktop/xml/" + fileNameStr + ".xml");
 //                    outputStream.writeTo(fos);
@@ -290,8 +304,8 @@ public class VocExportUtil {
 //                } catch (IOException e) {
 //                    throw new RuntimeException(e);
 //                }
+                // ByteArrayOutputStream을 byte[]로 변환
                 exportVocXmlMap.put(fileNameStr, outputStream.toByteArray());
-
             }
         }
 
@@ -299,66 +313,69 @@ public class VocExportUtil {
     }
 
     public void createSegmentationObjectFile() {
+        nu.pattern.OpenCV.loadShared();
+        nu.pattern.OpenCV.loadLocally();
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
         Random rand = new Random();
         Map<String, byte[]> exportSegObjectImageMap = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-        List<List<MatOfPoint>> resultList = new ArrayList<>();
-        //Map(key : fileName, value : ex) [{points : [x(1), y(1), x(2), y(2), x(3), y(3), ...]}])
-        for(Map.Entry<String, JSONArray> entry: exportSegImageLabelInfoMap.entrySet()) {
-            String fileName = entry.getKey();
-            JSONArray segInfoArray = entry.getValue();
-            String fullFileName = exportAllImageNameMap.get(fileName);
 
-            // 이미지 행렬 변환
-            // 원본 이미지
-            Mat originalImage = Imgcodecs.imread(fullFileName);
-            // 폴리곤 생성하고 윤곽선을 찾을 이미지
-            // CvType.CV_8U? 흑백이미지로 표현하기 위해 사용되는 타입, 윤곽선을 찾는 함수는 CvType.CV_8U형식의 이미지만 지원함
-            Mat maskImage = Mat.zeros(originalImage.size(), CvType.CV_8U);
-            // 윤곽선 + 폴리곤이 그려져 저장될 이미지
-            Mat drawing = Mat.zeros(originalImage.size(), originalImage.type());
-            for(int i = 0; i < segInfoArray.size(); i++) {
-                JSONObject segInfoObj = (JSONObject)segInfoArray.get(i);
-                double[] segInfo = (double[]) segInfoObj.get("points");
-                // 이미지에 그려질 폴리곤
-                MatOfPoint polygon = new MatOfPoint();
-                // 폴리곤으로 생성할 좌표 목록
-                List<Point> points = new ArrayList<>();
-                Point point = new Point();
-                for(int j = 0; j < segInfo.length; j++) {
-                    if(j % 2 == 0) {
-                        point.x = segInfo[j];
-                    } else {
-                        point.y = segInfo[j];
-                        points.add(point);
-                        point = new Point();
+        try {
+            //Map(key : fileName, value : ex) [{points : [x(1), y(1), x(2), y(2), x(3), y(3), ...]}])
+            for (Map.Entry<String, JSONArray> entry : exportSegImageLabelInfoMap.entrySet()) {
+                String fileName = entry.getKey();
+                JSONArray segInfoArray = entry.getValue();
+                String fullFileName = exportAllImageNameMap.get(fileName);
+
+                // 이미지 행렬 변환
+                // 원본 이미지
+                Mat originalImage = Imgcodecs.imread(fullFileName);
+                // 폴리곤 생성하고 윤곽선을 찾을 이미지
+                // CvType.CV_8U? 흑백이미지로 현하기 위해 사용되는 타입, 윤곽선을 찾는 함수는 CvType.CV_8U형식의 이미지만 지원함
+                Mat maskImage = Mat.zeros(originalImage.size(), CvType.CV_8U);
+                // 윤곽선 + 폴리곤이 그려져 저장될 이미지
+                Mat drawing = Mat.zeros(originalImage.size(), originalImage.type());
+                for (int i = 0; i < segInfoArray.size(); i++) {
+                    JSONObject segInfoObj = (JSONObject) segInfoArray.get(i);
+                    double[] segInfo = (double[]) segInfoObj.get("points");
+                    // 이미지에 그려질 폴리곤
+                    MatOfPoint polygon = new MatOfPoint();
+                    // 폴리곤으로 생성할 좌표 목록
+                    List<Point> points = new ArrayList<>();
+                    Point point = new Point();
+                    for (int j = 0; j < segInfo.length; j++) {
+                        if (j % 2 == 0) {
+                            point.x = segInfo[j];
+                        } else {
+                            point.y = segInfo[j];
+                            points.add(point);
+                            point = new Point();
+                        }
+                    }
+
+                    polygon.fromList(points);
+                    Scalar color = new Scalar(rand.nextInt(255) + 1, rand.nextInt(255) + 1, rand.nextInt(255) + 1);
+                    // 이미지에 폴리곤 그리기
+                    Imgproc.fillConvexPoly(maskImage, polygon, color, Imgproc.LINE_8);
+
+                    // 윤곽선 그리기 로직
+                    List<MatOfPoint> contours = new ArrayList<>();
+                    Mat hierarchy = new Mat();
+                    // 위에 폴리곤 생성된 이미지에서 윤곽선 찾기
+                    Imgproc.findContours(maskImage, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+                    // 찾은 윤곽선 및 폴리곤 그리기
+                    for (int j = 0; j < contours.size(); j++) {
+                        Imgproc.drawContours(drawing, contours, j, new Scalar(255, 255, 255), 8, Imgproc.LINE_8, hierarchy, 0, new Point());
+                        Imgproc.fillConvexPoly(drawing, polygon, color, Imgproc.LINE_8);
                     }
                 }
 
-                polygon.fromList(points);
-                Scalar color = new Scalar(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
-                // 이미지에 폴리곤 그리기
-                Imgproc.fillConvexPoly(maskImage, polygon, color, LINE_8);
-
-                // 윤곽선 그리기 로직
-                List<MatOfPoint> contours = new ArrayList<>();
-                Mat hierarchy = new Mat();
-                // 위에 폴리곤 생성된 이미지에서 윤곽선 찾기
-                Imgproc.findContours(maskImage, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-                // 찾은 윤곽선 그리기
-                // 윤곽선 및 폴리곤 그리기
-                for (int j = 0; j < contours.size(); j++) {
-                    Imgproc.drawContours(drawing, contours, j, new Scalar(255,255,255), 8, LINE_8, hierarchy, 0, new Point());
-                    Imgproc.fillConvexPoly(drawing, polygon, color, LINE_8);
-                }
-            }
-
-            // 저장될 이미지 읽어서 byte[]로 변환
-            MatOfByte matOfByte = new MatOfByte();
-            Imgcodecs.imencode(".png", drawing, matOfByte);
-            byte[] byteArray = matOfByte.toArray();
-            exportSegObjectImageMap.put(fileName, byteArray);
-            // 바이트 배열을 파일로 저장
+                // 저장될 이미지 읽어서 byte[]로 변환
+                MatOfByte matOfByte = new MatOfByte();
+                Imgcodecs.imencode(".png", drawing, matOfByte);
+                byte[] byteArray = matOfByte.toArray();
+                exportSegObjectImageMap.put(fileName, byteArray);
+                // 바이트 배열을 파일로 저장 (테스트용)
 //             FileOutputStream fos = new FileOutputStream("/Users/juno/Desktop/xml/" + fileNameStr + ".xml");
 //            try (FileOutputStream fos = new FileOutputStream("/Users/juno/Desktop/xml/" + fileName + ".png")) {
 //                fos.write(byteArray);
@@ -367,6 +384,9 @@ public class VocExportUtil {
 //            } catch (IOException e) {
 //                throw new RuntimeException(e);
 //            }
+            }
+        } catch (Exception e) {
+            throw new HandlerCustomException("500", "SegmentationObject 파일을 생성하는 과정에서 알 수 없는 오류가 발생하였습니다.", e);
         }
         this.exportSegObjectImageMap = exportSegObjectImageMap;
     }
