@@ -84,7 +84,7 @@
 						<label for="dataset-coco" class="radio_label">coco</label>
 					
 					
-						<input id="dataset-voc" class="radioBtn" name="dataset-type" type="radio" value="voc" disabled/>
+						<input id="dataset-voc" class="radioBtn" name="dataset-type" type="radio" value="voc"/>
 						<label for="dataset-voc" class="radio_label">voc</label>
 					</div>
 				</div>		
@@ -160,6 +160,9 @@
 			that.pt.find("textarea[name='contents']").val("");
 			that.pt.find(".c_wrap").empty();
 			that.pt.find(".checkBox").removeClass("selected");
+			
+			that.pt.find("input[id='dataset-virtual'][name='dataset-type']").trigger("click")
+			
 			
 			var html = "<li class='file_drop_info flex'>"
 				+ "<div class='info_wrap'>"
@@ -291,7 +294,7 @@
 						that.computed.importCocoDataset(formData);
 						break;
 					case 'voc' :
-						// that.computed.importVocDataset(formData);
+						that.computed.importVocDataset(formData);
 						break;
 						
 					default:
@@ -561,24 +564,30 @@
 				   		$("#loader").hide();
 				   		
 						console.log("### importCocoDataset success: ", res);
-						alert(res.result.data);
-						
-						if(res.result.code == "200"){
-							//트리초기화
-							$(".ztree").empty();
-							labeller.getDatasetList();
+						if(typeof res.result !== "undefined") {
 							
-							that.reset();
-							
-							labeller.pt.find("div.section").removeClass("selected");
-							var node = ".section.info";
-							labeller.pt.find(node).addClass("selected");							
-						} else if (res.result.code == "2001") {
-							alert(res.result.data);
-							location.href = baseUrl + 'login';
-						} else {
-							alert(res.result.data);
-						}							
+							if(res.result.code == "200"){
+								
+								alert(res.result.data);
+								
+								//트리초기화
+								$(".ztree").empty();
+								labeller.getDatasetList();
+								
+								that.reset();
+								
+								labeller.pt.find("div.section").removeClass("selected");
+								var node = ".section.info";
+								labeller.pt.find(node).addClass("selected");							
+							} else if (res.result.code == "2001") {
+								alert(res.result.data);
+								location.href = baseUrl + 'login';
+							} else {
+								alert(res.result.data);
+							}							
+						}  else if (typeof res.jsonOutputVO !== "undefined" ) {
+							alert(res.jsonOutputVO.data);
+						} 
 				   	},
 				   	error : function(err){
 				   		$("#loader").hide();
@@ -587,6 +596,55 @@
 				});
 				
 			},
+			
+			importVocDataset : function(formData) {
+				var that = imports;
+				console.log("### importVocDataset : ", formData);
+				
+				$("#loader").show();
+				$.ajax({
+				   	url :  baseUrl + "/imExport/import/voc",
+				   	data : formData,
+				   	type : "POST",
+				   	processData : false,
+				   	contentType: false,
+				   	success : function(res){
+				   		$("#loader").hide();
+				   		
+						console.log("### importVocDataset success: ", res);
+						
+						if(typeof res.result !== "undefined") {
+							
+							if(res.result.code == 200) {
+								
+								alert(res.result.data);
+								
+								//트리초기화
+								$(".ztree").empty();
+								labeller.getDatasetList();
+								
+								that.reset();
+								
+								labeller.pt.find("div.section").removeClass("selected");
+								var node = ".section.info";
+								labeller.pt.find(node).addClass("selected");							
+							} else if (res.result.code == "2001") {
+								alert(res.data);
+								location.href = baseUrl + 'login';
+							} else {
+								alert(res.result.data);
+							}							
+							
+						} else if (typeof res.jsonOutputVO !== "undefined" ) {
+							alert(res.jsonOutputVO.data);
+						} 
+				   	},
+				   	error : function(err){
+				   		$("#loader").hide();
+				   		 console.log("ERROR!!", err);
+				   	}
+				});
+			}
 			 
 		},
 		

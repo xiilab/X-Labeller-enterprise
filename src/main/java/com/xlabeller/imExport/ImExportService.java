@@ -320,7 +320,7 @@ public class ImExportService {
         try {
             dataService.insertDataset(insertDatasetVO);
         } catch (Exception e) {
-            throw new HandlerCustomException("500", "COCO Import 데이터셋 등록에 실패했습니다.", e);
+            throw new HandlerCustomException("500", "VOC Import 데이터셋 등록에 실패했습니다.", e);
         }
 
         // 5. label 등록, META테이블에 label 저장
@@ -335,7 +335,7 @@ public class ImExportService {
             cocoImportMeta(dataVO.getData_id(), labelType, imageAnnotationArray);
         });
 
-        return Output.JsonOutput("200", "COCO형식으로 Import가 완료되었습니다.");
+        return Output.JsonOutput("200", "VOC 형식으로 Import가 완료되었습니다.");
     }
 
     private void cocoImportMeta(String dataId, String labelType, JSONArray jsonArray) {
