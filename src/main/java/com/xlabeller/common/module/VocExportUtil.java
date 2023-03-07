@@ -1,8 +1,6 @@
 package com.xlabeller.common.module;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xlabeller.common.configuration.AnnotationExceptionHandler;
 import com.xlabeller.common.exception.HandlerCustomException;
 import com.xlabeller.enums.PathEnum;
 import com.xlabeller.models.ImExportVO;
@@ -27,8 +25,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.*;
-
-import org.opencv.imgproc.Imgproc.*;
 
 public class VocExportUtil {
     private static Logger logger = Logger.getLogger(VocExportUtil.class);
@@ -152,7 +148,7 @@ public class VocExportUtil {
         JSONObject jsonObject = new JSONObject();
 //        String label = imExportVO.getLabel();
         if ("IMAGE_BBOX".equals(labelType)) {
-            JSONObject bbox = getBboxInfoToStringArray(info);
+            JSONObject bbox = getBboxInfoToStringArrayByLabelB(info);
             jsonObject.put("label", label);
             jsonObject.put("bbox", bbox);
         } else {
@@ -164,8 +160,23 @@ public class VocExportUtil {
                 throw new HandlerCustomException("500", "XML파일을 생성하는 중 오류가 발생했습니다.", e);
             }
             JSONObject segInfoObj = (JSONObject) segInfoJsonArray.get(0);
-            String bboxInfo = (String) segInfoObj.get("box");
-            JSONObject bbox = getBboxInfoToStringArray(bboxInfo);
+            // box 수정 필요
+//            String bboxInfo = (String) segInfoObj.get("box");
+//            JSONObject bbox = getBboxInfoToStringArray(bboxInfo);
+
+            JSONArray segmentationArray = (JSONArray) segInfoObj.get("segmentation");
+
+            double x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+            for(int i = 0; i < segmentationArray.size(); i++) {
+                JSONObject segmentationObj = (JSONObject)segmentationArray.get(i);
+                double pointX = Double.parseDouble(segmentationObj.get("x").toString());
+                double pointY = Double.parseDouble(segmentationObj.get("y").toString());
+                x1 = (i == 0 || x1 > pointX)? pointX : x1;
+                y1 = (i == 0 || y1 > pointY)? pointY : y1;
+                x2 = (i == 0 || x2 < pointX)? pointX : x2;
+                y2 = (i == 0 || y2 < pointY)? pointY : y2;
+            }
+            JSONObject bbox = getBboxInfoToStringArrayByLabelS(x1, y1, x2, y2);
             jsonObject.put("label", label);
             jsonObject.put("bbox", bbox);
         }
@@ -178,9 +189,9 @@ public class VocExportUtil {
         }
     }
 
-    private JSONObject getBboxInfoToStringArray(String imExportVO) {
+    private JSONObject getBboxInfoToStringArrayByLabelB(String bboxStrArray) {
         JSONObject resultObj = new JSONObject();
-        String[] bboxInfo = imExportVO.split(",");
+        String[] bboxInfo = bboxStrArray.split(",");
         int x1 = (int) Math.floor(Double.parseDouble(bboxInfo[0]));
         int y1 = (int) Math.floor(Double.parseDouble(bboxInfo[1]));
         int width = (int) Math.floor(Double.parseDouble(bboxInfo[2]));
@@ -191,6 +202,16 @@ public class VocExportUtil {
         resultObj.put("ymin", String.valueOf(Math.max(y1, 0)));
         resultObj.put("xmax", String.valueOf(Math.max(x2, 0)));
         resultObj.put("ymax", String.valueOf(Math.max(y2, 0)));
+
+        return resultObj;
+    }
+
+    private JSONObject getBboxInfoToStringArrayByLabelS(double x1, double y1, double x2, double y2) {
+        JSONObject resultObj = new JSONObject();
+        resultObj.put("xmin", String.valueOf((long)Math.max(x1, 0)));
+        resultObj.put("ymin", String.valueOf((long)Math.max(y1, 0)));
+        resultObj.put("xmax", String.valueOf((long)Math.max(x2, 0)));
+        resultObj.put("ymax", String.valueOf((long)Math.max(y2, 0)));
 
         return resultObj;
     }
@@ -356,7 +377,7 @@ public class VocExportUtil {
                     polygon.fromList(points);
                     Scalar color = new Scalar(rand.nextInt(255) + 1, rand.nextInt(255) + 1, rand.nextInt(255) + 1);
                     // 이미지에 폴리곤 그리기
-                    Imgproc.fillConvexPoly(maskImage, polygon, color, Imgproc.LINE_8);
+                    Imgproc.fillConvexPoly(maskImage, polygon, color, Imgproc.LINE_4);
 
                     // 윤곽선 그리기 로직
                     List<MatOfPoint> contours = new ArrayList<>();
@@ -365,8 +386,8 @@ public class VocExportUtil {
                     Imgproc.findContours(maskImage, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
                     // 찾은 윤곽선 및 폴리곤 그리기
                     for (int j = 0; j < contours.size(); j++) {
-                        Imgproc.drawContours(drawing, contours, j, new Scalar(255, 255, 255), 8, Imgproc.LINE_8, hierarchy, 0, new Point());
-                        Imgproc.fillConvexPoly(drawing, polygon, color, Imgproc.LINE_8);
+                        Imgproc.drawContours(drawing, contours, j, new Scalar(255, 255, 255), 8, Imgproc.LINE_4, hierarchy, 0, new Point());
+                        Imgproc.fillConvexPoly(drawing, polygon, color, Imgproc.LINE_4);
                     }
                 }
 
@@ -376,14 +397,8 @@ public class VocExportUtil {
                 byte[] byteArray = matOfByte.toArray();
                 exportSegObjectImageMap.put(fileName, byteArray);
                 // 바이트 배열을 파일로 저장 (테스트용)
-//             FileOutputStream fos = new FileOutputStream("/Users/juno/Desktop/xml/" + fileNameStr + ".xml");
-//            try (FileOutputStream fos = new FileOutputStream("/Users/juno/Desktop/xml/" + fileName + ".png")) {
-//                fos.write(byteArray);
-//            } catch (FileNotFoundException e) {
-//                throw new RuntimeException(e);
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
+                // FileOutputStream fos = new FileOutputStream("/Users/juno/Desktop/xml/" + fileName + ".png"
+                // fos.write(byteArray);
             }
         } catch (Exception e) {
             throw new HandlerCustomException("500", "SegmentationObject 파일을 생성하는 과정에서 알 수 없는 오류가 발생하였습니다.", e);

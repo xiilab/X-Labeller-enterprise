@@ -27,31 +27,29 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * </pre>
  */
 @ControllerAdvice
-public class AnnotationExceptionHandler {
-
-	// private static final Logger LOG = LoggerFactory.getLogger(AnnotationExceptionHandler.class);
+public class AnnotationExceptionHandler{
 	private static Logger logger = Logger.getLogger(AnnotationExceptionHandler.class);
 
-
-	@Value("#{globalProperty['error.log.saveYn']}")
-	private String errorLogSaveYn;
-
-	/**
-	 * IllegalStateException 처리
-	 *
-	 * @param e
-	 *
-	 */
 	@ExceptionHandler(HandlerCustomException.class)
 	public Object handleCustomException(HandlerCustomException e) {
+		// 서버 에러, 납품할 때는 지워야 됨
+		if(e.getThrowable() != null && e.getThrowable().getStackTrace().length > 0) {
+//			e.getThrowable().printStackTrace();
+			StackTraceElement[] elem = e.getThrowable().getStackTrace();
+			for (StackTraceElement stackTraceElement : elem) {
+				logger.error(stackTraceElement);
+			}
+		}
+
 		if(e.getMessage() == null || e.getMessage().isEmpty()) {
 //			errorMap.put("resultCode", "500");
 //			errorMap.put("resultMsg", "NPException 오류!");
 			logger.error(e.getMessage());
-			return Output.JsonOutput("4061","파라미터가 전달되지 않았습니다.\n새로고침 후 다시 시도해주시고 지속적을 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+			return Output.JsonOutput("4061","알 수 없는 오류가 발생하였습니다.\n새로고침 후 다시 시도해주시고 지속적을 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
 
 		logger.error(e.getMessage());
+
 		return Output.JsonOutput(e.getCode(), e.getMessage());
 	}
 }

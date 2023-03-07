@@ -1,10 +1,8 @@
 package com.xlabeller.common.module;
 
 import org.apache.log4j.Logger;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FrameGrabber.Exception;
 
-public class VideoMetaUtil { 
+public class VideoMetaUtil {
 	private int width = 0;
 	private int height = 0;
 	private int total_frame = 0;
@@ -20,21 +18,21 @@ public class VideoMetaUtil {
 	
 	public void open(String path) {
 		isAvailable = false;
-	    try {
-	    	FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(path);
-			grabber.start();
-			width = grabber.getImageWidth();
-			height = grabber.getImageHeight();
-			total_frame = grabber.getLengthInFrames();
-			duration = grabber.getLengthInTime() / (double)1000000;
-			fps = grabber.getVideoFrameRate();
-			grabber.close();
-		    isAvailable = true;
-		    
-		} catch (Exception e) {
-			logger.error("VideoMetaUtil>>open()",e);
-			isAvailable = false;
-		}
+//	    try {
+//	    	FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(path);
+//			grabber.start();
+//			width = grabber.getImageWidth();
+//			height = grabber.getImageHeight();
+//			total_frame = grabber.getLengthInFrames();
+//			duration = grabber.getLengthInTime() / (double)1000000;
+//			fps = grabber.getVideoFrameRate();
+//			grabber.close();
+//		    isAvailable = true;
+//
+//		} catch (Exception e) {
+//			logger.error("VideoMetaUtil>>open()",e);
+//			isAvailable = false;
+//		}
 	}
 	
 	

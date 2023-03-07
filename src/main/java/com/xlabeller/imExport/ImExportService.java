@@ -98,7 +98,7 @@ public class ImExportService {
         try (ZipInputStream zis = new ZipInputStream(importZipFile.getInputStream())) {
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
-                if (entryValidate(entry)) continue;
+                if (entryValidate(entry, true)) continue;
 
                 // check if the entry is a valid image file
                 String[] validExtensions = {"png", "jpg", "jpeg", "json"};
@@ -121,7 +121,7 @@ public class ImExportService {
                 imageMap.put(entry.getName(), bytes);
             }
         } catch (IOException e) {
-            throw new HandlerCustomException("4051", "Failed to read the zip file");
+            throw new HandlerCustomException("4051", "Failed to read the zip file", e);
         }
 
         // zip에 json파일 없으면 에러처리
@@ -142,7 +142,7 @@ public class ImExportService {
             // coco.json읽어서 JSON형태로 변환
             cocoJsonObj = (JSONObject) cocoJsonParser.parse(jsonContent);
         } catch (ParseException e) {
-            throw new HandlerCustomException("4051", "zip파일에 포함된 json파일이 손상되어 JSON형식으로 변환할 수 없습니다.\n파일을 다시 확인해주세요.");
+            throw new HandlerCustomException("4051", "zip파일에 포함된 json파일이 손상되어 JSON형식으로 변환할 수 없습니다.\n파일을 다시 확인해주세요.", e);
         }
 
         // 모듈에서 coco.json에서 필요한 항목 추출
@@ -173,7 +173,7 @@ public class ImExportService {
         try {
             dataService.insertDataset(insertDatasetVO);
         } catch (Exception e) {
-            throw new HandlerCustomException("500", "COCO Import 데이터셋 등록에 실패했습니다.");
+            throw new HandlerCustomException("500", "COCO Import 데이터셋 등록에 실패했습니다.", e);
         }
 
         // 5. label 등록, META테이블에 label 저장
@@ -187,34 +187,6 @@ public class ImExportService {
         });
 
         return Output.JsonOutput("200", "COCO형식으로 Import가 완료되었습니다.");
-    }
-
-    private boolean entryValidate(ZipEntry entry) {
-        if (entry.getName().contains("_MACOSX")) {
-            return true;
-        }
-        if (entry.getName().contains(".DS_Store")) {
-            return true;
-        }
-        if (entry.isDirectory()) {
-            return true;
-        }
-        return false;
-    }
-
-    private String getExtensionValid(String[] acceptExtension, String fileName) {
-        // 파일 포맷 추출
-        String extension = Optional.ofNullable(FilenameUtils.getExtension(fileName))
-                .map(String::toLowerCase)
-                .orElseThrow(() -> {
-                    throw new HandlerCustomException("4051", "COCO zip파일에 부적절한 포맷을 가진 파일이 존재합니다.\nzip파일을 확인해주세요.");
-                });
-        // 허용된 파일 포맷이 아닐 경우, 에러처리
-        if (!Arrays.asList(acceptExtension).contains(extension)) {
-            throw new HandlerCustomException("4051", "COCO zip파일에 부적절한 포맷을 가진 파일이 존재합니다.\nzip파일을 확인해주세요.");
-        }
-
-        return extension;
     }
 
     public void exportVoc(ImExportVO imExportVO, HttpServletResponse response) throws HandlerCustomException, IOException {
@@ -280,8 +252,12 @@ public class ImExportService {
             try {
                 InputStream in = new FileInputStream(value);
                 zipUtil.putEntry(jpegImagesDir + Paths.get(value).getFileName().toString(), IOUtils.toByteArray(in));
-            } catch (IOException e) {
-                throw new HandlerCustomException("500", "VOC를 추출하는 과정에서 오류가 발생하였습니다.");
+            } catch (Exception e) {
+                if (e instanceof FileNotFoundException) {
+                    throw new HandlerCustomException("500", "추출하려는 원본 이미지 파일을 찾을 수 없습니다.", e);
+                } else if (e instanceof IOException) {
+                    throw new HandlerCustomException("500", "VOC를 추출하는 과정에서 오류가 발생하였습니다.", e);
+                }
             }
         });
 
@@ -291,14 +267,75 @@ public class ImExportService {
             zipUtil.putEntry(fileFullPath, map.getValue());
         });
 
-		zipUtil.close();
+        zipUtil.close();
 
         String saveZipFileName = "exports_voc.zip";
-		response.setContentType("application/zip");
-		response.setHeader("Content-Disposition", "attachment; fileName=" + saveZipFileName);
-		try (OutputStream out = response.getOutputStream()) {
-			out.write(zipUtil.getZipOutputStream());
-		}
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; fileName=" + saveZipFileName);
+        try (OutputStream out = response.getOutputStream()) {
+            out.write(zipUtil.getZipOutputStream());
+        }
+    }
+
+    public Object importVoc(ImExportVO imExportVO) throws HandlerCustomException, IOException {
+        // 1. 파라미터 및 import하려는 파일이 zip파일인지 유효성 검사
+        MultipartFile importZipFile = imExportVO.getImport_zip_file();
+        String labelType = imExportVO.getLabel_type();
+        String title = imExportVO.getTitle();
+        String contents = imExportVO.getContents();
+
+        // 업로드한 파일 zip포맷인지 유효성 검사
+        getExtensionValid(new String[]{"zip"}, importZipFile.getOriginalFilename());
+        // 2. zip파일 압축해제 후 VOC, VOC/Annotations, VOC/ImageSets, VOC/JPEGImages, VOC/SegmentationObject 폴더 있는지 검사
+        VocImportUtil vocImportUtil = new VocImportUtil(importZipFile);
+        vocImportUtil.initData(labelType);
+        Map<String, byte[]> importVocJpegImagesMap = vocImportUtil.getImportVocJpegImagesMap();
+        Map<String, JSONArray> importAnnotationsInfoMap = vocImportUtil.getImportAnnotationsInfoMap();
+        Map<String, JSONArray> importSegmentationObjectInfoMap = vocImportUtil.getImportSegmentationObjectInfoMap();
+
+
+        // 4. 이미지 파일 저장 및 데이터셋, 데이터 DB에 저장
+        // file객체 MultipartFile로 변환
+        // why? Dataservice.insertDataset을 재활용하기 위함
+        List<MultipartFile> multipartFileList = new ArrayList<>();
+        importVocJpegImagesMap.entrySet().forEach((map) -> {
+            if ("IMAGE_BBOX".equals(labelType) && importAnnotationsInfoMap.containsKey(map.getKey())) {
+                MultipartFile multipartFile = new MockMultipartFile(map.getKey() + ".png", map.getKey() + ".png", "UTF-8", map.getValue());
+                multipartFileList.add(multipartFile);
+            } else if ("IMAGE_SEGMENTATION".equals(labelType) && importSegmentationObjectInfoMap.containsKey(map.getKey())) {
+                MultipartFile multipartFile = new MockMultipartFile(map.getKey() + ".png", map.getKey() + ".png", "UTF-8", map.getValue());
+                multipartFileList.add(multipartFile);
+            }
+        });
+
+        MultipartFile[] imageFilesArray = multipartFileList.toArray(new MultipartFile[multipartFileList.size()]);
+
+        // Dataset 및 Data 등록
+        DatasetVO insertDatasetVO = new DatasetVO();
+        insertDatasetVO.setTitle(title);
+        insertDatasetVO.setContents(contents);
+        insertDatasetVO.setFiles(imageFilesArray);
+        insertDatasetVO.setMedia_type("IMAGE");
+        insertDatasetVO.setLabel_type(labelType);
+        try {
+            dataService.insertDataset(insertDatasetVO);
+        } catch (Exception e) {
+            throw new HandlerCustomException("500", "COCO Import 데이터셋 등록에 실패했습니다.", e);
+        }
+
+        // 5. label 등록, META테이블에 label 저장
+        // 등록한 데이터셋의 모든 이미지 목록 가져옴
+        DataVO selectDataVO = new DataVO();
+        selectDataVO.setDataset_id(insertDatasetVO.getDataset_id());
+        List<DataVO> dataList = dataDao.getDataList(selectDataVO);
+        dataList.stream().forEach(dataVO -> {
+            String fileName = dataVO.getFilename().substring(0, dataVO.getFilename().lastIndexOf("."));
+            JSONArray imageAnnotationArray = "IMAGE_BBOX".equals(labelType)?
+                    importAnnotationsInfoMap.get(fileName) : importSegmentationObjectInfoMap.get(fileName);
+            cocoImportMeta(dataVO.getData_id(), labelType, imageAnnotationArray);
+        });
+
+        return Output.JsonOutput("200", "COCO형식으로 Import가 완료되었습니다.");
     }
 
     private void cocoImportMeta(String dataId, String labelType, JSONArray jsonArray) {
@@ -335,5 +372,33 @@ public class ImExportService {
         MetaVO insertMetaVO = new MetaVO();
         insertMetaVO.setMeta_list(insertMetaList);
         metaDao.insertMetaList(insertMetaVO);
+    }
+
+    private boolean entryValidate(ZipEntry entry, boolean dirSkipStatus) {
+        if (entry.getName().contains("_MACOSX")) {
+            return true;
+        }
+        if (entry.getName().contains(".DS_Store")) {
+            return true;
+        }
+        if (dirSkipStatus && entry.isDirectory()) {
+            return true;
+        }
+        return false;
+    }
+
+    private String getExtensionValid(String[] acceptExtension, String fileName) {
+        // 파일 포맷 추출
+        String extension = Optional.ofNullable(FilenameUtils.getExtension(fileName))
+                .map(String::toLowerCase)
+                .orElseThrow(() -> {
+                    throw new HandlerCustomException("4051", "COCO zip파일에 부적절한 포맷을 가진 파일이 존재합니다.\nzip파일을 확인해주세요.");
+                });
+        // 허용된 파일 포맷이 아닐 경우, 에러처리
+        if (!Arrays.asList(acceptExtension).contains(extension)) {
+            throw new HandlerCustomException("4051", "COCO zip파일에 부적절한 포맷을 가진 파일이 존재합니다.\nzip파일을 확인해주세요.");
+        }
+
+        return extension;
     }
 }

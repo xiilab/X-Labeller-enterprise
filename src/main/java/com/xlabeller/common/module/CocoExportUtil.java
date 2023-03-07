@@ -17,11 +17,7 @@ import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
-
-
 public class CocoExportUtil {
-	
 	private List<String> imageList = new ArrayList<String>();
 	private Map<String,Integer> imageMap = new HashMap<String,Integer>();
 	
@@ -334,30 +330,4 @@ public class CocoExportUtil {
             return null;
         }
     }
-	
-	public String encodingText(String text) {
-		if(!Normalizer.isNormalized(text, Normalizer.Form.NFC)) {
-			text = Normalizer.normalize(text, Normalizer.Form.NFC);
-		}
-		
-		byte[] str_byte = text.getBytes();
-		UniversalDetector detector = new UniversalDetector(null);
-		detector.handleData(str_byte, 0, str_byte.length);
-		detector.dataEnd();
-		String encoding = detector.getDetectedCharset();
-		
-		if(encoding == null || !encoding.equals("UTF-8")) {
-			try {
-				text = new String(str_byte, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return text;
-	}
-	
-	
-	
 }

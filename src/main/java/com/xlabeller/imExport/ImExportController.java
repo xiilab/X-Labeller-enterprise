@@ -55,4 +55,12 @@ public class ImExportController {
 		return modelAndView;
 	}
 
+	@PostMapping("/import/voc")
+	public ModelAndView importVoc(ImExportVO imExportVO, HttpServletResponse response) throws IOException {
+		ModelAndView modelAndView = new ModelAndView();
+		imExportService.importVoc(imExportVO);
+		modelAndView.addObject("result",  "VOC형식으로 Export가 완료되었습니다.");
+		return modelAndView;
+	}
+
 }

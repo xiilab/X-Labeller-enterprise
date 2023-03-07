@@ -24,7 +24,7 @@ public class CocoImportUtil {
     // imagesMap  = key : FILE_NAME, value : JSONArray(어노테이션 정보)
     private Map<String, JSONArray> annotationImagesMap;
     private String labelType;
-    private static Logger logger = Logger.getLogger(CocoImportUtil.class);
+    //private static Logger logger = Logger.getLogger(CocoImportUtil.class);
 
     public CocoImportUtil(JSONObject cocoJsonObject) {
         this.cocoJsonObject = cocoJsonObject;
@@ -164,15 +164,6 @@ public class CocoImportUtil {
             }
         }
 
-        // annotation 존재하는 이미지만 map로 저장, 이미지에 어노테이션이 존재하더라도 label_type에 저장되지 않을 수 있음
-
-/*        this.annotationImagesMap = this.imagesMap.entrySet()
-                .stream()
-                .filter((e) -> !resultMap.containsKey(e.getValue()))
-                .collect(Collectors.toMap(
-                        (e) -> e.getValue()
-                        (e) -> resultMap.get(e.)
-                ));*/
         this.annotationImagesMap = resultMap;
         this.annotationMap = copyResultMap;
     }

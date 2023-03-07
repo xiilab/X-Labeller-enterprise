@@ -329,7 +329,7 @@ public class DataService {
 	
 	public Object insertDataset(DatasetVO datasetVO) throws Exception {
 		UserVO userInfo = SessionUtil.getUserInfo();
-//		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
+//		if(userInfo == 9null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 //			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 //		}
 		

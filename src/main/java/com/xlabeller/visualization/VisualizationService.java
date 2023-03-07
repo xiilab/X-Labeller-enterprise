@@ -367,7 +367,7 @@ public class VisualizationService {
                     resultObj = getLabelCenterPositionScore(box, imageWhMapWidth, imageWhMapHeight);
                 }
             } catch (org.json.simple.parser.ParseException e) {
-                throw new HandlerCustomException("500", "JSON을 파싱하던 중 에러가 발생했습니다.");
+                throw new HandlerCustomException("500", "JSON을 파싱하던 중 에러가 발생했습니다.", e);
             }
 
             // String box = (String) ((JSONObject) segInfoJsonArray.get(0)).get("box");

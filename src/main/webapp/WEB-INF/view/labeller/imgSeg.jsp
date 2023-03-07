@@ -3770,6 +3770,7 @@
 						}
 						$("#loader").show();
 						for(var i=0; i<keys.length; i++){
+							//
 							var temp = that.computed.rescale(meta[keys[i]]['polyData'],true);
                             // jh.sa 201022
 							var segmentation = [];
@@ -4071,7 +4072,9 @@
 						const that = imgSeg;
 						var scaledRatio = that.data.scaleFactor.ratio;
 						var tempData = [];
-						
+						console.log("scaledRatio::", scaledRatio);
+						console.log("polyData::", polyData['box']);
+						console.log("isSave::", isSave);
 						if(!isSave){
 							
 							for(var i=0; i<polyData.length; i++){
@@ -4096,7 +4099,7 @@
 								tempData[i].y = polyData[i].y/scaledRatio;
 								tempData[i].x = polyData[i].x/scaledRatio;
 							}
-							
+
 							if(polyData["box"]){
 								tempData["box"] = {
 										left : polyData["box"].left/scaledRatio,
