@@ -167,14 +167,14 @@ public class VocExportUtil {
             JSONArray segmentationArray = (JSONArray) segInfoObj.get("segmentation");
 
             double x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-            for(int i = 0; i < segmentationArray.size(); i++) {
-                JSONObject segmentationObj = (JSONObject)segmentationArray.get(i);
+            for (int i = 0; i < segmentationArray.size(); i++) {
+                JSONObject segmentationObj = (JSONObject) segmentationArray.get(i);
                 double pointX = Double.parseDouble(segmentationObj.get("x").toString());
                 double pointY = Double.parseDouble(segmentationObj.get("y").toString());
-                x1 = (i == 0 || x1 > pointX)? pointX : x1;
-                y1 = (i == 0 || y1 > pointY)? pointY : y1;
-                x2 = (i == 0 || x2 < pointX)? pointX : x2;
-                y2 = (i == 0 || y2 < pointY)? pointY : y2;
+                x1 = (i == 0 || x1 > pointX) ? pointX : x1;
+                y1 = (i == 0 || y1 > pointY) ? pointY : y1;
+                x2 = (i == 0 || x2 < pointX) ? pointX : x2;
+                y2 = (i == 0 || y2 < pointY) ? pointY : y2;
             }
             JSONObject bbox = getBboxInfoToStringArrayByLabelS(x1, y1, x2, y2);
             jsonObject.put("label", label);
@@ -208,10 +208,10 @@ public class VocExportUtil {
 
     private JSONObject getBboxInfoToStringArrayByLabelS(double x1, double y1, double x2, double y2) {
         JSONObject resultObj = new JSONObject();
-        resultObj.put("xmin", String.valueOf((long)Math.max(x1, 0)));
-        resultObj.put("ymin", String.valueOf((long)Math.max(y1, 0)));
-        resultObj.put("xmax", String.valueOf((long)Math.max(x2, 0)));
-        resultObj.put("ymax", String.valueOf((long)Math.max(y2, 0)));
+        resultObj.put("xmin", String.valueOf((long) Math.max(x1, 0)));
+        resultObj.put("ymin", String.valueOf((long) Math.max(y1, 0)));
+        resultObj.put("xmax", String.valueOf((long) Math.max(x2, 0)));
+        resultObj.put("ymax", String.valueOf((long) Math.max(y2, 0)));
 
         return resultObj;
     }
@@ -374,10 +374,13 @@ public class VocExportUtil {
                         }
                     }
 
+                    List<MatOfPoint> polygonList = new ArrayList<>();
                     polygon.fromList(points);
+                    polygonList.add(polygon);
                     Scalar color = new Scalar(rand.nextInt(255) + 1, rand.nextInt(255) + 1, rand.nextInt(255) + 1);
                     // 이미지에 폴리곤 그리기
-                    Imgproc.fillConvexPoly(maskImage, polygon, color, Imgproc.LINE_4);
+                    //Imgproc.fillConvexPoly(maskImage, polygon, color, Imgproc.LINE_8);
+                    Imgproc.fillPoly(maskImage, polygonList, color, Imgproc.LINE_8);
 
                     // 윤곽선 그리기 로직
                     List<MatOfPoint> contours = new ArrayList<>();
@@ -386,8 +389,8 @@ public class VocExportUtil {
                     Imgproc.findContours(maskImage, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
                     // 찾은 윤곽선 및 폴리곤 그리기
                     for (int j = 0; j < contours.size(); j++) {
-                        Imgproc.drawContours(drawing, contours, j, new Scalar(255, 255, 255), 8, Imgproc.LINE_4, hierarchy, 0, new Point());
-                        Imgproc.fillConvexPoly(drawing, polygon, color, Imgproc.LINE_4);
+                        Imgproc.drawContours(drawing, contours, j, new Scalar(255, 255, 255), 8, Imgproc.LINE_8, hierarchy, 0, new Point());
+                        Imgproc.fillPoly(drawing, contours, color, Imgproc.LINE_8);
                     }
                 }
 
@@ -397,8 +400,11 @@ public class VocExportUtil {
                 byte[] byteArray = matOfByte.toArray();
                 exportSegObjectImageMap.put(fileName, byteArray);
                 // 바이트 배열을 파일로 저장 (테스트용)
-                // FileOutputStream fos = new FileOutputStream("/Users/juno/Desktop/xml/" + fileName + ".png"
-                // fos.write(byteArray);
+//                MatOfByte tempMatOfByte = new MatOfByte();
+//                Imgcodecs.imencode(".png", maskImage, tempMatOfByte);
+                //                byte[] tempByteArray = tempMatOfByte.toArray();
+//                FileOutputStream fos = new FileOutputStream("/Users/juno/Desktop/xml/" + fileName + ".png");
+//                fos.write(byteArray);
             }
         } catch (Exception e) {
             throw new HandlerCustomException("500", "SegmentationObject 파일을 생성하는 과정에서 알 수 없는 오류가 발생하였습니다.", e);
