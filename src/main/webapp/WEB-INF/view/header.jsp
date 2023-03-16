@@ -46,7 +46,8 @@
  			
 		    /******************/
 		    /* X-Labeller 로고 */
-		    #header .logo_wrap { width: 221px; height: 64px; text-align: center; background: url('images/img-logo-milnet.png') no-repeat center; cursor: pointer; }
+		    #header .logo_wrap { width: 250px; height: 64px; text-align: center; background: url('images/img-logo-militaryImageNet.png') no-repeat center; cursor: pointer; }
+		    /* #header .logo_wrap { width: 221px; height: 64px; text-align: center; background: url('images/img-logo-milnet.png') no-repeat center; cursor: pointer; } */
 		    /* #header .logo_wrap { width: 221px; height: 64px; text-align: center; background: url('images/img-logo-x-labeller.png') no-repeat center; cursor: pointer; } */
 		    /**/
 		    /* 성모 로고 */
