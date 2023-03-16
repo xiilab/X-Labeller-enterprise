@@ -34,7 +34,7 @@ public class AnnotationExceptionHandler{
 	public Object handleCustomException(HandlerCustomException e) {
 		// 서버 에러, 납품할 때는 지워야 됨
 		if(e.getThrowable() != null && e.getThrowable().getStackTrace().length > 0) {
-//			e.getThrowable().printStackTrace();
+			e.getThrowable().printStackTrace();
 			StackTraceElement[] elem = e.getThrowable().getStackTrace();
 			for (StackTraceElement stackTraceElement : elem) {
 				logger.error(stackTraceElement);

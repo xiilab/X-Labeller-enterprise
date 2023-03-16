@@ -17,12 +17,12 @@ public class AiAssistantController {
 	private AiAssistantService aiAssistantService;
 	private static Logger logger = Logger.getLogger(AiAssistantController.class);
 	
-	@RequestMapping("/runAiAssistant")
-	public ModelAndView runAiAssistant(AiAssistantVO aiAssistantVO) throws IOException {
-		ModelAndView modelAndView = new ModelAndView();
-		Object result = aiAssistantService.runAiAssistant(aiAssistantVO);
-		modelAndView.addObject("result",  result);
-		return modelAndView;
-	}
+//	@RequestMapping("/runAiAssistant")
+//	public ModelAndView runAiAssistant(AiAssistantVO aiAssistantVO) throws IOException {
+//		ModelAndView modelAndView = new ModelAndView();
+//		Object result = aiAssistantService.runAiAssistant(aiAssistantVO);
+//		modelAndView.addObject("result",  result);
+//		return modelAndView;
+//	}
 	
 }

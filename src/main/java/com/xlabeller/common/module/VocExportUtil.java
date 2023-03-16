@@ -237,7 +237,7 @@ public class VocExportUtil {
         for (Map.Entry<String, JSONObject> entry : allImageInfoMap.entrySet()) {
             String fileNameStr = entry.getKey();
             String fileOgName = exportAllImageNameMap.get(fileNameStr).split("dataset/")[1];
-            fileOgName = fileOgName.substring(0, fileOgName.indexOf("."));
+            //fileOgName = fileOgName.substring(0, fileOgName.indexOf("."));
             JSONObject fileInfo = (JSONObject) entry.getValue();
             Document doc = dBuilder.newDocument();
             // 루트 엘리먼트 생성
@@ -353,14 +353,12 @@ public class VocExportUtil {
                 Mat originalImage = Imgcodecs.imread(fullFileName);
                 // 폴리곤 생성하고 윤곽선을 찾을 이미지
                 // CvType.CV_8U? 흑백이미지로 현하기 위해 사용되는 타입, 윤곽선을 찾는 함수는 CvType.CV_8U형식의 이미지만 지원함
-                Mat maskImage = Mat.zeros(originalImage.size(), CvType.CV_8U);
+                Mat maskImage = Mat.zeros(originalImage.size(), originalImage.type());
                 // 윤곽선 + 폴리곤이 그려져 저장될 이미지
-                Mat drawing = Mat.zeros(originalImage.size(), originalImage.type());
+                //Mat drawing = Mat.zeros(originalImage.size(), originalImage.type());
                 for (int i = 0; i < segInfoArray.size(); i++) {
                     JSONObject segInfoObj = (JSONObject) segInfoArray.get(i);
                     double[] segInfo = (double[]) segInfoObj.get("points");
-                    // 이미지에 그려질 폴리곤
-                    MatOfPoint polygon = new MatOfPoint();
                     // 폴리곤으로 생성할 좌표 목록
                     List<Point> points = new ArrayList<>();
                     Point point = new Point();
@@ -374,29 +372,22 @@ public class VocExportUtil {
                         }
                     }
 
+                    // 이미지에 그려질 폴리곤
+                    MatOfPoint polygon = new MatOfPoint();
                     List<MatOfPoint> polygonList = new ArrayList<>();
                     polygon.fromList(points);
                     polygonList.add(polygon);
                     Scalar color = new Scalar(rand.nextInt(255) + 1, rand.nextInt(255) + 1, rand.nextInt(255) + 1);
                     // 이미지에 폴리곤 그리기
                     //Imgproc.fillConvexPoly(maskImage, polygon, color, Imgproc.LINE_8);
+                    //Imgproc.drawContours(maskImage, polygonList, i, new Scalar(255, 255, 255), 8, Imgproc.LINE_8);
+                    Imgproc.polylines(maskImage, polygonList, true, new Scalar(255, 255,255), 8, Imgproc.LINE_8);
                     Imgproc.fillPoly(maskImage, polygonList, color, Imgproc.LINE_8);
-
-                    // 윤곽선 그리기 로직
-                    List<MatOfPoint> contours = new ArrayList<>();
-                    Mat hierarchy = new Mat();
-                    // 위에 폴리곤 생성된 이미지에서 윤곽선 찾기
-                    Imgproc.findContours(maskImage, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-                    // 찾은 윤곽선 및 폴리곤 그리기
-                    for (int j = 0; j < contours.size(); j++) {
-                        Imgproc.drawContours(drawing, contours, j, new Scalar(255, 255, 255), 8, Imgproc.LINE_8, hierarchy, 0, new Point());
-                        Imgproc.fillPoly(drawing, contours, color, Imgproc.LINE_8);
-                    }
                 }
 
                 // 저장될 이미지 읽어서 byte[]로 변환
                 MatOfByte matOfByte = new MatOfByte();
-                Imgcodecs.imencode(".png", drawing, matOfByte);
+                Imgcodecs.imencode(".png", maskImage, matOfByte);
                 byte[] byteArray = matOfByte.toArray();
                 exportSegObjectImageMap.put(fileName, byteArray);
                 // 바이트 배열을 파일로 저장 (테스트용)

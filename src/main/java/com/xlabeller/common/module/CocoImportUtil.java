@@ -45,7 +45,7 @@ public class CocoImportUtil {
 
         for(int i = 0; i < imagesJsonArray.size(); i++) {
             JSONObject imageJsonObj = (JSONObject) imagesJsonArray.get(i);
-            Long image_id = (Long)imageJsonObj.get("id");
+            Long image_id = Long.parseLong(String.valueOf(imageJsonObj.get("id")));
             String fileName = (String)imageJsonObj.get("file_name");
             resultMap.put(image_id, fileName);
         }
@@ -80,9 +80,10 @@ public class CocoImportUtil {
         for(int i = 0; i < annotationsJsonArray.size(); i++) {
             JSONObject imageJsonObj = (JSONObject) annotationsJsonArray.get(i);
             // label name 추출
-            Long categoryId = (Long)imageJsonObj.get("category_id");
+            Long categoryId = Long.parseLong(String.valueOf(imageJsonObj.get("category_id")));
             String labelName = this.categoriesMap.get(categoryId);
-            Long imageId = (Long)imageJsonObj.get("image_id");
+            Long imageId = Long.parseLong(String.valueOf(imageJsonObj.get("image_id")));
+            //Long imageId = (Long)imageJsonObj.get("image_id");
             JSONObject annotationObj = new JSONObject();
             if(this.labelType.equals("IMAGE_BBOX")) {
                 if(!isValidCocoAnnotations(imageJsonObj, "IMAGE_BBOX")) {

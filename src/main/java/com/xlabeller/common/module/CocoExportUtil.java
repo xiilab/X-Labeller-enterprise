@@ -160,7 +160,9 @@ public class CocoExportUtil {
 			BufferedImage bi = null;
 			for(int i = 0 ; i < imageList.size();i++) {
 				JSONObject imageObj = new JSONObject();
-				bi = ImageIO.read(new File(WORKSPACE_PATH + imageList.get(i)));
+				String filePath = WORKSPACE_PATH + imageList.get(i);
+				System.out.println(filePath);
+				bi = ImageIO.read(new File(filePath));
 				imageObj.put("id", i);
 				imageObj.put("width", bi.getWidth());
 				imageObj.put("height", bi.getHeight());
@@ -174,7 +176,8 @@ public class CocoExportUtil {
 				
 				resultArr.add(imageObj);
 			}
-			
+
+			System.out.println(resultArr.toJSONString());
 			return resultArr;
 		}catch(Exception e) {
 			e.printStackTrace();	

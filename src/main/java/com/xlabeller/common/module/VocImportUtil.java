@@ -61,16 +61,16 @@ public class VocImportUtil {
         // zip 파일 압축 해제 후 해당하는 map에 저장
         readImportVocZipFile(labelType);
         // 계산 후 반환
-        if("IMAGE_SEGMENTATION".equals(labelType)) {
+        if ("IMAGE_SEGMENTATION".equals(labelType)) {
             addImportSegmentationObjectInfo();
         }
     }
 
     private void addImportSegmentationObjectInfo() {
-        if(this.importVocImageSetsSegList.size() <= 0) {
+        if (this.importVocImageSetsSegList.size() <= 0) {
             throw new HandlerCustomException("500", "Import할 SegmentationObject가 존재하지 않습니다.");
         }
-        if(this.importSegmentationObjectInfoMap.size() <= 0) {
+        if (this.importSegmentationObjectInfoMap.size() <= 0) {
             throw new HandlerCustomException("500", "Import할 SegmentationObject가 존재하지 않습니다.");
         }
 
@@ -79,21 +79,21 @@ public class VocImportUtil {
             JSONArray annotationsResultArray = this.importAnnotationsInfoMap.get(fileName);
             JSONArray segmentationInfoArray = this.importSegmentationObjectInfoMap.get(fileName);
             segmentationInfoArray.forEach((jsonObject) -> {
-                JSONObject segmentationInfoObj = (JSONObject)jsonObject;
+                JSONObject segmentationInfoObj = (JSONObject) jsonObject;
                 // 세그멘테이션 area값 꺼내오기
-                double segArea = (double)segmentationInfoObj.get("area");
+                double segArea = (double) segmentationInfoObj.get("area");
                 double min = Double.MAX_VALUE;
 
                 // XML에 있는 bbox값을 읽어 area를 구한 뒤, 세그멘테이션 area와 가장 근접한 값 찾기
-                for(int i = 0; i < annotationsResultArray.size(); i++) {
+                for (int i = 0; i < annotationsResultArray.size(); i++) {
                     JSONObject annotationsResultObject = (JSONObject) annotationsResultArray.get(i);
-                    String labelName = (String)annotationsResultObject.get("label");
-                    String[] boxInfo = ((String)annotationsResultObject.get("info")).split(",");
+                    String labelName = (String) annotationsResultObject.get("label");
+                    String[] boxInfo = ((String) annotationsResultObject.get("info")).split(",");
                     double width = Double.parseDouble(boxInfo[2]);
                     double height = Double.parseDouble(boxInfo[3]);
                     double area = width * height;
                     double abs = segArea - area;
-                    if(abs < min) {
+                    if (abs < min) {
                         min = abs;
                         segmentationInfoObj.put("label", labelName);
                     }
@@ -109,15 +109,15 @@ public class VocImportUtil {
             while ((entry = zis.getNextEntry()) != null) {
                 if (entryValidate(entry, true)) continue;
                 String entryName = entry.getName();
-                if(entryName.contains(VocDirEnum.ANNOTATIONS.getDirPath())) {
+                if (entryName.contains(VocDirEnum.ANNOTATIONS.getDirPath())) {
                     addAnnotationsInfoMap(zis);
-                } else if("IMAGE_BBOX".equals(labelType) && entryName.contains(VocDirEnum.IMAGE_SETS_MAIN.getDirPath())) {
+                } else if ("IMAGE_BBOX".equals(labelType) && entryName.contains(VocDirEnum.IMAGE_SETS_MAIN.getDirPath())) {
                     addVocImageSetsMainList(zis);
-                } else if("IMAGE_SEGMENTATION".equals(labelType) && entryName.contains(VocDirEnum.IMAGE_SETS_SEGMENTATION.getDirPath())) {
+                } else if ("IMAGE_SEGMENTATION".equals(labelType) && entryName.contains(VocDirEnum.IMAGE_SETS_SEGMENTATION.getDirPath())) {
                     addVocImageSetsSegList(zis);
-                } else if(entryName.contains(VocDirEnum.JPEG_IMAGES.getDirPath())) {
+                } else if (entryName.contains(VocDirEnum.JPEG_IMAGES.getDirPath())) {
                     addJpegImagesMap(zis, entryName);
-                } else if("IMAGE_SEGMENTATION".equals(labelType) && entryName.contains(VocDirEnum.SEGMENTATION_OBJECT.getDirPath())) {
+                } else if ("IMAGE_SEGMENTATION".equals(labelType) && entryName.contains(VocDirEnum.SEGMENTATION_OBJECT.getDirPath())) {
                     addImportSegmentationObjectInfoMap(zis, entryName);
                 }
             }
@@ -127,6 +127,169 @@ public class VocImportUtil {
             throw new HandlerCustomException(e.getCode(), e.getMessage(), e);
         }
     }
+
+//    private void addImportSegmentationObjectInfoMap(ZipInputStream zis, String entryName) {
+//        String fileName = entryName.substring(entryName.lastIndexOf("/") + 1, entryName.indexOf("."));
+//        File outputFile = null;
+//        // 윤곽선 찾아서 세그멘테이션으로 변환
+//        try {
+//            nu.pattern.OpenCV.loadShared();
+//            nu.pattern.OpenCV.loadLocally();
+//            System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//
+//            // dataset_temp 디렉토리 및 저장할 파일 생성
+//            outputFile = new File(PathEnum.IMPORT_VOC_TEMP_PATH.getPath(), entryName);
+//            new File(outputFile.getParent()).mkdirs();
+//            FileOutputStream fos = new FileOutputStream(outputFile);
+//            int len = 0;
+//            byte[] buffer = new byte[4096];
+//            while ((len = zis.read(buffer)) > 0) {
+//                fos.write(buffer, 0, len);
+//            }
+//
+//            // 저장된 이미지 매트릭스로 변환
+//            Mat originalImage = Imgcodecs.imread(PathEnum.IMPORT_VOC_TEMP_PATH.getPath() + "/" + entryName);
+//            Mat grayImage = new Mat();
+//            Imgproc.cvtColor(originalImage, grayImage, Imgproc.COLOR_BGR2GRAY);
+//
+//            // 바이트 배열을 파일로 저장 (테스트용)
+//            MatOfByte tempMatOfByte = new MatOfByte();
+//            Imgcodecs.imencode(".png", grayImage, tempMatOfByte);
+//            byte[] tempByteArray = tempMatOfByte.toArray();
+//            FileOutputStream fos2 = new FileOutputStream("/Users/juno/Desktop/xml/color/" + fileName + ".png");
+//            fos2.write(tempByteArray);
+//
+//            // apply threshold to create binary image
+//            Mat binaryImage = new Mat();
+//            Imgproc.threshold(grayImage, binaryImage, 0, 255, Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU);
+//
+//            // 바이트 배열을 파일로 저장 (테스트용)
+//            MatOfByte tempMatOfByte2 = new MatOfByte();
+//            Imgcodecs.imencode(".png", binaryImage, tempMatOfByte2);
+//            tempByteArray = tempMatOfByte2.toArray();
+//            FileOutputStream fos3 = new FileOutputStream("/Users/juno/Desktop/xml/binary/" + fileName + ".png");
+//            fos3.write(tempByteArray);
+//
+//            // apply morphological opening to remove noise
+//            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+//            Mat openedImage = new Mat();
+//            Imgproc.morphologyEx(binaryImage, openedImage, Imgproc.MORPH_OPEN, kernel);
+//
+//            // 바이트 배열을 파일로 저장 (테스트용)
+//            MatOfByte tempMatOfByte3 = new MatOfByte();
+//            Imgcodecs.imencode(".png", openedImage, tempMatOfByte3);
+//            tempByteArray = tempMatOfByte3.toArray();
+//            FileOutputStream fos4 = new FileOutputStream("/Users/juno/Desktop/xml/morphological/" + fileName + ".png");
+//            fos4.write(tempByteArray);
+//
+//            // 확실한 백그라운드 이미지 생성
+//            Mat sureBg = new Mat();
+//            Imgproc.dilate(openedImage, sureBg, kernel);
+//
+//            // 바이트 배열을 파일로 저장 (테스트용)
+//            MatOfByte tempMatOfByte7 = new MatOfByte();
+//            Imgcodecs.imencode(".png", sureBg, tempMatOfByte7);
+//            tempByteArray = tempMatOfByte7.toArray();
+//            FileOutputStream fos7 = new FileOutputStream("/Users/juno/Desktop/xml/sureBg/" + fileName + ".png");
+//            fos7.write(tempByteArray);
+//
+//            // apply distance transform to create markers
+//            Mat markers = new Mat();
+//            Imgproc.distanceTransform(openedImage, markers, Imgproc.DIST_L2, 5);
+//            Core.normalize(markers, markers, 0, 255, Core.NORM_MINMAX, CvType.CV_8UC1);
+//
+//            // Unknown 영역
+//            Mat unknown = new Mat();
+//            Core.subtract(sureBg, markers, unknown);
+//
+//            // 바이트 배열을 파일로 저장 (테스트용)
+//            MatOfByte tempMatOfByte4 = new MatOfByte();
+//            Imgcodecs.imencode(".png", openedImage, tempMatOfByte4);
+//            tempByteArray = tempMatOfByte4.toArray();
+//            FileOutputStream fos5 = new FileOutputStream("/Users/juno/Desktop/xml/distance/" + fileName + ".png");
+//            fos5.write(tempByteArray);
+//
+//            // apply watershed algorithm
+//            Imgproc.watershed(originalImage, markers);
+//
+//            // 바이트 배열을 파일로 저장 (테스트용)
+//            MatOfByte tempMatOfByte5 = new MatOfByte();
+//            Imgcodecs.imencode(".png", openedImage, tempMatOfByte4);
+//            tempByteArray = tempMatOfByte5.toArray();
+//            FileOutputStream fos6 = new FileOutputStream("/Users/juno/Desktop/xml/watershed/" + fileName + ".png");
+//            fos6.write(tempByteArray);
+//
+//            List<List<Point>> contoursPoints = new ArrayList<>();
+//            for (int i = 0; i < markers.rows(); i++) {
+//                for (int j = 0; j < markers.cols(); j++) {
+//                    int label = (int) markers.get(i, j)[0];
+//                    if (label == -1) {
+//                        // point belongs to background
+//                        continue;
+//                    }
+//                    if (contoursPoints.size() < label + 1) {
+//                        // add new polygon
+//                        contoursPoints.add(new ArrayList<>());
+//                    }
+//                    contoursPoints.get(label).add(new Point(j, i));
+//                }
+//            }
+//
+//            // 잠시 주석
+////            for (MatOfPoint contour : contours) {
+////                List<Point> points = new ArrayList<>();
+////                // mask 값을 포인트로 변환 후 넣기
+////                for (Point point : contour.toArray()) {
+////                    points.add(point);
+////                }
+////                contoursPoints.add(points);
+////            }
+//
+//            JSONArray resultJsonArray = new JSONArray();
+//            JSONObject resultJsonObject = new JSONObject();
+//            JSONObject infoJsonObject = new JSONObject();
+//            JSONArray pointJsonArray = new JSONArray();
+//            JSONObject pointJsonObject = new JSONObject();
+//
+//            for (List<Point> contoursPoint : contoursPoints) {
+//                int loopCnt = 0;
+//                double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+//                for (Point p : contoursPoint) {
+//                    x1 = (loopCnt == 0 || x1 > p.x) ? p.x : x1;
+//                    y1 = (loopCnt == 0 || y1 > p.y) ? p.y : y1;
+//                    x2 = (loopCnt == 0 || x2 < p.x) ? p.x : x2;
+//                    y2 = (loopCnt == 0 || y2 < p.y) ? p.y : y2;
+//                    pointJsonObject = new JSONObject();
+//                    pointJsonObject.put("x", p.x);
+//                    pointJsonObject.put("y", p.y);
+//                    pointJsonArray.add(pointJsonObject);
+//                    loopCnt++;
+//                }
+//                // 좌표값으로 width, height 구해서 문자열로 반환
+//                // 반환 값 : "[x1],[y1],[width],[height]"
+//                String box = calcBoxSizeToString(x1, y1, x2, y2);
+//                // 넓이 계산
+//                double width = x2 - x1;
+//                double height = y2 - y1;
+//                // 세그멘테이션에 해당하는 라벨명을 찾기 위한 area값
+//                double area = width * height;
+//                infoJsonObject.put("segmentation", pointJsonArray);
+//                infoJsonObject.put("box", box);
+//                resultJsonObject.put("info", infoJsonObject);
+//                resultJsonObject.put("area", area);
+//                resultJsonArray.add(resultJsonObject);
+//            }
+//
+//            this.importSegmentationObjectInfoMap.put(fileName, resultJsonArray);
+//        } catch (Exception e) {
+//            throw new HandlerCustomException("500", "SegmentationObject 파일을 생성하는 과정에서 알 수 없는 오류가 발생하였습니다.", e);
+//        } finally {
+//            // 임시로 저장된 SegmentationObject파일 삭제
+//            if (outputFile != null) {
+//                outputFile.delete();
+//            }
+//        }
+//    }
 
     private void addImportSegmentationObjectInfoMap(ZipInputStream zis, String entryName) {
         String fileName = entryName.substring(entryName.lastIndexOf("/") + 1, entryName.indexOf("."));
@@ -148,36 +311,100 @@ public class VocImportUtil {
             }
 
             // 저장된 이미지 매트릭스로 변환
-            Mat originalImage = Imgcodecs.imread(PathEnum.IMPORT_VOC_TEMP_PATH.getPath() + "/" + entryName, CvType.CV_8U);
+            Mat originalImage = Imgcodecs.imread(PathEnum.IMPORT_VOC_TEMP_PATH.getPath() + "/" + entryName, Imgcodecs.IMREAD_COLOR);
+
+
+//            Convert the image to grayscale
+//            주석 해제시 findCountours 맨 앞 파라미터만 변경 필요
+            Mat grayImage = new Mat();
+            Imgproc.cvtColor(originalImage, grayImage, Imgproc.COLOR_BGR2GRAY);
+
+            // 바이트 배열을 파일로 저장 (테스트용)
+            MatOfByte tempMatOfByte = new MatOfByte();
+            Imgcodecs.imencode(".png", grayImage, tempMatOfByte);
+            byte[] tempByteArray = tempMatOfByte.toArray();
+            FileOutputStream fos2 = new FileOutputStream("/Users/juno/Desktop/xml/1/" + fileName + ".png");
+            fos2.write(tempByteArray);
+//
+            // Perform Canny edge detection
+            Mat edges = new Mat();
+            Imgproc.Canny(grayImage, edges, 85, 255);
+
+            // 바이트 배열을 파일로 저장 (테스트용)
+            MatOfByte tempMatOfByte2 = new MatOfByte();
+            Imgcodecs.imencode(".png", edges, tempMatOfByte2);
+            byte[] tempByteArray2 = tempMatOfByte2.toArray();
+            FileOutputStream fos3 = new FileOutputStream("/Users/juno/Desktop/xml/2/" + fileName + ".png");
+            fos3.write(tempByteArray2);
+//
+//            // Extract edge pixels by thresholding
+            Mat thresholded = new Mat();
+            Imgproc.threshold(edges, thresholded, 0, 255, Imgproc.THRESH_BINARY);
+            //Imgproc.adaptiveThreshold(edges, thresholded, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY_INV, 11, 7);
+
             // 윤곽선 찾기 로직
             List<MatOfPoint> contours = new ArrayList<>();
             Mat hierarchy = new Mat();
-            // 윤곽선 찾기
-            Imgproc.findContours(originalImage, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+            // 윤곽선 찾기, 메서드 이상 현상 발생, 수정 필요
+            Imgproc.findContours(thresholded, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_TC89_KCOS);
+            Mat mat = new Mat();
+            Imgproc.cvtColor(originalImage, mat, originalImage.type());
             List<List<Point>> contoursPoints = new ArrayList<>();
+
+            // 바이트 배열을 파일로 저장 (테스트용)
+//            MatOfByte tempMatOfByte = new MatOfByte();
+//            Imgcodecs.imencode(".png", edges, tempMatOfByte);
+//            byte[] tempByteArray = tempMatOfByte.toArray();
+//            FileOutputStream fos3 = new FileOutputStream("/Users/juno/Desktop/xml/" + fileName + ".png");
+//            fos3.write(tempByteArray);
+
+//            MatOfPoint2f maxPolygon = new MatOfPoint2f();
+//            double maxArea = 0;
+//            for (MatOfPoint contour : contours) {
+//                double area = Imgproc.contourArea(contour);
+//                if (area > maxArea) {
+//                    MatOfPoint2f polygon = new MatOfPoint2f();
+//                    MatOfPoint2f curve = new MatOfPoint2f(contour.toArray());
+//                    Imgproc.approxPolyDP(curve, polygon, 0.02 * Imgproc.arcLength(curve, true), true);
+//                    if (polygon.total() == 4) {
+//                        maxPolygon = polygon;
+//                        maxArea = area;
+//                    }
+//                }
+//            }
+
+            // 잠시 주석
+            int idx = 0;
             for (MatOfPoint contour : contours) {
-                List<Point> points = new ArrayList<>();
-                // mask 값을 포인트로 변환 후 넣기
-                for (Point point : contour.toArray()) {
-                    points.add(point);
+                // 테스트용 지울것임
+                int level = (int) hierarchy.get(0, idx)[3];
+                System.out.println("Contour index: " + idx + ", Level: " + level);
+                if (level == 1 && Imgproc.contourArea(contours.get(idx)) > 16) {
+                    List<Point> points = new ArrayList<>();
+                    // mask 값을 포인트로 변환 후 넣기
+                    for (Point point : contour.toArray()) {
+                        points.add(point);
+                    }
+                    contoursPoints.add(points);
                 }
-                contoursPoints.add(points);
+                idx++;
             }
 
             JSONArray resultJsonArray = new JSONArray();
-            JSONObject resultJsonObject = new JSONObject();
-            JSONObject infoJsonObject = new JSONObject();
-            JSONArray pointJsonArray = new JSONArray();
+            //JSONArray pointJsonArray = new JSONArray();
             JSONObject pointJsonObject = new JSONObject();
 
             for (List<Point> contoursPoint : contoursPoints) {
+                JSONArray pointJsonArray = new JSONArray();
+                JSONObject infoJsonObject = new JSONObject();
+                JSONObject resultJsonObject = new JSONObject();
                 int loopCnt = 0;
                 double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
                 for (Point p : contoursPoint) {
-                    x1 = (loopCnt == 0 || x1 > p.x)? p.x : x1;
-                    y1 = (loopCnt == 0 || y1 > p.y)? p.y : y1;
-                    x2 = (loopCnt == 0 || x2 < p.x)? p.x : x2;
-                    y2 = (loopCnt == 0 || y2 < p.y)? p.y : y2;
+                    x1 = (loopCnt == 0 || x1 > p.x) ? p.x : x1;
+                    y1 = (loopCnt == 0 || y1 > p.y) ? p.y : y1;
+                    x2 = (loopCnt == 0 || x2 < p.x) ? p.x : x2;
+                    y2 = (loopCnt == 0 || y2 < p.y) ? p.y : y2;
                     pointJsonObject = new JSONObject();
                     pointJsonObject.put("x", p.x);
                     pointJsonObject.put("y", p.y);
@@ -243,9 +470,10 @@ public class VocImportUtil {
             doc.getDocumentElement().normalize();
             // xml 문서에서 파일명 추출
             String fileName = doc.getElementsByTagName("fileName").item(0).getTextContent();
+            fileName = fileName.substring(0, fileName.indexOf("."));
             // Object 노드 모두 추출
             NodeList objectNodeList = doc.getElementsByTagName("object");
-            for(int i = 0; i < objectNodeList.getLength(); i++) {
+            for (int i = 0; i < objectNodeList.getLength(); i++) {
                 Element element = (Element) objectNodeList.item(i);
                 // xml 문서에서 xmin, ymin, xmax, ymax 추출
                 double x1 = Double.parseDouble(element.getElementsByTagName("xmin").item(0).getTextContent());
@@ -261,7 +489,7 @@ public class VocImportUtil {
                 annotationObj.put("label", labelName);
                 annotationObj.put("info", box);
 
-                if(this.importAnnotationsInfoMap.containsKey(fileName)) {
+                if (this.importAnnotationsInfoMap.containsKey(fileName)) {
                     this.importAnnotationsInfoMap.get(fileName).add(annotationObj);
                 } else {
                     this.importAnnotationsInfoMap.put(fileName, new JSONArray());
