@@ -92,7 +92,7 @@ public class VocImportUtil {
                     double width = Double.parseDouble(boxInfo[2]);
                     double height = Double.parseDouble(boxInfo[3]);
                     double area = width * height;
-                    double abs = segArea - area;
+                    double abs = Math.abs(segArea - area);
                     if (abs < min) {
                         min = abs;
                         segmentationInfoObj.put("label", labelName);
@@ -374,12 +374,19 @@ public class VocImportUtil {
 //            }
 
             // 잠시 주석
-            int idx = 0;
-            for (MatOfPoint contour : contours) {
+            for (int i = 0; i < contours.size(); i++) {
+                MatOfPoint contour = contours.get(i);
                 // 테스트용 지울것임
-                int level = (int) hierarchy.get(0, idx)[3];
-                System.out.println("Contour index: " + idx + ", Level: " + level);
-                if (level == 1 && Imgproc.contourArea(contours.get(idx)) > 16) {
+                int next = (int) hierarchy.get(0, i)[0];
+                int previous = (int) hierarchy.get(0, i)[1];
+                int firstChild = (int) hierarchy.get(0, i)[2];
+                int level = (int) hierarchy.get(0, i)[3];
+//                System.out.println("Contour index: " + i + ", next: " + next);
+//                System.out.println("Contour index: " + i + ", previous: " + previous);
+//                System.out.println("Contour index: " + i + ", firstChild: " + firstChild);
+//                System.out.println("Contour index: " + i + ", Level: " + level);
+//                if (!(next == -1 && previous == -1) && Imgproc.contourArea(contours.get(i)) > 16) {
+                if (!(next == -1 && previous == -1) && Imgproc.contourArea(contours.get(i)) > 16) {
                     List<Point> points = new ArrayList<>();
                     // mask 값을 포인트로 변환 후 넣기
                     for (Point point : contour.toArray()) {
@@ -387,7 +394,15 @@ public class VocImportUtil {
                     }
                     contoursPoints.add(points);
                 }
-                idx++;
+
+                if(i == contours.size() - 1 && contoursPoints.isEmpty()) {
+                    List<Point> points = new ArrayList<>();
+                    contour = contours.get(0);
+                    for (Point point : contour.toArray()) {
+                        points.add(point);
+                    }
+                    contoursPoints.add(points);
+                }
             }
 
             JSONArray resultJsonArray = new JSONArray();
@@ -401,6 +416,12 @@ public class VocImportUtil {
                 int loopCnt = 0;
                 double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
                 for (Point p : contoursPoint) {
+                    // point 중복 로직 추가
+                    long count = getDuplicatePointCount(pointJsonArray, p);
+                    if(count > 0) {
+                        continue;
+                    }
+
                     x1 = (loopCnt == 0 || x1 > p.x) ? p.x : x1;
                     y1 = (loopCnt == 0 || y1 > p.y) ? p.y : y1;
                     x2 = (loopCnt == 0 || x2 < p.x) ? p.x : x2;
@@ -411,6 +432,11 @@ public class VocImportUtil {
                     pointJsonArray.add(pointJsonObject);
                     loopCnt++;
                 }
+                // x값 기준으로 오름차순 정렬
+                // 1. JSON배열 객체 리스트로 변환
+                //JSONArray sortPointJsonArray = getSortPointJsonArray(pointJsonArray);
+
+
                 // 좌표값으로 width, height 구해서 문자열로 반환
                 // 반환 값 : "[x1],[y1],[width],[height]"
                 String box = calcBoxSizeToString(x1, y1, x2, y2);
@@ -435,6 +461,98 @@ public class VocImportUtil {
                 outputFile.delete();
             }
         }
+    }
+
+    private JSONArray getSortPointJsonArray(JSONArray pointJsonArray) {
+        List<JSONObject> jsonList = new ArrayList<>();
+//        double minX = 0;
+//        double minY = 0;
+        double maxY = 0;
+        double firstY = 0;
+        double firstX = 0;
+        // 1. JSONArray -> List로 변환
+        for (int i = 0; i < pointJsonArray.size(); i++) {
+            JSONObject jsonObject = (JSONObject) pointJsonArray.get(i);
+            double x = (double)jsonObject.get("x");
+            double y = (double)jsonObject.get("y");
+            firstX = (i == 0 || x < firstX)? x : firstX;
+            firstY = (firstX == x && firstY < y)? y : firstY;
+            maxY = (i == 0 || maxY < y)? y : maxY;
+
+//            minX = (i == 0 || x <= minX) ? x : minX;
+//            minY = (i == 0 || minY > y)? y : minY;
+//            firstY = (minX == x && firstY < y)? y : firstY;
+//            if(minX == x && firstY < y) {
+//                firstY = (double)jsonObject.get("y");
+//            }
+            //minY = (i == 0 || y< minY) ? y : minY;
+            jsonList.add(jsonObject);
+        }
+
+        // 2. List x값 오름차순 정렬
+        //double finalMinX = minX;
+        //double finalMinY = minY;
+//        double finalMinX = minX;
+//        double finalMaxY = maxY;
+//        double finalFirstY = firstY;
+        double finalFirstX = firstX;
+        double finalFirstY = firstY;
+        double finalMaxY = maxY;
+        Collections.sort(jsonList, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject o1, JSONObject o2) {
+                double compareX1 = (double) o1.get("x");
+                double compareX2 = (double) o2.get("x");
+                return Double.compare(compareX1, compareX2);
+            }
+        });
+
+        Collections.sort(jsonList, new Comparator<JSONObject>() {
+            int idx = 0;
+            double tempY = 0;
+
+            @Override
+            public int compare(JSONObject o1, JSONObject o2) {
+                double compareY1 = (double) o1.get("y");
+                double compareY2 = (double) o2.get("y");
+                if(idx == 0) {
+                    tempY = compareY1;
+                    idx++;
+                    return 0;
+                }
+
+                // 좀더 가까운게 distance값이 작음
+                double distanceY1 = tempY - compareY1;
+                double distanceY2 = tempY - compareY2;
+
+                if(distanceY1 < distanceY2) {
+                    tempY = compareY1;
+                    return 0;
+                } else {
+                    tempY = compareY2;
+                    return -1;
+                }
+
+                // Y값이 비슷한 것 중에, Y가 더 큰 것
+                //return Double.compare(compareY1, compareY2);
+            }
+        });
+
+        // 3. List -> JSONArray 변환
+        JSONArray sortPointJsonArray = new JSONArray();
+        for (int i = 0; i < jsonList.size(); i++) {
+            JSONObject jsonObject = jsonList.get(i);
+            sortPointJsonArray.add(jsonObject);
+        }
+        return sortPointJsonArray;
+    }
+
+    private long getDuplicatePointCount(JSONArray pointJsonArray, Point p) {
+        // point 중복제거 로직 추가
+        return pointJsonArray.stream().filter((pointJson) -> {
+            JSONObject jsonObject = (JSONObject) pointJson;
+            return (double) jsonObject.get("x") == p.x && (double) jsonObject.get("y") == p.y;
+        }).count();
     }
 
     private String calcBoxSizeToString(double x1, double y1, double x2, double y2) {
@@ -469,7 +587,7 @@ public class VocImportUtil {
             Document doc = builder.parse(inputStream);
             doc.getDocumentElement().normalize();
             // xml 문서에서 파일명 추출
-            String fileName = doc.getElementsByTagName("fileName").item(0).getTextContent();
+            String fileName = doc.getElementsByTagName("filename").item(0).getTextContent();
             fileName = fileName.substring(0, fileName.indexOf("."));
             // Object 노드 모두 추출
             NodeList objectNodeList = doc.getElementsByTagName("object");
