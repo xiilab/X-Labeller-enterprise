@@ -16,6 +16,7 @@ import com.xlabeller.sshSession.SessionCmdExecute;
 import com.xlabeller.sshSession.SessionSingletone;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -23,6 +24,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -1356,7 +1358,7 @@ public class TaskService {
 
 				String classificationThreshold = String.valueOf(jsonObj.get("classification_threshold"));
 
-				result = sessionCmdExecute.callCustomYolov4Inference(projectId, taskId, gpuIndex, modelName, csvSavePath, classificationThreshold);
+				result = sessionCmdExecute.callCustomYolov4Inference(projectId, taskId, gpuIndex, modelName, csvSavePath, classificationThreshold, "multi");
 			
 			} else if (algorithmId.equals("7")){
 				JSONParser parser = new JSONParser();
@@ -1380,6 +1382,205 @@ public class TaskService {
 			return Output.JsonOutput("801", "실행중에 예기치 않은 문제가 발생했습니다. 문의 부탁드립니다");
 		}
 		
+//		return Output.JsonOutput("200", "Inference를 시작하였습니다.");
+	}
+
+	public Object runSemiAutoInference(InferenceVO inferenceVO) {
+//		id : run_id,					// task id인지 확인 > ok
+//		config : config_string,  			// 수정 json으로 넘기기 값 확인 > ok
+//		img_path : img_string,
+//		model_name : name,
+//		csv_save_name : file_name,				// config 와 별개로 반드시 받아야하는 값  => ok
+//		gpu_node_id : selected_gpu_node_id,
+//		gpu_index : selected_gpu_index
+
+		String modelName = inferenceVO.getModel_name();
+		String dataId = inferenceVO.getData_id();
+		String taskId = inferenceVO.getTask_id();
+		String gpuNodeId = "1";
+		String gpuIndex = "0";
+
+		if(!StringUtils.hasText(inferenceVO.getData_id())) {
+			return Output.JsonOutput("4506", "선택된 알고리즘이 없거나 손상되었습니다.\n새로 고침 후 다시 시도해주시고 지속저으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+		}
+		if(!StringUtils.hasText(inferenceVO.getData_id())) {
+			return Output.JsonOutput("4506", "Inference할 학습모델을 선택해주세요.");
+		}
+		if(!StringUtils.hasText(inferenceVO.getTask_id())) {
+			return Output.JsonOutput("4506", "Inference할 TASK를 선택해주세요.");
+		}
+
+		// dataId로 조회해서 imgPath가져옴
+		DataVO dataVO = new DataVO();
+		dataVO.setData_id(dataId);
+		DataVO findDataVO = dataDao.getDataById(dataVO);
+		String datasetId = findDataVO.getDataset_id();
+		String dataPath = NFS_MOUNT_ROOT_PATH + "/" + findDataVO.getPath();
+
+		// task_id로 TASK 조회 후, config 값 세팅
+		TaskVO taskVO = new TaskVO();
+		taskVO.setTask_id(taskId);
+		TaskVO findTaskVO = taskDao.getTaskById(taskVO);
+		String labelType = findTaskVO.getLabel_type();
+		String config = findTaskVO.getConfig();
+		String projectId = findTaskVO.getProject_id();
+		String algorithmId = findTaskVO.getAlgorithm_id();
+
+		// TASK의 라벨타입으로 분기 처리
+		String mode = "";
+
+		if(labelType.equals("IMAGE_SEGMENTATION")) {
+			mode = "seg";
+		} else if(labelType.equals("IMAGE_BBOX")) {
+			mode = "bbox";
+		} else {
+			return Output.JsonOutput("4506", "유효하지 않은 접근입니다.\n새로 고침 후 다시 시도해주시고, 지속적으로 발생할 경우 관리자에게 문의해 주시길 바랍니다.");
+		}
+
+		// gpuNode 정보 불러와서 변수에 저장
+		GpuNodeVO gpuNodeVO = new GpuNodeVO();
+		gpuNodeVO.setGpu_node_id(gpuNodeId);
+		GpuNodeVO outputGpuNodeVO = gpuNodeDao.getGpuNodeById(gpuNodeVO);
+		if(outputGpuNodeVO == null) {
+			return Output.JsonOutput("801", "등록된 GPU가 존재하지 않습니다.\nGPU를 먼저 등록해주세요.");
+		}
+		if(!StringUtils.hasText(outputGpuNodeVO.getAddress())) {
+			return Output.JsonOutput("801", "해당 GPU Node의 Address가 없습니다.\nSetup을 확인해주세요.");
+		}
+		if(!StringUtils.hasText(outputGpuNodeVO.getPassword())) {
+			return Output.JsonOutput("801", "해당 GPU Node의 Password가 없습니다.\nSetup을 확인해주세요.");
+		}
+
+		// gpuNode 주소, 비밀번호 변수에 저장
+		String host = outputGpuNodeVO.getAddress();
+		String pw = outputGpuNodeVO.getPassword();
+		String userName = outputGpuNodeVO.getAccount();
+		int port = Integer.valueOf(outputGpuNodeVO.getPort());
+
+		SSHSessionConnection sshConnection = new SSHSessionConnection(userName, port, host, pw);
+		Session session = sshConnection.call();
+		SessionCmdExecute sessionCmdExecute = new SessionCmdExecute(session);
+
+		boolean isUpInference = sessionCmdExecute.isUpInference(projectId, taskId);
+		if(isUpInference) {
+			return Output.JsonOutput("4505", "현재 동작하고 있는 Task입니다.");
+		}
+
+		JSONObject gpuObj = new JSONObject();
+		gpuObj.put(host, pw);
+
+		// imgPath csv파일 변환
+		String path = WORKSPACE_PATH + "semi_auto/imagepath/imagepath.csv";
+		String pathDir = WORKSPACE_PATH + "semi_auto/imagepath/";
+
+		try {
+			// 강제 폴더 생성 !!!!!!!!!!!!!!!!!!!!
+			System.out.println(pathDir + "강제 폴더 생성 !!!!!!!!!!!!!!!!!!!!");
+			Paths.get(pathDir).toFile().mkdirs();
+		} catch (Exception e) {
+		}
+
+		// imagePath에 저장
+		CsvWriter csvWriter = new CsvWriter();
+		boolean fileState = csvWriter.createString(path, dataPath);
+		if(!fileState) {
+			return Output.JsonOutput("811", "CSV파일 생성에 실패하였습니다. 다시 시도하시기 바랍니다.");
+		}
+
+		String csvSaveFullPath = WORKSPACE_PATH + "semi_auto/result/semi_auto_result.csv";
+		String csvSaveFileName = "semi_auto_result.csv";
+		try {
+//			String csvSavePath = "semi_auto_result.csv";
+//			String csvSaveFullPath = WORKSPACE_PATH + "semi_auto/result/semi_auto_result.csv";
+
+			//Object result;
+			// s.kim 임시 추가, 시연
+			if (algorithmId.equals("2")){
+//				JSONParser parser = new JSONParser();
+//				Object obj = parser.parse(config);
+//				JSONObject jsonObj = (JSONObject) obj;
+
+//				String classificationThreshold = String.valueOf(jsonObj.get("classification_threshold"));
+				String classificationThreshold = "0.5";
+
+				sessionCmdExecute.callCustomYolov4Inference(projectId, taskId, gpuIndex, modelName, csvSaveFileName, classificationThreshold, "single");
+
+			} else if (algorithmId.equals("7") || algorithmId.equals("8")){
+				JSONParser parser = new JSONParser();
+				//JSONObject jsonObj = (JSONObject)parser.parse(config);
+				sessionCmdExecute.callCustomEfficientdetInference(projectId, taskId, gpuIndex, modelName, csvSaveFileName);
+			} else {
+				config = config.replaceAll("\"", "\\\\\"");
+				sessionCmdExecute.callCustomInference(projectId, taskId, algorithmId, gpuIndex, mode, modelName, csvSaveFileName, config);
+			}
+
+			// 파일 생성되었는지 5초 간격으로 확인
+			File file = new File(csvSaveFullPath);
+
+			long startTime = System.currentTimeMillis();
+			long elapsedTime = 0;
+			int idx = 0;
+
+			do {
+				try {
+					Thread.sleep(3000); // 3초간 실행 중지
+					idx++;
+					elapsedTime = System.currentTimeMillis() - startTime; // 경과 시간 업데이트
+					logger.info("semi-auto Inference 경과 시간 : " + elapsedTime);
+					if(idx == 7) {
+						break;
+					}
+				} catch (InterruptedException e) {
+					// 예외 처리
+					return Output.JsonOutput("801", "실행중에 예기치 않은 문제가 발생했습니다. 문의 부탁드립니다");
+				}
+			} while (!file.exists());
+
+			if (idx == 7) {
+				return Output.JsonOutput("4301", "생성할 라벨이 존재하지 않습니다.");
+			}
+
+			// 생성된 CSV파일 읽어서 DB에 추가하기 위한 형식으로 변환
+			CsvReader cr = new CsvReader(csvSaveFullPath);
+			List<InferenceResultVO> resultList = cr.read();
+			List<String> infoList = new ArrayList<>();
+			for (InferenceResultVO inferenceResultVO : resultList) {
+				StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append(
+						"\"" +
+						inferenceResultVO.getImg_path() + ","
+						+ inferenceResultVO.getX() + ","
+						+ inferenceResultVO.getY() + ","
+						+ inferenceResultVO.getW() + ","
+						+ inferenceResultVO.getH() + ","
+						+ "null" +
+						"\""
+				);
+				infoList.add(stringBuilder.toString());
+			}
+
+			String[] infoArray = new String[infoList.size()];
+			infoArray = infoList.toArray(infoArray);
+
+			MetaVO insertMetaVO = new MetaVO();
+			insertMetaVO.setInfo(Arrays.toString(infoArray));
+			insertMetaVO.setDataset_id(datasetId);
+			insertMetaVO.setTask_id(taskId);
+			insertMetaVO.setType("single");
+			insertMetaVO.setPath(csvSaveFileName);
+			Object OutputResult = dataService.insertMetaByInference(insertMetaVO);
+
+			return OutputResult;
+		} catch (Exception e) {
+			logger.error("Exception Error!", e);
+			return Output.JsonOutput("801", "실행중에 예기치 않은 문제가 발생했습니다. 문의 부탁드립니다");
+		} finally {
+			String renamePath = WORKSPACE_PATH + "semi_auto/result/semi_auto_result_temp.csv";
+			File file = new File(csvSaveFullPath);
+			File newFile = new File(renamePath);
+			file.renameTo(newFile);
+		}
+
 //		return Output.JsonOutput("200", "Inference를 시작하였습니다.");
 	}
 	

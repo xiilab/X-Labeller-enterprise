@@ -27,6 +27,7 @@ public class MetaVO {
 	private String total_size;
 	private List<MetaVO> meta_list;
 	private String data_ids;
+	private String type;
 //	private String segmentation;
 	
 	
@@ -149,6 +150,14 @@ public class MetaVO {
 
 	public void setData_ids(String data_ids) {
 		this.data_ids = data_ids;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }
 	

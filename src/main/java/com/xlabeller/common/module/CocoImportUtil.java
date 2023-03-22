@@ -178,9 +178,9 @@ public class CocoImportUtil {
                 return isValid;
             }
             // seg값이 있으면 segemntation으로 판단
-            if(imageJsonObj.get("segmentation") == null || ((JSONArray)imageJsonObj.get("segmentation")).size() > 0) {
-                return isValid;
-            }
+//            if(imageJsonObj.get("segmentation") == null || ((JSONArray)imageJsonObj.get("segmentation")).size() > 0) {
+//                return isValid;
+//            }
         } else if(labelType.equals("IMAGE_SEGMENTATION")) {
             // bbox값이 있는지 확인, JSONArray로 변환할 수 있는지 확인
             if(imageJsonObj.get("bbox") == null || !JSONArray.class.isInstance(imageJsonObj.get("bbox"))) {
