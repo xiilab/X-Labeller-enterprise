@@ -2765,9 +2765,6 @@ public class DataService {
 
 	public Object insertMetaByInference(MetaVO metaVO) throws CustomException {
 		UserVO userInfo = SessionUtil.getUserInfo();
-		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
-			return Output.JsonOutput("2001", "로그인 세션이 만료 되었습니다");
-		}
 		if(metaVO.getDataset_id() == null || metaVO.getDataset_id().length() <= 0) {
 			return Output.JsonOutput("4061", "데이터셋 ID 파라미터 값이 유효하지 않습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
@@ -2841,7 +2838,12 @@ public class DataService {
 				logger.error("findTaskVO task_id is null! task_id : " + metaVO.getTask_id());
 				return Output.JsonOutput("4071","유효하지 않은 접근입니다.\n새로 고침 후 다시 시도해주시길 바랍니다.");
 			}
-			String resultPath = WORKSPACE_PATH + findTaskVO.getProject_id() + "/" + findTaskVO.getTask_id() + "/result/" + metaVO.getPath();
+			String resultPath = "";
+			if("single".equals(metaVO.getType())) {
+				resultPath = WORKSPACE_PATH + "semi_auto/result/" + metaVO.getPath();
+			} else {
+				resultPath = WORKSPACE_PATH + findTaskVO.getProject_id() + "/" + findTaskVO.getTask_id() + "/result/" + metaVO.getPath();
+			}
 			CsvReader cr = new CsvReader(resultPath);
 			List<InferenceResultVO> resultList = cr.read();
 			if (resultList == null || resultList.isEmpty() || resultList.size() <= 0) {
@@ -2910,7 +2912,6 @@ public class DataService {
 				metaTempVO.setData_id(imgPath);
 				metaTempVO.setLabel(label);
 				metaTempVO.setInfo(info);
-				metaTempVO.setUser_id(userInfo.getUser_id());
 				metaTempVO.setLabel_type(findDatasetVO.getLabel_type());
 				metaList.add(metaTempVO);
 

@@ -498,7 +498,7 @@ public class SessionCmdExecute implements Callable<Object> {
 	}
 	
 	// s.kim 210602
-	public Object callCustomYolov4Inference(String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String classificationThreshold) {
+	public Object callCustomYolov4Inference(String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String classificationThreshold, String type) {
 //		String cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId + 
 //				" --name xlabeller_i_" + projectId + "_" + taskId + 
 //				" -v xlabeller_nfs:/xlabeller" + 
@@ -518,6 +518,7 @@ public class SessionCmdExecute implements Callable<Object> {
 				" --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller" +
 				" xlabeller_yolov4:2.0" + 
 				" python3 /workspace/darknet/xlabeller_inference.py" +
+				" --type " + type +
 				" --thresh " + classificationThreshold +
 				" --output_csv " + csvFileName +
 				" --weights " + modelName + 

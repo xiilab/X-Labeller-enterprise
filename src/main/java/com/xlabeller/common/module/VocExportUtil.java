@@ -250,7 +250,7 @@ public class VocExportUtil {
             rootElement.appendChild(folder);
 
             // filename 엘리먼트 생성
-            Element fileName = doc.createElement("fileName");
+            Element fileName = doc.createElement("filename");
             fileName.appendChild(doc.createTextNode(fileOgName));
             rootElement.appendChild(fileName);
 

@@ -4,6 +4,7 @@ public class InferenceVO {
 	
 
 	private String id;
+	private String data_id;
 	private String task_id;
 	private String model_name;
 //	private String score;
@@ -88,8 +89,12 @@ public class InferenceVO {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	
-	
-	
+
+	public String getData_id() {
+		return data_id;
+	}
+
+	public void setData_id(String data_id) {
+		this.data_id = data_id;
+	}
 }
