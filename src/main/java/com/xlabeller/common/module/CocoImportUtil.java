@@ -182,11 +182,12 @@ public class CocoImportUtil {
         for(int i = 0; i < annotationsJsonArray.size(); i++) {
             JSONObject imageJsonObj = (JSONObject) annotationsJsonArray.get(i);
             //Long imageId = (Long)imageJsonObj.get("image_id");
-            JSONObject annotationObj = new JSONObject();
+            //JSONObject annotationObj = new JSONObject();
             if(this.labelType.equals("IMAGE_BBOX")) {
                 if(!isValidCocoAnnotations(imageJsonObj, "IMAGE_BBOX")) {
                     continue;
                 }
+                JSONObject annotationObj = new JSONObject();
                 JSONArray bbox = (JSONArray)imageJsonObj.get("bbox");
                 if (bbox.size() != 4 ) {
                     continue;
@@ -213,11 +214,12 @@ public class CocoImportUtil {
                 }
                 //String bbox = ((JSONArray)imageJsonObj.get("bbox")).toJSONString().replaceAll("[\\[\\]]", "");
                 JSONArray segmentation = (JSONArray)imageJsonObj.get("segmentation");
-                JSONArray pointSegmentation = new JSONArray();
-                JSONObject pointJson = new JSONObject();
-                double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
                 for(int j = 0; j < segmentation.size(); j++) {
+                    JSONObject annotationObj = new JSONObject();
                     JSONArray segmentationObjArray = (JSONArray) segmentation.get(j);
+                    JSONArray pointSegmentation = new JSONArray();
+                    JSONObject pointJson = new JSONObject();
+                    double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
                     for (int k = 0; k < segmentationObjArray.size(); k++) {
                         Double point = Double.parseDouble(segmentationObjArray.get(k).toString());
                         if(k % 2 == 0) {

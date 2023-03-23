@@ -5814,7 +5814,7 @@
 					$.ajax({
 						url : baseUrl + "task/semiAutoInference.json",
 						data : ajaxData,
-						type : "POST",
+						type : "GET",
 						success : function(res) {
 							$("#loader").hide();
 							console.log("=====semiAutoInference=====", res);
