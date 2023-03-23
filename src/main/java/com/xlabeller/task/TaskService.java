@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -1364,7 +1365,7 @@ public class TaskService {
 
                 String classificationThreshold = String.valueOf(jsonObj.get("classification_threshold"));
 
-                result = sessionCmdExecute.callCustomEfficientdetInference(projectId, taskId, gpuIndex, modelName, csvSavePath);
+                result = sessionCmdExecute.callCustomEfficientdetInference(projectId, taskId, gpuIndex, modelName, csvSavePath, "multi");
             } else {
                 config = config.replaceAll("\"", "\\\\\"");
                 result = sessionCmdExecute.callCustomInference(projectId, taskId, algorithmId, gpuIndex, mode, modelName, csvSavePath, config);
@@ -1484,8 +1485,9 @@ public class TaskService {
             return Output.JsonOutput("811", "CSV파일 생성에 실패하였습니다. 다시 시도하시기 바랍니다.");
         }
 
-        String csvSaveFullPath = WORKSPACE_PATH + "semi_auto/result/semi_auto_result.csv";
-        String csvSaveFileName = "semi_auto_result.csv";
+        UUID uuid = UUID.randomUUID();
+        String csvSaveFullPath = WORKSPACE_PATH + "semi_auto/result/" + uuid + ".csv";
+        String csvSaveFileName = uuid + ".csv";
         try {
 //			String csvSavePath = "semi_auto_result.csv";
 //			String csvSaveFullPath = WORKSPACE_PATH + "semi_auto/result/semi_auto_result.csv";
@@ -1505,7 +1507,7 @@ public class TaskService {
             } else if (algorithmId.equals("7") || algorithmId.equals("8")) {
                 JSONParser parser = new JSONParser();
                 //JSONObject jsonObj = (JSONObject)parser.parse(config);
-                sessionCmdExecute.callCustomEfficientdetInference(projectId, taskId, gpuIndex, modelName, csvSaveFileName);
+                sessionCmdExecute.callCustomEfficientdetInference(projectId, taskId, gpuIndex, modelName, csvSaveFileName, "single");
             } else {
                 config = config.replaceAll("\"", "\\\\\"");
                 sessionCmdExecute.callCustomInference(projectId, taskId, algorithmId, gpuIndex, mode, modelName, csvSaveFileName, config);
@@ -1518,22 +1520,23 @@ public class TaskService {
             long elapsedTime = 0;
             int idx = 0;
 
-            do {
+            while (true) {
                 try {
-                    Thread.sleep(3000); // 3초간 실행 중지
-                    idx++;
-                    elapsedTime = System.currentTimeMillis() - startTime; // 경과 시간 업데이트
-                    logger.info("semi-auto Inference 경과 시간 : " + elapsedTime);
-                    if (idx == 7) {
-                        break;
-                    }
+                    Thread.sleep(3000); // 3초마다 체크
                 } catch (InterruptedException e) {
-                    // 예외 처리
-                    return Output.JsonOutput("801", "실행중에 예기치 않은 문제가 발생했습니다. 문의 부탁드립니다");
+                    e.printStackTrace();
                 }
-            } while (!file.exists());
+                //file = new File(csvSaveFullPath); // 파일이 존재하지 않으면 다시 생성
+                idx++;
+                elapsedTime = System.currentTimeMillis() - startTime; // 경과 시간 업데이트
+                logger.info("semi-auto Inference 경과 시간 : " + elapsedTime);
+                file = new File(csvSaveFullPath);
+                if (file.exists() || idx == 20) {
+                    break;
+                }
+            }
 
-            if (idx == 7) {
+            if (idx == 20) {
                 return Output.JsonOutput("4301", "생성할 라벨이 존재하지 않습니다.");
             }
 
