@@ -4901,7 +4901,7 @@
 						let modelName = null;
 						let	taskId = null;
 						
-						dataId = imgSeg.data.canvas['dataId'];
+						dataId = imgBBox.data.canvas['dataId'];
 						taskId = $("#imgBBox select#task_option").val();
 						modelName = $("#imgBBox select#model_option").val();
 						
