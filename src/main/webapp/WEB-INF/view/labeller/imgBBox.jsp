@@ -279,17 +279,18 @@
 		
 		/* quick */
 /*  		#imgBBox .quick_wrap { width: 100%; position: absolute; bottom: 0px; padding: 26.5px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; }        */
- 		#imgBBox .quick_wrap { width: 100%; bottom: 0px; padding: 26.5px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; align-items : flex-end; }       
-
+ 		#imgBBox .quick_wrap { width: 100%; bottom: 0px; padding: 15px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: space-between; align-items : flex-end; }       
+		#imgBBox .quick_wrap .quick_btn_wrap { display: flex; margin-left: 25.5px; }
+		
 /*  		#imgBBox .quick_wrap { width: calc(100% - 699px); position: absolute; bottom: 0px; padding: 25px 0; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; }        */
 /* 		#imgBBox .quick_wrap { width: 488px; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; position: absolute; top: -8px; left: 609px;}     */
       
-		#imgBBox .quick_btn {
+      	#imgBBox .quick_btn {
 			width: 100px;
+			height: 36px;
  			line-height: 36px; 
- 			margin-left: 0px;
 			margin-right: 10px;
-			margin-bottom: 2px;
+			margin-top: 4px;
 /* 			padding: 6px; */
 			text-align: center;
 			border-radius: 5px;
@@ -298,11 +299,8 @@
 			font-size: 11px;
 			font-weight: 300;
 			color: #fff;
+			cursor: pointer;
 		}
-		
-		#imgBBox .quick_btn:hover {
-			background-color: #3A71E9;
-		}    
 		
 		#imgBBox .quick_btn_wrap {
 			padding-top: 10px;
@@ -925,10 +923,10 @@
 		#imgBBox .hover_div div {word-break: break-word; margin: 2px 5px; white-space: normal; font-weight: 300; font-family: Open_Sans;}
 		
 		/* military - autoLabelling */
-		#imgBBox .semi_auto_labelling_wrap { display: flex; }							
+		#imgBBox .semi_auto_labelling_wrap { display: flex; align-items: flex-end; margin-right: 25.5px; }												
 		#imgBBox .semi_auto_labelling_wrap .wrap { display: flex; flex-direction: column; margin-right: 10px;}
 		#imgBBox .semi_auto_labelling_wrap .wrap label { margin-bottom: 5px; }
-		#imgBBox .semi_auto_labelling_wrap .wrap select { width: 150px; }	
+		#imgBBox .semi_auto_labelling_wrap .wrap select { width: 200px; }
       </style>
    </head>
    <body id="page-top">
@@ -1017,35 +1015,32 @@
                  		</div>              <!-- Image Slide area end -->    						
 						
 	               		<div class="quick_wrap flex"> <!-- Quick Training & Inference Btn area start -->
-							<div id="quick_training_btn" class="quick_btn filter_color">Quick Training</div>
-							<div id="quick_inference_btn" class="quick_btn filter_color">Quick Inference</div>
-							
-							<!--  military - autoLabelling -->
+	               			<div class="quick_btn_wrap">
+								<div id="quick_training_btn" class="quick_btn filter_color">Quick Training</div>
+								<div id="quick_inference_btn" class="quick_btn filter_color">Quick Inference</div>
+	               			</div>
+							<!--  ===> for semiAutoInference -->
 							<div class="semi_auto_labelling_wrap">
 								<div class="wrap">
 									<label>project</label>
-									<select id="">
-										<option value="">INSTANCE_SEGMENTATION_DATASET1_replica</option>
-										<option value="">INSTANCE_SEGMENTATION_DATASET2_replica</option>
-										<option value="">INSTANCE_SEGMENTATION_DATASET3_replica</option>
+									<select id="project_option">
+										<option selected disabled>No options</option>
 									</select>
 								</div>
 								<div class="wrap">
 									<label>task</label>
-									<select id="">
-										<option value="">Quick_INSTANCE_SEGMENTATION_DATASET1_replica_Task1</option>
-										<option value="">INSTANCE_SEGMENTATION_TASK1</option>
+									<select id="task_option">
+										<option selected disabled>No options</option>
 									</select>
 								</div>
 								<div class="wrap">
 									<label>model</label>
-									<select id="">
-										<option value="">YOLO</option>
-										<option value="">EFFICCIENTDET</option>
+									<select id="model_option">
+										<option selected disabled>No options</option>
 									</select>
 								</div>
+								<div id="semi_auto_inference_btn" class="quick_btn filter_color">Semi-auto</div>
 							</div>
-							<div id="" class="quick_btn filter_color">Semi-auto</div>
 							
 							<!-- Quick Training -->
 							<div id="quick_training" class="quick_training filter_color">
@@ -1365,7 +1360,7 @@
 				
 				init : function(dataset_id) {
 					const that = imgBBox;
-					console.log("Start2!");
+					console.log("## CALL imgBBox init");
 					// jh.sa 추가 		
 // 					that.bind.evtOnceInit();
 					var nodes = wsObj["labeller"].dir.getSelectedNodes();
@@ -4689,6 +4684,7 @@
 				
 				that.bind.quickTraining();
 				that.bind.quickInference();
+				that.bind.semiAutoLabelling();
 			},
 			bind : {
 				// Quick Training & Inference
@@ -4815,7 +4811,7 @@
 							$("#imgBBox .checkpoint_view").removeClass("active");
 						}
 						let temp_id = $("#imgBBox .quick_training .task_result option:selected").data("id");
-						that.computed.getCheckpointList(temp_id, "0");
+						that.computed.getCheckPointList(temp_id, "0");
 					});		
 					$("#imgBBox #quick_training .checkpoint_list .side_btn_wrap .save_btn").off("click").on("click", function() {
 						$("#imgBBox #quick_training .checkpoint_list").removeClass("active");
@@ -4886,7 +4882,79 @@
 					$("#imgBBox .quick_inference_btn").off("click").on("click", function() {
 						that.computed.createJsonQuickInference();
 					});				
-				},		
+				},	
+				
+				semiAutoLabelling() {
+					
+					const that = imgBBoxQuick;
+					
+					// 초기화 해줘야 할 것들?
+					that.computed.getProjectList(null, "2");
+					let resetHtml = '<option selected disabled>No options</option>'
+					$("#imgBBox select#task_option").html(resetHtml);
+					$("#imgBBox select#model_option").html(resetHtml);
+					
+					// semi-auto 버튼 눌렀을떄 이벤트
+					$("#imgBBox #semi_auto_inference_btn").off("click").on("click", function() {
+						
+						let dataId = null;
+						let modelName = null;
+						let	taskId = null;
+						
+						dataId = imgSeg.data.canvas['dataId'];
+						taskId = $("#imgBBox select#task_option").val();
+						modelName = $("#imgBBox select#model_option").val();
+						
+						if(dataId.length == 0 || dataId == null || dataId == undefined ) {
+							alert("데이터ID를 확인할 수 없습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+							return;
+						}
+						
+						if(taskId == null || dataId == undefined ) {
+							alert("task를 선택해주세요.");
+							return;
+						}
+						
+						if(modelName == null || dataId == undefined ) {
+							alert("모델을 선택해주세요.");
+							return;
+						}
+							
+						
+						that.computed.semiAutoInference(dataId, taskId, modelName);
+						
+					});
+					
+					
+					// 관련 이벤트 
+					that.bind.semiAutoLabellingListener();
+					
+				},
+				
+				semiAutoLabellingListener() {
+					
+					const that = imgBBoxQuick;
+					
+					// 프로젝트 옵션 선택 이벤트 
+					$("#imgBBox select#project_option").off("change").on("change", function(e){
+						
+						let resetHtml = '<option selected disabled>No options</option>'
+						$("#imgBBox select#task_option").html(resetHtml);
+						$("#imgBBox select#model_option").html(resetHtml);
+						that.computed.getTaskOptionList(e.target.value); // 테스크 목록 조회 api 호출 
+						
+					});
+					
+					// 테스크 옵션 선택 이벤트
+					$("#imgBBox select#task_option").off("change").on("change", function(e){
+						
+						let resetHtml = '<option selected disabled>No options</option>'
+						$("#imgBBox select#model_option").html(resetHtml);
+						that.computed.getCheckPointList(e.target.value, "2");
+						
+					});
+					
+				},
 				
 				checkPointListener() {
 					const that = imgBBoxQuick;
@@ -5213,9 +5281,9 @@
 							$("#loader").hide();
 							if(res.result.code == "200"){
 								that.computed.getAlgorithmById(res.result.data.algorithm_id, "1");
-								that.computed.getCheckpointList(id, "1");
+								that.computed.getCheckPointList(id, "1");
 // 								that.computed.getAlgorithmById(res.result.data.algorithm_id, "2");
-// 								that.computed.getCheckpointList(id, "2");
+// 								that.computed.getCheckPointList(id, "2");
 							} else if (res.result.code == "2001") {
 								alert(res.result.data);
 								location.href = baseUrl + 'login';
@@ -5248,6 +5316,8 @@
 									that.render.drawProjectList(res.result.data);
 								} else if (num == "1"){
 									that.render.drawTaskList(task_list_data, res.result.data);
+								} else if (num == "2") { // semi autolabelling
+									that.render.renderProjectSelectOption(res.result.data);
 								}
 							} else if (res.result.code == "2001") {
 								alert(res.result.data);
@@ -5266,7 +5336,7 @@
 					return deffered;				
 				},
 				
-				getCheckpointList(id, num){
+				getCheckPointList(id, num){
 					const that = imgBBoxQuick;
 					$("#loader").show();
 					const deffered = $.ajax({
@@ -5281,12 +5351,18 @@
 									that.render.drawInheritCheckpointList(res.result.data);
 								} else if(num == "1"){
 									that.render.drawInferenceCheckpointList(res.result.data);
+								} else if(num == "2") { 
+									that.render.renderModelSelectOption(res.result.code, res.result.data);
 								}
 							} else if (res.result.code == "2001") {
 								alert(res.result.data);
 								location.href = baseUrl + 'login';
 							} else {
-								alert(res.result.data);
+								if(num == "2") {
+									that.render.renderModelSelectOption(res.result.code, res.result.data);
+								} else {
+									alert(res.result.data);
+								}
 							}								
 
 							
@@ -5690,7 +5766,72 @@
 
 					
 
-				},				
+				},		
+				
+				getTaskOptionList : function(projectId) {
+					
+					const that = imgBBoxQuick;
+					var ajaxData = {
+						project_id : projectId,
+						label_type : "IMAGE_BBOX" // IMAGE_BBOX, IMAGE_SEGMENTATION, VIDEO_BBOX
+					}
+					
+					$.ajax({
+						url : baseUrl + "task/getTaskList.json",
+						data : ajaxData,
+						type : "POST",
+						success : function(res) {
+							$("#loader").hide();
+							console.log("=====getTaskOptionList(getTaskList.json)=====", res.result.data);
+							if (res.result.code == "200") {
+								that.render.renderTaskSelectOption(res.result.data)
+								
+							} else if (res.result.code == "2001") {
+								alert(res.result.data);
+								location.href = baseUrl + 'login';
+							} else {
+								alert(res.result.data);
+							}
+							
+						},
+						error : function(err) {
+							$("#loader").hide();
+							console.log("ERROR!!", err);
+						}
+					});
+					
+				},
+				
+				semiAutoInference : function(dataId, taskId, modelName) {
+					
+					const that = imgBBoxQuick;
+					var ajaxData = {
+						data_id : dataId,
+						task_id : taskId,
+						model_name : modelName
+					};
+					
+					$.ajax({
+						url : baseUrl + "task/semiAutoInference.json",
+						data : ajaxData,
+						type : "POST",
+						success : function(res) {
+							$("#loader").hide();
+							console.log("=====semiAutoInference=====", res);
+							if (res.result.code == "200") {
+								
+							} else {
+								alert(res.result.data);
+							}
+							
+						},
+						error : function(err) {
+							$("#loader").hide();
+							console.log("ERROR!!", err);
+						}
+					});
+					
+				},
 				
 			},
 			render : {
@@ -6222,7 +6363,7 @@
 
 							for(let i=0; i < data.length; i++){
 								if(selected_task == data[i]["title"]){
-									that.computed.getCheckpointList(data[i]["task_id"], "0");
+									that.computed.getCheckPointList(data[i]["task_id"], "0");
 									that.render.drawTaskName(data[i]["title"]);
 									break;
 								};
@@ -6253,7 +6394,88 @@
 					$(target_title).html(select_task_name);
 					console.log("taskName_data : ", taskName_data);
 
-				},				
+				},
+				
+				// ===> for semiAutoInference
+				renderProjectSelectOption(resultData) {
+					
+				
+					console.log("===== renderProjectSelectOption ===== ", resultData);
+					
+					const that = imgBBoxQuick;
+					
+					let selectTarget = $("#imgBBox select#project_option");
+					selectTarget.html("");
+					
+					let html = ""
+					if(resultData.length > 0) {
+						html = "<option selected disabled>Please select the project</option>"; 
+						for(let i=0, len = resultData.length; i<len; i++){
+							html += "<option value='"+resultData[i]["project_id"]+"'>";
+							html += resultData[i]["title"];
+							html += "</option>";
+				
+						}
+					} else {
+					 	html += "<option selected disabled>No options</option>"
+					}
+					
+					selectTarget.append(html);
+					that.bind.semiAutoLabellingListener();
+				},
+				
+				// ===> for semiAutoInference
+				renderTaskSelectOption(resultData) {
+					
+					console.log("===== renderTaskSelectOption =====", resultData)
+					
+				 	const that = imgBBoxQuick;
+					
+					let selectTarget = $("#imgBBox select#task_option");
+					selectTarget.html("");
+					
+					let html = ""
+					if(resultData.length > 0) {
+						html = "<option selected disabled>Please select the task</option>"; 
+						for(let i=0, len = resultData.length; i<len; i++){
+							html += "<option value='"+resultData[i]["task_id"]+"'>";
+							html += resultData[i]["title"];
+							html += "</option>";
+						}
+					} else {
+						html += "<option selected disabled>No options</option>"
+					}
+					
+					selectTarget.append(html);
+					that.bind.semiAutoLabellingListener();
+				},
+				
+				// ===> for semiAutoInference
+				renderModelSelectOption(resultCode, resultData) {
+					
+					console.log("===== renderModelSelectOption =====", resultData)
+					
+				 	const that = imgBBoxQuick;
+					
+					let selectTarget = $("#imgBBox select#model_option");
+					selectTarget.html("");
+					
+					let html = ""
+					if(resultCode == "200" && resultData.length > 0) {
+						html = "<option selected disabled>Please select the model</option>"; 
+						for(let i=0, len = resultData.length; i<len; i++){
+							html += "<option value='"+ resultData[i] +"'>";
+							html += resultData[i];
+							html += "</option>";
+						}
+					} else {
+						html += "<option selected disabled>No options</option>"
+					}
+					
+					selectTarget.append(html);
+					that.bind.semiAutoLabellingListener();
+				}
+				
 			},
 		};
 		

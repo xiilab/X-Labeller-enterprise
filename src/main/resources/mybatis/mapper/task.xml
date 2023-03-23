@@ -77,7 +77,7 @@
 			<if test='user_id != null and !user_id.equals("")'>AND USER_ID = #{user_id}</if>
 			<if test='title != null and !title.equals("")'>AND TITLE LIKE CONCAT('%',#{title},'%')</if>
 			<if test='contents != null and !contents.equals("")'>AND CONTENTS LIKE CONCAT('%',#{contents},'%')</if>
-			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type]}</if>
+			<if test='label_type != null and !label_type.equals("")'>AND LABEL_TYPE = #{label_type}</if>
 		ORDER BY t.TASK_ID DESC
 	</select>
 	

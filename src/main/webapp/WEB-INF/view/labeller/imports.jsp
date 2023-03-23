@@ -264,10 +264,16 @@
 					return;
 				}
 				
+				// 데이터셋 타입
+				var dataset_type = that.pt.find(".label_type_wrap .radioBtn[name=dataset-type]:checked").val();
 				var formData = new FormData();
-
+				// 파일 
 				for(var i = 0 ; i < that.fileList.length ; i++){
-					formData.append("import_zip_file",that.fileList[i]);
+					if(dataset_type == 'virtual') {
+						formData.append("files", that.fileList[i]);					
+					} else {
+						formData.append("import_zip_file",that.fileList[i]);
+					}
 				}
 				var is_new = true;
 // 				if(that.pt.find("input[name='is_new']:checked").val() == 0){
@@ -282,8 +288,6 @@
 				formData.append("is_new",is_new);
 				formData.append("label_type", label_type);
 				
-				// 데이터셋 타입
-				var dataset_type = that.pt.find(".label_type_wrap .radioBtn[name=dataset-type]:checked").val();
 				
 				switch(dataset_type) {
 				

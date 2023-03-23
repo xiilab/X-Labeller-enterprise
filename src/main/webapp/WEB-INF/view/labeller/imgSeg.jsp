@@ -243,15 +243,17 @@
       	#imgSeg .list_btn_wrap .data_list_btn { width: 30px; height: 30px; margin-right: 30px; background: url(images/icon_filter_normal.png) right; cursor: pointer; }
  		
 /*  		#imgSeg .quick_wrap { width: 100%; position: absolute; bottom: 0px; padding: 26.5px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; }        */
- 		#imgSeg .quick_wrap { width: 100%; bottom: 0px; padding: 26.5px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; align-items : flex-end; }       
-
+ 		#imgSeg .quick_wrap { width: 100%; bottom: 0px; padding: 15px 0; background-color: #fff; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: space-between; align-items : flex-end; }       
+		#imgSeg .quick_wrap .quick_btn_wrap { display: flex; margin-left: 25.5px; }
+		
 /*  		#imgSeg .quick_wrap { width: calc(100% - 699px); position: absolute; bottom: 0px; padding: 25px 0; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; }        */
 /* 		#imgSeg .quick_wrap { width: 488px; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; position: absolute; top: -8px; left: 609px;}     */
       
 		#imgSeg .quick_btn {
 			width: 100px;
+			height: 36px;
  			line-height: 36px; 
-			margin: 0 20px;
+			margin-right: 10px;
 			margin-top: 4px;
 /* 			padding: 6px; */
 			text-align: center;
@@ -307,26 +309,7 @@
 /*  		#imgSeg .quick_wrap { width: calc(100% - 699px); position: absolute; bottom: 0px; padding: 25px 0; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; justify-content: center; }        */
 /* 		#imgSeg .quick_wrap { width: 488px; text-align: center; font-family: 'Open_Sans', sans-serif; font-size: 13px; font-weight: 400; color: #343434; position: absolute; top: -8px; left: 609px;}     */
       
-		#imgSeg .quick_btn {
-			width: 100px;
- 			line-height: 36px; 
- 			margin-left: 0px;
-			margin-right: 10px;
-			margin-bottom: 2px;
-/* 			padding: 6px; */
-			text-align: center;
-			border-radius: 5px;
-			box-shadow: 0 4px 8px 0 #e7e7e7;
-			background-color: #4c84ff;
-			font-size: 11px;
-			font-weight: 300;
-			color: #fff;
-			cursor: pointer;
-		}
-		
-		#imgSeg .quick_btn:hover {
-			background-color: #3A71E9;
-		}    
+		 
 		
 		#imgSeg .quick_btn_wrap {
 			padding-top: 10px;
@@ -949,10 +932,10 @@
 		#imgSeg .hover_div div {word-break: break-word; margin: 2px 5px; white-space: normal; font-weight: 300; font-family: Open_Sans;}
 		
 		/* military - autoLabelling */
-		#imgSeg .semi_auto_labelling_wrap { display: flex; }							
+		#imgSeg .semi_auto_labelling_wrap { display: flex; align-items: flex-end; margin-right: 25.5px; }							
 		#imgSeg .semi_auto_labelling_wrap .wrap { display: flex; flex-direction: column; margin-right: 10px;}
 		#imgSeg .semi_auto_labelling_wrap .wrap label { margin-bottom: 5px; }
-		#imgSeg .semi_auto_labelling_wrap .wrap select { width: 150px; }
+		#imgSeg .semi_auto_labelling_wrap .wrap select { width: 200px; }
 									
       </style>
    </head>
@@ -1042,35 +1025,33 @@
 	                 		</div>            		<!-- Data List Popup area end -->    							
                  		</div>              <!-- Image Slide area end -->     						
 	               		<div class="quick_wrap flex"> <!-- Quick Training & Inference Btn area start -->
-							<div id="quick_training_btn" class="quick_btn filter_color">Quick Training</div>
-							<div id="quick_inference_btn" class="quick_btn filter_color">Quick Inference</div>
-							
-							<!--  military - autoLabelling -->
+	               		
+               				<div class="quick_btn_wrap">
+								<div id="quick_training_btn" class="quick_btn filter_color">Quick Training</div>
+								<div id="quick_inference_btn" class="quick_btn filter_color">Quick Inference</div>
+							</div>
+							<!--  ===> for semiAutoInference -->
 							<div class="semi_auto_labelling_wrap">
 								<div class="wrap">
 									<label>project</label>
-									<select id="">
-										<option value="">INSTANCE_SEGMENTATION_DATASET1_replica</option>
-										<option value="">INSTANCE_SEGMENTATION_DATASET2_replica</option>
-										<option value="">INSTANCE_SEGMENTATION_DATASET3_replica</option>
+									<select id="project_option">
+										<option selected disabled>No options</option>
 									</select>
 								</div>
 								<div class="wrap">
 									<label>task</label>
-									<select id="">
-										<option value="">Quick_INSTANCE_SEGMENTATION_DATASET1_replica_Task1</option>
-										<option value="">INSTANCE_SEGMENTATION_TASK1</option>
+									<select id="task_option">
+										<option selected disabled>No options</option>
 									</select>
 								</div>
 								<div class="wrap">
 									<label>model</label>
-									<select id="">
-										<option value="">YOLO</option>
-										<option value="">EFFICCIENTDET</option>
+									<select id="model_option">
+										<option selected disabled>No options</option>
 									</select>
 								</div>
+								<div id="semi_auto_inference_btn" class="quick_btn filter_color">Semi-auto</div>
 							</div>
-							<div id="" class="quick_btn filter_color">Semi-auto</div>
 							
 							<!-- Quick Training -->
 							<div id="quick_training" class="quick_training filter_color">
@@ -1269,6 +1250,8 @@
 								</div>
 							</div>							
 	               		</div>   
+	               		
+                  		
                   	</section>
                   	<section class="label_tag">
 	                    <section class="tag">
@@ -1384,6 +1367,8 @@
 				},					
 				
 				init : function(dataset_id) {
+					
+					console.log("## CALL imgSeg init");
 					const that = imgSeg;
 // 					that.bind.evtOnceInit(); //  added by k.park
 					// jh.sa 추가 		
@@ -5068,6 +5053,8 @@
 					
 					that.bind.quickTraining();
 					that.bind.quickInference();
+					that.bind.semiAutoLabelling();
+					
 				},
 				bind : {
 					// Quick Training & Inference
@@ -5194,7 +5181,7 @@
 								$("#imgSeg .checkpoint_view").removeClass("active");
 							}
 							let temp_id = $("#imgSeg .quick_training .task_result option:selected").data("id");
-							that.computed.getCheckpointList(temp_id, "0");
+							that.computed.getCheckPointList(temp_id, "0");
 						});		
 						$("#imgSeg #quick_training .checkpoint_list .side_btn_wrap .save_btn").off("click").on("click", function() {
 							$("#imgSeg #quick_training .checkpoint_list").removeClass("active");
@@ -5266,6 +5253,78 @@
 							that.computed.createJsonQuickInference();
 						});				
 					},		
+					
+					semiAutoLabelling() {
+						
+						const that = imgSegQuick;
+						
+						// 초기화 해줘야 할 것들?
+						that.computed.getProjectList(null, "2");
+						let resetHtml = '<option selected disabled>No options</option>'
+						$("#imgSeg select#task_option").html(resetHtml);
+						$("#imgSeg select#model_option").html(resetHtml);
+						
+						// semi-auto 버튼 눌렀을떄 이벤트
+						$("#imgSeg #semi_auto_inference_btn").off("click").on("click", function() {
+							
+							let dataId = null;
+							let modelName = null;
+							let	taskId = null;
+							
+							dataId = imgSeg.data.canvas['dataId'];
+							taskId = $("#imgSeg select#task_option").val();
+							modelName = $("#imgSeg select#model_option").val();
+							
+							if(dataId.length == 0 || dataId == null || dataId == undefined ) {
+								alert("데이터ID를 확인할 수 없습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+								return;
+							}
+							
+							if(taskId == null || dataId == undefined ) {
+								alert("task를 선택해주세요.");
+								return;
+							}
+							
+							if(modelName == null || dataId == undefined ) {
+								alert("모델을 선택해주세요.");
+								return;
+							}
+								
+							
+							that.computed.semiAutoInference(dataId, taskId, modelName);
+							
+						});
+						
+						
+						// 관련 이벤트 
+						that.bind.semiAutoLabellingListener();
+						
+					},
+					
+					semiAutoLabellingListener() {
+						
+						const that = imgSegQuick
+						
+						// 프로젝트 옵션 선택 이벤트 
+						$("#imgSeg select#project_option").off("change").on("change", function(e){
+							
+							let resetHtml = '<option selected disabled>No options</option>'
+							$("#imgSeg select#task_option").html(resetHtml);
+							$("#imgSeg select#model_option").html(resetHtml);
+							that.computed.getTaskOptionList(e.target.value); // 테스크 목록 조회 api 호출 
+							
+						});
+						
+						// 테스크 옵션 선택 이벤트
+						$("#imgSeg select#task_option").off("change").on("change", function(e){
+							
+							let resetHtml = '<option selected disabled>No options</option>'
+							$("#imgSeg select#model_option").html(resetHtml);
+							that.computed.getCheckPointList(e.target.value, "2");
+							
+						});
+						
+					},
 					
 					checkPointListener() {
 						const that = imgSegQuick;
@@ -5591,7 +5650,7 @@
 								$("#loader").hide();
 								if(res.result.code == "200"){
 									that.computed.getAlgorithmById(res.result.data.algorithm_id, "1");
-									that.computed.getCheckpointList(id, "1");
+									that.computed.getCheckPointList(id, "1");
 								} else if (res.result.code == "2001") {
 									alert(res.result.data);
 									location.href = baseUrl + 'login';
@@ -5619,11 +5678,12 @@
 								console.log("=======getProjectList=======", res);
 								$("#loader").hide();
 								if(res.result.code == "200"){
-									if(num == "0"){
+									if(num == "0"){ // 학습 
 										that.render.drawInheritTaskList(task_list_data, res.result.data);
-										that.render.drawProjectList(res.result.data);
-									} else if (num == "1"){
+									} else if (num == "1"){ // 추론 
 										that.render.drawTaskList(task_list_data, res.result.data);
+									} else if (num == "2") { // semi autolabelling
+										that.render.renderProjectSelectOption(res.result.data);
 									}
 								} else if (res.result.code == "2001") {
 									alert(res.result.data);
@@ -5642,7 +5702,8 @@
 						return deffered;				
 					},
 					
-					getCheckpointList(id, num){
+					/* 해당 Task의 학습 모델 파일 리스트를 생성날짜를 기준으로 오름차순 출력 */
+					getCheckPointList(id, num){
 						const that = imgSegQuick;
 						$("#loader").show();
 						const deffered = $.ajax({
@@ -5657,12 +5718,19 @@
 										that.render.drawInheritCheckpointList(res.result.data);
 									} else if(num == "1"){
 										that.render.drawInferenceCheckpointList(res.result.data);
+									} else if(num == "2") { 
+										that.render.renderModelSelectOption(res.result.code, res.result.data);
 									}
 								} else if (res.result.code == "2001") {
 									alert(res.result.data);
 									location.href = baseUrl + 'login';
 								} else {
-									alert(res.result.data);
+									
+									if(num == "2") {
+										that.render.renderModelSelectOption(res.result.code, res.result.data);
+									} else {
+										alert(res.result.data);
+									}
 								}								
 
 								
@@ -6066,7 +6134,72 @@
 
 						
 
-					},				
+					},			
+					
+					getTaskOptionList : function(projectId) {
+						
+						const that = imgSegQuick;
+						var ajaxData = {
+							project_id : projectId,
+							label_type : "IMAGE_SEGMENTATION" // IMAGE_BBOX, IMAGE_SEGMENTATION, VIDEO_BBOX
+						}
+						
+						$.ajax({
+							url : baseUrl + "task/getTaskList.json",
+							data : ajaxData,
+							type : "POST",
+							success : function(res) {
+								$("#loader").hide();
+								console.log("=====getTaskOptionList(getTaskList.json)=====", res.result.data);
+								if (res.result.code == "200") {
+									that.render.renderTaskSelectOption(res.result.data)
+									
+								} else if (res.result.code == "2001") {
+									alert(res.result.data);
+									location.href = baseUrl + 'login';
+								} else {
+									alert(res.result.data);
+								}
+								
+							},
+							error : function(err) {
+								$("#loader").hide();
+								console.log("ERROR!!", err);
+							}
+						});
+						
+					},
+					
+					semiAutoInference : function(dataId, taskId, modelName) {
+						
+						const that = imgSegQuick;
+						var ajaxData = {
+							data_id : dataId,
+							task_id : taskId,
+							model_name : modelName
+						};
+						
+						$.ajax({
+							url : baseUrl + "task/semiAutoInference.json",
+							data : ajaxData,
+							type : "POST",
+							success : function(res) {
+								$("#loader").hide();
+								console.log("=====semiAutoInference=====", res);
+								if (res.result.code == "200") {
+									
+								}  else {
+									alert(res.result.data);
+								}
+								
+							},
+							error : function(err) {
+								$("#loader").hide();
+								console.log("ERROR!!", err);
+							}
+						});
+						
+					},
 					
 				},
 				render : {
@@ -6589,7 +6722,7 @@
 
 								for(let i=0; i < data.length; i++){
 									if(selected_task == data[i]["title"]){
-										that.computed.getCheckpointList(data[i]["task_id"], "0");
+										that.computed.getCheckPointList(data[i]["task_id"], "0");
 										that.render.drawTaskName(data[i]["title"]);
 										break;
 									};
@@ -6620,7 +6753,88 @@
 						$(target_title).html(select_task_name);
 						console.log("taskName_data : ", taskName_data);
 
-					},				
+					},	
+					
+					// ===> for semiAutoInference
+					renderProjectSelectOption(resultData) {
+						
+					
+						console.log("===== renderProjectSelectOption ===== ", resultData);
+						
+						const that = imgSegQuick;
+						
+						let selectTarget = $("#imgSeg select#project_option");
+						selectTarget.html("");
+						
+						let html = ""
+						if(resultData.length > 0) {
+							html = "<option selected disabled>Please select the project</option>"; 
+							for(let i=0, len = resultData.length; i<len; i++){
+								html += "<option value='"+resultData[i]["project_id"]+"'>";
+								html += resultData[i]["title"];
+								html += "</option>";
+					
+							}
+						} else {
+						 	html += "<option selected disabled>No options</option>"
+						}
+						
+						selectTarget.append(html);
+						that.bind.semiAutoLabellingListener();
+					},
+					
+					// ===> for semiAutoInference
+					renderTaskSelectOption(resultData) {
+						
+						console.log("===== renderTaskSelectOption =====", resultData)
+						
+					 	const that = imgSegQuick;
+						
+						let selectTarget = $("#imgSeg select#task_option");
+						selectTarget.html("");
+						
+						let html = ""
+						if(resultData.length > 0) {
+							html = "<option selected disabled>Please select the task</option>"; 
+							for(let i=0, len = resultData.length; i<len; i++){
+								html += "<option value='"+resultData[i]["task_id"]+"'>";
+								html += resultData[i]["title"];
+								html += "</option>";
+							}
+						} else {
+							html += "<option selected disabled>No options</option>"
+						}
+						
+						selectTarget.append(html);
+						that.bind.semiAutoLabellingListener();
+					},
+					
+					// ===> for semiAutoInference
+					renderModelSelectOption(resultCode, resultData) {
+						
+						console.log("===== renderModelSelectOption =====", resultData)
+						
+					 	const that = imgSegQuick;
+						
+						let selectTarget = $("#imgSeg select#model_option");
+						selectTarget.html("");
+						
+						let html = ""
+						if(resultCode == "200" && resultData.length > 0) {
+							html = "<option selected disabled>Please select the model</option>"; 
+							for(let i=0, len = resultData.length; i<len; i++){
+								html += "<option value='"+ resultData[i] +"'>";
+								html += resultData[i];
+								html += "</option>";
+							}
+						} else {
+							html += "<option selected disabled>No options</option>"
+						}
+						
+						selectTarget.append(html);
+						that.bind.semiAutoLabellingListener();
+					}
+					
 				},
 			};		
 		
