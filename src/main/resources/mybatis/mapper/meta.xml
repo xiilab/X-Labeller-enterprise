@@ -22,7 +22,7 @@
 			AND m.DATA_ID IN (${data_ids})
 		</if>
 		<if test='label != null and !"".equals(label)'>
-			AND m.LABEL = #{LABEL}
+			AND m.LABEL = #{label}
 		</if>
 	</select>	
 	
