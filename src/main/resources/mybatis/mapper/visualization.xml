@@ -44,4 +44,20 @@
         AND DATASET_ID = #{dataset_id}
         ]]>
     </select>
+    
+    <!-- 해상도별 객체 수량 -->
+    <select id="getLabelList" parameterType="VisualizationVO" resultType="VisualizationVO">
+        <![CDATA[
+        SELECT 
+			LABEL AS "label"
+		FROM META AS MT
+		JOIN DATA AS DT ON MT.DATA_ID = DT.DATA_ID
+		JOIN DATASET AS DTS ON DT.DATASET_ID = DTS.DATASET_ID
+		WHERE 1=1
+		AND DTS.DATASET_ID = #{dataset_id}
+		GROUP BY LABEL
+		ORDER BY LABEL
+        ]]>
+    </select>
+	    
 </mapper>

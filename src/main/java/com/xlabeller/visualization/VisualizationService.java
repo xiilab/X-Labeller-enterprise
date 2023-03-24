@@ -441,4 +441,23 @@ public class VisualizationService {
 
         return resultArray;
     }
+    
+    /**
+     * 데이터셋별 라벨 목
+     * @param visualizationVO dataset_id
+     * @return
+     */
+	public Object getLabelList(VisualizationVO visualizationVO) {
+		if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+            return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
+
+        Object result = visualizationDao.getLabelList(visualizationVO);
+		
+        if (result == null) {
+        	return Output.JsonOutput("300", "조회된 라벨 목록이 존재 하지 않습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
+		
+		return Output.JsonOutput("200", result);
+	}
 }
