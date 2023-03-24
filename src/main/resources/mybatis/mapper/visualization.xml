@@ -16,7 +16,7 @@
         WHERE (WIDTH IS NOT NULL AND HEIGHT IS NOT NULL)
         AND DATASET_ID = #{dataset_id}
         ]]>
-        <if test='label != null and !label.equals("")'>
+        <if test='label != null and !"".equals(label)'>
         	AND LABEL = #{label}
         </if>
 
@@ -33,7 +33,7 @@
                 FROM DATA
                 WHERE DATASET_ID = #{dataset_id}
             )
-            <if test='label != null and !label.equals("")'>
+            <if test='label != null and !"".equals(label)'>
             	AND LABEL = #{label}
            	</if>
             GROUP BY LABEL
@@ -52,7 +52,7 @@
         WHERE (D.WIDTH IS NOT NULL AND D.HEIGHT IS NOT NULL)
         AND DATASET_ID = #{dataset_id}
         ]]>
-        <if test='label != null and !label.equals("")'>
+        <if test='label != null and !"".equals(label)'>
         	AND LABEL = #{label}
        	</if>
     </select>

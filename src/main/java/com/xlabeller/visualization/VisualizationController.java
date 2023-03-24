@@ -150,7 +150,7 @@ public class VisualizationController {
 	}
 	
 	/**
-	 * 데이터셋별 라벨 목
+	 * 데이터셋별 라벨 목록 
 	 * @param visualizationVO : dataset_id
 	 * @return label
 	 * */
