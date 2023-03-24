@@ -21,7 +21,9 @@
 		<if test='data_ids != null and !data_ids.equals("")'>
 			AND m.DATA_ID IN (${data_ids})
 		</if>
-
+		<if test='label != null and !"".equals(label)'>
+			AND m.LABEL = #{LABEL}
+		</if>
 	</select>	
 	
 	<select id="getMetaByMetaId" resultType="MetaVO">

@@ -1,14 +1,14 @@
 package com.xlabeller.visualization;
 
-import com.xlabeller.models.VisualizationVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.xlabeller.models.VisualizationVO;
 
 
 @Controller
@@ -148,4 +148,18 @@ public class VisualizationController {
 		modelAndView.addObject("result",  result);
 		return modelAndView;
 	}
+	
+	/**
+	 * 데이터셋별 라벨 목록 
+	 * @param visualizationVO : dataset_id
+	 * @return label
+	 * */
+	@GetMapping("/getLabelList")
+	public ModelAndView getLabelList(VisualizationVO visualizationVO) {
+		ModelAndView modelAndView = new ModelAndView();
+		Object result = visualizationService.getLabelList(visualizationVO);
+		modelAndView.addObject("result",  result);
+		return modelAndView;
+	}
+
 }

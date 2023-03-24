@@ -64,10 +64,13 @@ public class VisualizationService {
      * 오브젝트 크기별 분포
      */
     public Object getDistributionByObjectSize(VisualizationVO visualizationVO) {
-        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+    	String datasetId = visualizationVO.getDataset_id();
+    	String label = visualizationVO.getLabel();
+    	if (datasetId == null || "".equals(datasetId)) {
             return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
-        String datasetId = visualizationVO.getDataset_id();
+        
+        
         // 반환할 객체, JSON객체가 담긴 list로 반환 ex) [{width : 0.1, height : 0.1}, {width : 0.5, height : 0.3}, ...]
         List<JSONObject> resultList = new ArrayList<>();
 
@@ -75,7 +78,7 @@ public class VisualizationService {
         Map<String, JSONObject> imageWhMap = getDividedTenImageWhMap(datasetId);
 
         // 2. imageWhMap Key에 해당하는 모든 라벨 목록을 가져옴
-        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap);
+        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap, label);
 
         // 3. 가져온 라벨 목록의 imageID와 동일한 imageWhMap Key가 있으면 value를 가져와 라벨의 width, height를 value의 width, height로 나눠 계산된 값으로 MAP로 생성
         // MAP = KEY : "IMAGE_ID", VALUE : 계산된 값 배열
@@ -102,10 +105,11 @@ public class VisualizationService {
      * Object width별 분포
      */
     public Object getLabelCountByWidth(VisualizationVO visualizationVO) {
-        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+    	String datasetId = visualizationVO.getDataset_id();
+    	String label = visualizationVO.getLabel();
+        if (datasetId == null || "".equals(datasetId)) {
             return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
-        String datasetId = visualizationVO.getDataset_id();
         // 반환할 객체, JSON객체가 담긴 list로 반환 ex) {width : 0.1, height : 0.1}, {width : 0.5, height : 0.3}, ...
         Map<Double, Integer> resultMap = new HashMap<>();
 
@@ -113,7 +117,7 @@ public class VisualizationService {
         Map<String, JSONObject> imageWhMap = getDividedTenImageWhMap(datasetId);
 
         // 2. imageWhMap Key에 해당하는 모든 라벨 목록을 가져옴
-        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap);
+        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap, label);
 
         // 3. 가져온 라벨 목록의 imageID와 동일한 imageWhMap Key가 있으면 value를 가져와 라벨의 width, height를 imageWhMap value의 width, height로 나눠 계산된 값으로 MAP로 생성
         // MAP = KEY : "IMAGE_ID", VALUE : 계산된 값 배열
@@ -145,10 +149,11 @@ public class VisualizationService {
      * Object height별 분포
      */
     public Object getLabelCountByHeight(VisualizationVO visualizationVO) {
-        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+    	String datasetId = visualizationVO.getDataset_id();
+    	String label = visualizationVO.getLabel();
+    	if (datasetId == null || "".equals(datasetId)) {
             return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
-        String datasetId = visualizationVO.getDataset_id();
         // 반환할 객체, JSON객체가 담긴 list로 반환 ex) {width : 0.1, height : 0.1}, {width : 0.5, height : 0.3}, ...
         Map<Double, Integer> resultMap = new HashMap<>();
 
@@ -156,7 +161,7 @@ public class VisualizationService {
         Map<String, JSONObject> imageWhMap = getDividedTenImageWhMap(datasetId);
 
         // 2. imageWhMap Key에 해당하는 모든 라벨 목록을 가져옴
-        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap);
+        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap, label);
 
         // 3. 가져온 라벨 목록의 imageID와 동일한 imageWhMap Key가 있으면 value를 가져와 라벨의 width, height를 value의 width, height로 나눠 계산된 값으로 MAP로 생성
         // MAP = KEY : "IMAGE_ID", VALUE : 계산된 값 배열
@@ -186,10 +191,11 @@ public class VisualizationService {
      * 경계범위 중심분포
      */
     public Object getBoundaryRangeCentroidDistribution(VisualizationVO visualizationVO) {
-        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+    	String datasetId = visualizationVO.getDataset_id();
+    	String label = visualizationVO.getLabel();
+        if (datasetId == null || "".equals(datasetId)) {
             return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
-        String datasetId = visualizationVO.getDataset_id();
         // 반환할 객체, JSON객체가 담긴 list로 반환 ex) [{width : 0.1, height : 0.1}, {width : 0.5, height : 0.3}, ...]
         List<JSONObject> resultList = new ArrayList<>();
 
@@ -197,7 +203,7 @@ public class VisualizationService {
         Map<String, JSONObject> imageWhMap = getDividedTenImageWhMap(datasetId);
 
         // 2. imageWhMap Key에 해당하는 모든 라벨 목록을 가져옴
-        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap);
+        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap, label);
 
         // 3. 가져온 라벨 목록의 imageID와 동일한 imageWhMap Key가 있으면 value를 가져와 라벨의 width, height를 value의 width, height로 나눠 계산된 값으로 MAP로 생성
         // MAP = KEY : "IMAGE_ID", VALUE : 계산된 값 배열
@@ -224,10 +230,11 @@ public class VisualizationService {
      * center x별 분포
      */
     public Object getLabelCountByCenterX(VisualizationVO visualizationVO) {
-        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+    	String datasetId = visualizationVO.getDataset_id();
+    	String label = visualizationVO.getLabel();
+        if (datasetId == null || "".equals(datasetId)) {
             return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
-        String datasetId = visualizationVO.getDataset_id();
         // 반환할 객체, JSON객체가 담긴 list로 반환 ex) {width : 0.1, height : 0.1}, {width : 0.5, height : 0.3}, ...
         Map<Double, Integer> resultMap = new HashMap<>();
 
@@ -235,7 +242,7 @@ public class VisualizationService {
         Map<String, JSONObject> imageWhMap = getDividedTenImageWhMap(datasetId);
 
         // 2. imageWhMap Key에 해당하는 모든 라벨 목록을 가져옴
-        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap);
+        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap, label);
 
         // 3. 가져온 라벨 목록의 imageID와 동일한 imageWhMap Key가 있으면 value를 가져와 라벨의 width, height를 value의 width, height로 나눠 계산된 값으로 MAP로 생성
         // MAP = KEY : "IMAGE_ID", VALUE : 계산된 값 배열
@@ -265,10 +272,11 @@ public class VisualizationService {
      * center x별 분포
      */
     public Object getLabelCountByCenterY(VisualizationVO visualizationVO) {
-        if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+    	String datasetId = visualizationVO.getDataset_id();
+    	String label = visualizationVO.getLabel();
+        if (datasetId == null || "".equals(datasetId)) {
             return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
-        String datasetId = visualizationVO.getDataset_id();
         // 반환할 객체, JSON객체가 담긴 list로 반환 ex) {width : 0.1, height : 0.1}, {width : 0.5, height : 0.3}, ...
         Map<Double, Integer> resultMap = new HashMap<>();
 
@@ -276,7 +284,7 @@ public class VisualizationService {
         Map<String, JSONObject> imageWhMap = getDividedTenImageWhMap(datasetId);
 
         // 2. imageWhMap Key에 해당하는 모든 라벨 목록을 가져옴
-        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap);
+        List<MetaVO> metaListInDataId = getMetaListInDataId(imageWhMap, label);
 
         // 3. 가져온 라벨 목록의 imageID와 동일한 imageWhMap Key가 있으면 value를 가져와 라벨의 width, height를 value의 width, height로 나눠 계산된 값으로 MAP로 생성
         // MAP = KEY : "IMAGE_ID", VALUE : 계산된 값 배열
@@ -304,13 +312,14 @@ public class VisualizationService {
 
     // 인자로 전달받은 map의 모든 Key를 여러개의 DATA_ID 문자열로 변환 후 라벨 목록을 가져옴
     // DATA_ID 문자열 변환 형식 ex) 1,2,3,4,5,...
-    private List<MetaVO> getMetaListInDataId(Map<String, JSONObject> imageWhMap) {
+    private List<MetaVO> getMetaListInDataId(Map<String, JSONObject> imageWhMap, String label) {
         // imageWhMap의 key인 data_id를 다음과 같은 형태로 반환함 => ex) 1,2,3,4,5
         String dataIdList = imageWhMap.keySet().stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
         MetaVO selectMetaVO = new MetaVO();
         selectMetaVO.setData_ids(dataIdList);
+        selectMetaVO.setLabel(label);
         List<MetaVO> metaListInDataId = metaDao.getMetaByDataId(selectMetaVO);
         return metaListInDataId;
     }
@@ -441,4 +450,23 @@ public class VisualizationService {
 
         return resultArray;
     }
+    
+    /**
+     * 데이터셋별 라벨 목록 
+     * @param visualizationVO dataset_id
+     * @return
+     */
+	public Object getLabelList(VisualizationVO visualizationVO) {
+		if (visualizationVO.getDataset_id() == null || "".equals(visualizationVO.getDataset_id())) {
+            return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
+
+        Object result = visualizationDao.getLabelList(visualizationVO);
+		
+        if (result == null) {
+        	return Output.JsonOutput("300", "조회된 라벨 목록이 존재 하지 않습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
+        }
+		
+		return Output.JsonOutput("200", result);
+	}
 }

@@ -67,6 +67,108 @@ public class CocoImportUtil {
         this.categoriesMap = resultMap;
     }
 
+//    private void readCocoAnnotations() {
+//        // imagesMap의 value(image_id)를 키로 가지는 map 생성
+//        // key : FILE_NAME, value : (labelType.equals("IMAGE_BBOX"))? [{bbox: [], label: ""}] : [{segmentation: [], bbox: [], label: ""}]
+//        Map<String, JSONArray> resultMap = this.imagesMap.entrySet().stream()
+//                .collect(Collectors.toMap(
+//                        Map.Entry::getValue,
+//                        (e) -> new JSONArray()
+//                ));
+//        JSONArray annotationsJsonArray = (JSONArray) cocoJsonObject.get("annotations");
+//
+//        for(int i = 0; i < annotationsJsonArray.size(); i++) {
+//            JSONObject imageJsonObj = (JSONObject) annotationsJsonArray.get(i);
+//            // label name 추출
+//            Long categoryId = Long.parseLong(String.valueOf(imageJsonObj.get("category_id")));
+//            String labelName = this.categoriesMap.get(categoryId);
+//            Long imageId = Long.parseLong(String.valueOf(imageJsonObj.get("image_id")));
+//            //Long imageId = (Long)imageJsonObj.get("image_id");
+//            JSONObject annotationObj = new JSONObject();
+//            if(this.labelType.equals("IMAGE_BBOX")) {
+//                if(!isValidCocoAnnotations(imageJsonObj, "IMAGE_BBOX")) {
+//                    continue;
+//                }
+//                JSONArray bbox = (JSONArray)imageJsonObj.get("bbox");
+//                if (bbox.size() != 4 ) {
+//                    continue;
+//                }
+//
+//                annotationObj.put("info", bbox.toJSONString().replaceAll("[\\[\\]]", ""));
+//                /**
+//                 * annotationObj 저장형식
+//                 * {
+//                 *      "label":"2355",
+//                 *      "info":"192.44679592026708,113.94716959707391,169.48221378150123,139.07111479523752"
+//                 *  }
+//                 * */
+//            } else {
+//                if(!isValidCocoAnnotations(imageJsonObj, "IMAGE_SEGMENTATION")) {
+//                    continue;
+//                }
+//                String bbox = ((JSONArray)imageJsonObj.get("bbox")).toJSONString().replaceAll("[\\[\\]]", "");
+//                JSONArray segmentation = (JSONArray)imageJsonObj.get("segmentation");
+//                JSONArray pointSegmentation = new JSONArray();
+//                JSONObject pointJson = new JSONObject();
+//                for(int j = 0; j < segmentation.size(); j++) {
+//                    JSONArray segmentationObjArray = (JSONArray) segmentation.get(j);
+//                    for (int k = 0; k < segmentationObjArray.size(); k++) {
+//                        Double point = Double.parseDouble(segmentationObjArray.get(k).toString());
+//                        if(k % 2 == 0) {
+//                            pointJson.put("x", point);
+//                        } else {
+//                            pointJson.put("y", point);
+//                            pointSegmentation.add(pointJson);
+//                            pointJson = new JSONObject();
+//                        }
+//                    }
+//                }
+//
+//                JSONObject infoObj = new JSONObject();
+//                infoObj.put("box", bbox);
+//                infoObj.put("segmentation", pointSegmentation);
+//                annotationObj.put("info", infoObj);
+//                /**
+//                 * annotationObj 저장 형식
+//                 * {
+//                 * 	"label":"1234",
+//                 * 	"info":
+//                 *        {
+//                 * 		    "segmentation":[
+//                 *            {"x":449.12396202013133,"y":132.03491866310222},
+//                 *            {"x":312.57051395825584,"y":192.15919803362948},
+//                 *            {"x":217.79834478098405,"y":287.95042279345256}
+//                 * 		    ],
+//                 * 		"box":"221.89421167660376,134.41551703636426,235.9521295839302,159.03381421295734"
+//                 *      }
+//                 * }
+//                 * */
+//            }
+//
+//            annotationObj.put("label", labelName);
+////            logger.info(annotationObj.toJSONString());
+//
+//            // resultMap에 annotationObj 넣음
+//            String fileName = this.imagesMap.get(imageId);
+//            resultMap.get(fileName).add(annotationObj);
+//        }
+//
+//        // coco annotation 원본 그대로 유지하기 위해 복사
+//        Map<String, JSONArray> copyResultMap = resultMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+//
+//        // 어노테이션이 존재하지 않는 이미지ID Key 삭제
+//        Iterator<Map.Entry<String, JSONArray>> iterator = resultMap.entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry<String, JSONArray> entry = iterator.next();
+//            if (entry.getValue().isEmpty()) {
+//                iterator.remove();
+//            }
+//        }
+//
+//        this.annotationImagesMap = resultMap;
+//        this.annotationMap = copyResultMap;
+//    }
+
     private void readCocoAnnotations() {
         // imagesMap의 value(image_id)를 키로 가지는 map 생성
         // key : FILE_NAME, value : (labelType.equals("IMAGE_BBOX"))? [{bbox: [], label: ""}] : [{segmentation: [], bbox: [], label: ""}]
@@ -79,16 +181,13 @@ public class CocoImportUtil {
 
         for(int i = 0; i < annotationsJsonArray.size(); i++) {
             JSONObject imageJsonObj = (JSONObject) annotationsJsonArray.get(i);
-            // label name 추출
-            Long categoryId = Long.parseLong(String.valueOf(imageJsonObj.get("category_id")));
-            String labelName = this.categoriesMap.get(categoryId);
-            Long imageId = Long.parseLong(String.valueOf(imageJsonObj.get("image_id")));
             //Long imageId = (Long)imageJsonObj.get("image_id");
-            JSONObject annotationObj = new JSONObject();
+            //JSONObject annotationObj = new JSONObject();
             if(this.labelType.equals("IMAGE_BBOX")) {
                 if(!isValidCocoAnnotations(imageJsonObj, "IMAGE_BBOX")) {
                     continue;
                 }
+                JSONObject annotationObj = new JSONObject();
                 JSONArray bbox = (JSONArray)imageJsonObj.get("bbox");
                 if (bbox.size() != 4 ) {
                     continue;
@@ -102,32 +201,53 @@ public class CocoImportUtil {
                  *      "info":"192.44679592026708,113.94716959707391,169.48221378150123,139.07111479523752"
                  *  }
                  * */
+
+                Long categoryId = Long.parseLong(String.valueOf(imageJsonObj.get("category_id")));
+                String labelName = this.categoriesMap.get(categoryId);
+                annotationObj.put("label", labelName);
+                Long imageId = Long.parseLong(String.valueOf(imageJsonObj.get("image_id")));
+                String fileName = this.imagesMap.get(imageId);
+                resultMap.get(fileName).add(annotationObj);
             } else {
                 if(!isValidCocoAnnotations(imageJsonObj, "IMAGE_SEGMENTATION")) {
                     continue;
                 }
-                String bbox = ((JSONArray)imageJsonObj.get("bbox")).toJSONString().replaceAll("[\\[\\]]", "");
+                //String bbox = ((JSONArray)imageJsonObj.get("bbox")).toJSONString().replaceAll("[\\[\\]]", "");
                 JSONArray segmentation = (JSONArray)imageJsonObj.get("segmentation");
-                JSONArray pointSegmentation = new JSONArray();
-                JSONObject pointJson = new JSONObject();
                 for(int j = 0; j < segmentation.size(); j++) {
+                    JSONObject annotationObj = new JSONObject();
                     JSONArray segmentationObjArray = (JSONArray) segmentation.get(j);
+                    JSONArray pointSegmentation = new JSONArray();
+                    JSONObject pointJson = new JSONObject();
+                    double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
                     for (int k = 0; k < segmentationObjArray.size(); k++) {
                         Double point = Double.parseDouble(segmentationObjArray.get(k).toString());
                         if(k % 2 == 0) {
+                            x1 = (k == 0 || x1 > point) ? point : x1;
+                            x2 = (k == 0 || x2 < point) ? point : x2;
                             pointJson.put("x", point);
                         } else {
+                            y1 = (k == 0 || y1 > point) ? point : y1;
+                            y2 = (k == 0 || y2 < point) ? point : y2;
                             pointJson.put("y", point);
                             pointSegmentation.add(pointJson);
                             pointJson = new JSONObject();
                         }
                     }
+
+                    JSONObject infoObj = new JSONObject();
+                    infoObj.put("box", calcBoxSizeToString(x1, y1, x2, y2));
+                    infoObj.put("segmentation", pointSegmentation);
+                    annotationObj.put("info", infoObj);
+
+                    Long categoryId = Long.parseLong(String.valueOf(imageJsonObj.get("category_id")));
+                    String labelName = this.categoriesMap.get(categoryId);
+                    annotationObj.put("label", labelName);
+                    Long imageId = Long.parseLong(String.valueOf(imageJsonObj.get("image_id")));
+                    String fileName = this.imagesMap.get(imageId);
+                    resultMap.get(fileName).add(annotationObj);
                 }
 
-                JSONObject infoObj = new JSONObject();
-                infoObj.put("box", bbox);
-                infoObj.put("segmentation", pointSegmentation);
-                annotationObj.put("info", infoObj);
                 /**
                  * annotationObj 저장 형식
                  * {
@@ -145,12 +265,16 @@ public class CocoImportUtil {
                  * */
             }
 
-            annotationObj.put("label", labelName);
+            // label name 추출
+//            Long categoryId = Long.parseLong(String.valueOf(imageJsonObj.get("category_id")));
+//            String labelName = this.categoriesMap.get(categoryId);
+//            annotationObj.put("label", labelName);
 //            logger.info(annotationObj.toJSONString());
 
             // resultMap에 annotationObj 넣음
-            String fileName = this.imagesMap.get(imageId);
-            resultMap.get(fileName).add(annotationObj);
+//            Long imageId = Long.parseLong(String.valueOf(imageJsonObj.get("image_id")));
+//            String fileName = this.imagesMap.get(imageId);
+//            resultMap.get(fileName).add(annotationObj);
         }
 
         // coco annotation 원본 그대로 유지하기 위해 복사
@@ -183,9 +307,9 @@ public class CocoImportUtil {
 //            }
         } else if(labelType.equals("IMAGE_SEGMENTATION")) {
             // bbox값이 있는지 확인, JSONArray로 변환할 수 있는지 확인
-            if(imageJsonObj.get("bbox") == null || !JSONArray.class.isInstance(imageJsonObj.get("bbox"))) {
-                return isValid;
-            }
+//            if(imageJsonObj.get("bbox") == null || !JSONArray.class.isInstance(imageJsonObj.get("bbox"))) {
+//                return isValid;
+//            }
             // seg 있는지 확인, JSONArray로 변환할 수 있는지 확인
             if(imageJsonObj.get("segmentation") == null || !JSONArray.class.isInstance(imageJsonObj.get("segmentation"))) {
                 return isValid;
@@ -197,6 +321,12 @@ public class CocoImportUtil {
         }
 
         return !isValid;
+    }
+
+    private String calcBoxSizeToString(double x1, double y1, double x2, double y2) {
+        double width = x2 - x1;
+        double height = y2 - y1;
+        return String.valueOf(x1) + "," + String.valueOf(y1) + "," + String.valueOf(width) + "," + String.valueOf(height);
     }
 
     public Map<Long, String> getImagesMap() {
