@@ -122,7 +122,7 @@
 		    background-repeat: no-repeat;
 		    background-position: center;
 		    background-size: 50px 50px;
-		    background-color : #4c84ff4a;
+		    background-color : #d2d2d27a;
         }
         }
     </style>

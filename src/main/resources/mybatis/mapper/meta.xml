@@ -21,7 +21,9 @@
 		<if test='data_ids != null and !data_ids.equals("")'>
 			AND m.DATA_ID IN (${data_ids})
 		</if>
-
+		<if test='label != null and !"".equals(label)'>
+			AND m.LABEL = #{label}
+		</if>
 	</select>	
 	
 	<select id="getMetaByMetaId" resultType="MetaVO">
@@ -105,7 +107,7 @@
 	    DELETE FROM META
 	    WHERE 1=1 
     	   	AND META_ID = #{meta_id}
-<!--     	   	AND USER_ID = #{user_id}	    	 -->
+<!--     	   AND USER_ID = #{user_id}	    	 -->
 	</delete>
 	
 	

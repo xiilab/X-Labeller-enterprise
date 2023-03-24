@@ -295,18 +295,30 @@ public class CocoExportUtil {
                     // 0번째 원소의 segmentation 가져옴
                     JSONArray segJsonArray = (JSONArray)infoJsonObj.get("segmentation");
                     // 0번째 원소의 box 가져옴
-                    String[] splitBbox = infoJsonObj.get("box").toString().split(",");
+                    //String[] splitBbox = infoJsonObj.get("box").toString().split(",");
+					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
                     // bbox 값
-                    x = Double.parseDouble(splitBbox[0]);
-                    y = Double.parseDouble(splitBbox[1]);
-                    w = Double.parseDouble(splitBbox[2]);
-                    h = Double.parseDouble(splitBbox[3]);
+//                    x = Double.parseDouble(splitBbox[0]);
+//                    y = Double.parseDouble(splitBbox[1]);
+//                    w = Double.parseDouble(splitBbox[2]);
+//                    h = Double.parseDouble(splitBbox[3]);
                     // seg 값
                     for(int j = 0 ; j < segJsonArray.size();j++) {
                         JSONObject tempSegObj = (JSONObject)segJsonArray.get(j);
-						pointsArray.add(tempSegObj.get("x"));
-						pointsArray.add(tempSegObj.get("y"));
+						double pointX = (double) tempSegObj.get("x");
+						double pointY = (double) tempSegObj.get("y");
+						x1 = (j == 0 || x1 > pointX) ? pointX : x1;
+						x2 = (j == 0 || x2 < pointX) ? pointX : x2;
+						y1 = (j == 0 || y1 > pointY) ? pointY : y1;
+						y2 = (j == 0 || y2 < pointY) ? pointY : y2;
+						pointsArray.add(pointX);
+						pointsArray.add(pointY);
                     }
+
+					x = x1;
+					y = y1;
+					w = x2 - x1;
+					h = y2 - y1;
                 }
 
                 bboxArray.add(x);
