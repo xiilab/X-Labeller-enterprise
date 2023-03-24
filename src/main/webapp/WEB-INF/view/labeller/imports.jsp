@@ -171,6 +171,7 @@
 				+ "</li>";
 			
 			that.pt.find(".c_wrap").append(html);
+			that.pt.find("input#bigFiles").val("")
 			that.fileList.length = 0;
 		},
 		//

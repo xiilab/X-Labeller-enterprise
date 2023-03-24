@@ -30,9 +30,23 @@
         /* 		#visualizationDetail .main_wrap { display: flex; flex-wrap : wrap; align-items: stretch; width: 100%; height: 100% ; margin: auto; padding: 0 12px; background-color: #e8eaec; text-align: center; } */
         #visualizationDetail .main_wrap .head {
             display: flex;
-            padding: 12px 12px 0;
+            padding: 12px;
             height: 5%;
+            justify-content: space-between;
         }
+        
+        #visualizationDetail .main_wrap .head .wrap {
+        	display : flex;
+        	align-items: center;
+        }	
+        
+        #visualizationDetail .main_wrap .head .wrap select {
+        	height: 35px;
+		    min-width: 200px;
+		    padding-right: 30px;
+        }
+        
+        #visualizationDetail .main_wrap .head .wrap select:disabled { background-color : #d2d2d2; }
 
         #visualizationDetail .main_wrap .head label {
             margin-right: 10px;
@@ -108,9 +122,16 @@
     <div class="content flex">
         <div class="main_wrap">
             <div class="head">
-                <label>Dataset id : <span id="datasetId">-</span></label> <label>Dataset
-                name : <span id="datasetName">-</span>
-            </label>
+            	<div class="wrap">
+	                <label>Dataset id : <span id="datasetId">-</span></label>
+	                <label>Dataset name : <span id="datasetName">-</span></label>
+            	</div>
+            	<div class="wrap">            	
+	                <label>Label</label>
+	            	<select id="label_id">
+	            		<option selected>전체</option>
+	            	</select>
+            	</div>
             </div>
             <div class="body">
                 <!-- 해상도별 데이터 수량  -->
@@ -268,7 +289,8 @@
             that.pt.find("#datasetName").text(datasetName);
 
             // 차트 데이터 호출
-            that.computed.getDataQuantityPerResolution();
+            that.callDeferred();
+            /* that.computed.getDataQuantityPerResolution();
             that.computed.getDataQuantityPerClass();
             that.computed.getClassQuantityPerResolution();
             that.computed.getBoundaryRangeCentroidDistribution();
@@ -276,7 +298,7 @@
             that.computed.getLabelCountByWidth();
            	that.computed.getLabelCountByHeight();
 			that.computed.getLabelCountByCenterY();
-			that.computed.getLabelCountByCenterX();
+			that.computed.getLabelCountByCenterX(); */
 
             that.bind.listener();
 
@@ -299,6 +321,32 @@
             },
 
         },
+        
+        callDeferred : function() {
+        
+        	var that = visualizationDetail;
+        	
+        	
+        	console.log("===== START !! ")
+        	that.pt.find("select#label_id").attr("disabled", true);
+        	visualization.pt.find("#workspace").append("<div class='loading'></div>")
+        	
+        	$.when(
+       			that.computed.getDataQuantityPerResolution(),
+                that.computed.getDataQuantityPerClass(),
+                that.computed.getClassQuantityPerResolution(),
+       			that.computed.getBoundaryRangeCentroidDistribution(),
+				that.computed.getDistributionByObjectSize(),
+               	that.computed.getLabelCountByWidth(),
+                that.computed.getLabelCountByHeight(),
+       			that.computed.getLabelCountByCenterY(),
+       			that.computed.getLabelCountByCenterX(),
+        	).done(function(){
+        		console.log("===== END !! ")
+        		visualization.pt.find("#workspace .loading").remove();
+		      	that.pt.find("select#label_id").attr("disabled", false);
+        	});
+        },
 
         computed: {
 
@@ -311,6 +359,9 @@
             getDataQuantityPerResolution: function () {
 
                 var that = visualizationDetail;
+                
+               	var deferred = $.Deferred();
+                
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -343,7 +394,10 @@
                             ]
 
                             // that.computed.initDataQuantityPerResolution(result);
-                            that.computed.initDataQuantityPerResolution(result)
+                            that.computed.initDataQuantityPerResolution(result);
+                            
+                            deferred.resolve(res.result);
+                            
                         } else {
                             alert(res.result.data);
                         }
@@ -351,7 +405,9 @@
                     error: function (err) {
                         console.log()
                     },
-                })
+                });
+                
+                return deferred;
 
             },
 
@@ -395,6 +451,9 @@
             getDataQuantityPerClass: function () {
 
                 var that = visualizationDetail;
+                
+                var deferred = $.Deferred();
+                
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -428,6 +487,8 @@
 
 // 							that.computed.initDataCountByResolution(res.result.data)
 
+                            deferred.resolve(res.result);
+
                         } else {
                             alert(res.result.data);
                         }
@@ -436,6 +497,8 @@
                         console.log()
                     },
                 })
+                
+                return deferred;
 
             },
 
@@ -485,6 +548,9 @@
             getClassQuantityPerResolution: function () {
 
                 var that = visualizationDetail;
+                
+                var deferred = $.Deferred();
+                
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -519,6 +585,9 @@
 
                             that.computed.initClassQuantityPerResolution(result);
 //	 							that.computed.initClassQuantityPerResolution(res.result.data)
+
+                            deferred.resolve(res.result);
+                            
                         } else {
                             alert(res.result.data);
                         }
@@ -526,7 +595,9 @@
                     error: function (err) {
                         console.log()
                     },
-                })
+                });
+                
+                return deferred;
             },
 
             initClassQuantityPerResolution: function (result) {
@@ -574,6 +645,9 @@
             getDistributionByObjectSize: function () {
 
                 var that = visualizationDetail;
+                
+                var deferred = $.Deferred();
+                
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -595,7 +669,8 @@
                         	
                             result = res.result.data;
                             that.computed.initObjectDistributionBySize(result);
-
+                            deferred.resolve(res.result);
+                            
                         } else {
                             alert(res.result.data);
                         }
@@ -603,9 +678,9 @@
                     error: function (err) {
                         console.log()
                     },
-                })
+                });
 
-
+                return deferred;
                 // that.computed.initObjectDistributionBySize(result);
             },
 
@@ -637,6 +712,7 @@
            	getBoundaryRangeCentroidDistribution : function() {
            		
            		var that = visualizationDetail;
+           		var deferred = $.Deferred();
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -660,6 +736,7 @@
                             result = res.result.data;
                             that.computed.initBoundaryRangeCentroidDistribution(result);
                             
+			          		deferred.resolve(res.result);
 
                         } else {
                             alert(res.result.data);
@@ -668,7 +745,10 @@
                     error: function (err) {
                         console.log()
                     },
-                })
+                });
+                
+           		return deferred;
+                
            	},
            	
            	initBoundaryRangeCentroidDistribution : function() {
@@ -703,6 +783,9 @@
             getLabelCountByWidth: function () {
 
                 var that = visualizationDetail;
+                
+                var deferred = $.Deferred();
+                
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -735,6 +818,8 @@
                             })
                             
                             that.computed.initLabelCountByWidth(result);
+                            deferred.resolve(res.result);
+                            
 
                         } else {
                             alert(res.result.data);
@@ -743,7 +828,9 @@
                     error: function (err) {
                         console.log()
                     },
-                })
+                });
+                
+                return deferred;
 
             },
 
@@ -786,6 +873,7 @@
             getLabelCountByHeight : function() {
             	
             	var that = visualizationDetail;
+            	var deferred = $.Deferred();
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -818,6 +906,7 @@
                             })
                             
                             that.computed.initLabelCountByHeight(result);
+			            	deferred.resolve(res.result);
 
                         } else {
                             alert(res.result.data);
@@ -827,6 +916,9 @@
                         console.log()
                     },
                 });
+                
+	           	return deferred;
+	           	
             },
             
             initLabelCountByHeight : function(result) {
@@ -866,6 +958,7 @@
            	getLabelCountByCenterY : function() {
            		
            		var that = visualizationDetail;
+           		var deferred = $.Deferred();
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -897,7 +990,9 @@
                                 i += 1;
                             })
                             that.computed.initLabelCountByCenterY(result);
-                            
+
+                       		deferred.resolve(res.result);
+                       		
 
                         } else {
                             alert(res.result.data);
@@ -906,7 +1001,9 @@
                     error: function (err) {
                         console.log()
                     },
-                })
+                });
+                
+                return deferred;
            	},
            	
            	initLabelCountByCenterY : function(result) {
@@ -946,6 +1043,8 @@
            	getLabelCountByCenterX : function() {
            		
            		var that = visualizationDetail;
+           		var deferred = $.Deferred();
+           		
                 var ajaxData = {
                     dataset_id: that.data.datasetId,
                 };
@@ -977,7 +1076,8 @@
                                 i += 1;
                             })
                             that.computed.initLabelCountByCenterX(result);
-                            
+                            deferred.resolve(res.result);
+                       		
 
                         } else {
                             alert(res.result.data);
@@ -986,7 +1086,10 @@
                     error: function (err) {
                         console.log()
                     },
-                })
+                });
+                
+                return deferred;
+                
            	}, 
            	
            	initLabelCountByCenterX : function(result) {
@@ -1078,7 +1181,7 @@
                     xAxis: [
                         {
                             name: optionObj['xAxisName'],
-                            nameTextStyle: {color: "#999"},
+                            nameTextStyle: {color: "#999", verticalAlign: "top", lineHeight: 50,},
                             type: 'category',
                             data: optionObj['xAxisData'],
                             axisTick: {show: false},
@@ -1129,32 +1232,23 @@
 
                 };
 
+
                 if (optionObj['zoomOption']) {
+                	if(optionObj['zoomOption'] == "inside") {
+                		console.log("INSIDE ZOOM!!!!!")
+                		chartOption['dataZoom'] = [
+	                        { type: 'inside' },
+	                    ];
+                	} else {
+                		
+                		chartOption['dataZoom'] = [
+	                        { type: 'inside' },
+	                        { type: 'slider', showDataShadow: false, /* handleIcon: , */ handleSize: '80%', height: 20, },
+	                        { type: 'inside', orient: 'vertical' },
+	                        { type: 'slider', orient: 'vertical', showDataShadow: false, handleSize: '80%', width: 20, }
+	                    ];
+                	}
 
-                    chartOption['dataZoom'] = [
-                        {
-                            type: 'inside'
-                        },
-                        {
-                            type: 'slider',
-                            showDataShadow: false,
-                            // handleIcon: ,
-                            handleSize: '80%',
-                            height: 20,
-                        },
-                        {
-                            type: 'inside',
-                            orient: 'vertical'
-                        },
-                        {
-                            type: 'slider',
-                            orient: 'vertical',
-                            showDataShadow: false,
-                            handleSize: '80%',
-                            width: 20,
-
-                        }
-                    ];
                 }
 
                 if (optionObj['stacked']) {

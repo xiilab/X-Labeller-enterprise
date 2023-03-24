@@ -52,7 +52,7 @@ function procDataCountByClass (xAxisData, seriesData) {
         series: []
     };
 
-    optionObj['chartTitle'] = "클래스별 데이터 수량 TOP 10"
+    optionObj['chartTitle'] = "클래스별 데이터 수량"
     optionObj['chartName'] = "dataQuantityPerClass";
     optionObj['target'] = "section#dataQuantityPerClass .chart_wrap";
     optionObj['xAxisName'] = "클래스";
@@ -70,6 +70,8 @@ function procDataCountByClass (xAxisData, seriesData) {
             }
         }
     ];
+    
+    optionObj['zoomOption'] = "inside";
 
     return optionObj;
 
