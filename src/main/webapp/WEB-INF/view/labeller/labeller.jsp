@@ -119,9 +119,51 @@
 				key : "labeller",
 				create : labeller.event.upload,
 				info : [
-					{expandNode : labeller.getDatasetList, drop : { area : "drop_area", onDrop : labeller.event.labelling, }, 
-// 						rMenu : { "Labelling TEST" : labeller.event.labelling, "DataList TEST" : labeller.event.list2, "LabelList TEST": labeller.event.labelList2, "Enrichment" : labeller.event.openNode,  "Data List": labeller.event.list, "Label List": labeller.event.labelList, "Modify" : labeller.event.modify, "Add File" : labeller.event.addImg, "Replicate︎" : {"Only Data" : labeller.event.replicate, "With Label" : labeller.event.replicateWith, }, "Delete︎" : {"Dataset": labeller.event.deleteNode, "Data": labeller.event.deleteDataList, "Label" : labeller.event.deleteMetaList}, }, },
-						rMenu : { "Enrichment" : labeller.event.labelling, "Data List" : labeller.event.list2, "Label List": labeller.event.labelList2, "Modify" : labeller.event.modify, "Add File" : labeller.event.addImg, "Replicate︎" : {"Only Data" : labeller.event.replicate, "With Label" : labeller.event.replicateWith, }, "Export" : labeller.event.labelling, "Delete︎" : {"Dataset": labeller.event.deleteNode, "Data": labeller.event.deleteDataList, "Label" : labeller.event.deleteMetaList},}, },
+					{
+						expandNode : labeller.getDatasetList,
+						drop : {
+							area : "drop_area",
+							onDrop : labeller.event.labelling,
+						}, 
+						/* 
+						rMenu : { 
+							"Labelling TEST" : labeller.event.labelling,
+							"DataList TEST" : labeller.event.list2,
+							"LabelList TEST": labeller.event.labelList2,
+							"Enrichment" : labeller.event.openNode,
+							"Data List": labeller.event.list,
+							"Label List": labeller.event.labelList,
+							"Modify" : labeller.event.modify,
+							"Add File" : labeller.event.addImg,
+							"Replicate︎" : {
+								"Only Data" : labeller.event.replicate,
+								"With Label" : labeller.event.replicateWith,
+							}
+							"Delete︎" : {
+								"Dataset": labeller.event.deleteNode,
+								"Data": labeller.event.deleteDataList,
+								"Label" : labeller.event.deleteMetaList
+							},
+						},
+						*/
+						rMenu : { 
+							"Enrichment" : labeller.event.labelling,
+							"Data List" : labeller.event.list2,
+							"Label List": labeller.event.labelList2,
+							"Modify" : labeller.event.modify,
+							"Add File" : labeller.event.addImg,
+							"Replicate︎" : {
+								"Only Data" : labeller.event.replicate,
+								"With Label" : labeller.event.replicateWith,
+							},
+							/* "Export" : labeller.event.labelling, */
+							"Delete︎" : {
+								"Dataset": labeller.event.deleteNode,
+								"Data": labeller.event.deleteDataList,
+								"Label" : labeller.event.deleteMetaList
+							},
+						},
+					},
 				], 
 			};
 			workspace(setting);	//트리 그리기
@@ -167,6 +209,9 @@
 					var node = ".section.imports";					
 					that.pt.find(node).addClass("selected");
 					imports.init();
+					// 다른페이지에서 저작도구 단축키 활성화 되지 않도록 키보드 이벤트 해제 
+					$(document).off("keyup"); 
+					$(document).off("keydown");
 				}				
 			},
 			
@@ -179,6 +224,9 @@
 					var node = ".section.exports";
 					that.pt.find(node).addClass("selected");
 					exports.init();					
+					// 다른페이지에서 저작도구 단축키 활성화 되지 않도록 키보드 이벤트 해제 
+					$(document).off("keyup"); 
+					$(document).off("keydown");
 				}
 			},
 			
@@ -190,6 +238,9 @@
 					var node = ".section.upload";
 					that.pt.find(node).addClass("selected");
 					upload.init();					
+					// 다른페이지에서 저작도구 단축키 활성화 되지 않도록 키보드 이벤트 해제 
+					$(document).off("keyup"); 
+					$(document).off("keydown");
 				}
 			},
 			
@@ -207,6 +258,9 @@
 					var node = ".section.modify";
 					that.pt.find(node).addClass("selected");
 					modify.init(nodes[0]);					
+					// 다른페이지에서 저작도구 단축키 활성화 되지 않도록 키보드 이벤트 해제 
+					$(document).off("keyup"); 
+					$(document).off("keydown");
 				}
 			},
 			
@@ -224,8 +278,10 @@
 					that.pt.find("div.section").removeClass("selected");
 					var node = ".section.addImg";
 					that.pt.find(node).addClass("selected");
-					
-					addImg.init(nodes[0]);					
+					addImg.init(nodes[0]);	
+					// 다른페이지에서 저작도구 단축키 활성화 되지 않도록 키보드 이벤트 해제 
+					$(document).off("keyup"); 
+					$(document).off("keydown");
 				}				
 			},
 			
@@ -264,6 +320,9 @@
 					that.pt.find(node).addClass("selected");
 					
 					dataList2.datasetInit(nodes[0].id);
+					// 다른페이지에서 저작도구 단축키 활성화 되지 않도록 키보드 이벤트 해제 
+					$(document).off("keyup"); 
+					$(document).off("keydown");
 				}
 			},			
 			
@@ -300,6 +359,10 @@
 				if(data_modified){
 					console.log("selected_nodes:: ", selected_nodes);
 					that.getDatasetById("labelList");
+					
+					// 다른페이지에서 저작도구 단축키 활성화 되지 않도록 키보드 이벤트 해제 
+					$(document).off("keyup"); 
+					$(document).off("keydown");
 				}
 			},			
 
