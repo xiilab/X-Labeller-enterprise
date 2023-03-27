@@ -5258,11 +5258,41 @@
 						
 						const that = imgSegQuick;
 						
-						// 초기화 해줘야 할 것들?
+						// 초기화 해줘야 할 것들
 						that.computed.getProjectList(null, "2");
+						
+						// 나머지 selectBox 초기화
 						let resetHtml = '<option selected disabled>No options</option>'
 						$("#imgSeg select#task_option").html(resetHtml);
 						$("#imgSeg select#model_option").html(resetHtml);
+						
+						// 관련 이벤트 
+						that.bind.semiAutoLabellingListener();
+						
+					},
+					
+					semiAutoLabellingListener() {
+						
+						const that = imgSegQuick
+						
+						// 프로젝트 옵션 선택 이벤트 
+						$("#imgSeg select#project_option").off("change").on("change", function(e){
+							
+							let resetHtml = '<option selected disabled>No options</option>'
+							$("#imgSeg select#task_option").html(resetHtml);
+							$("#imgSeg select#model_option").html(resetHtml);
+							that.computed.getTaskOptionList(e.target.value); // 테스크 목록 조회 api 호출 
+							
+						});
+						
+						// 테스크 옵션 선택 이벤트
+						$("#imgSeg select#task_option").off("change").on("change", function(e){
+							
+							let resetHtml = '<option selected disabled>No options</option>'
+							$("#imgSeg select#model_option").html(resetHtml);
+							that.computed.getCheckPointList(e.target.value, "2");
+							
+						});
 						
 						// semi-auto 버튼 눌렀을떄 이벤트
 						$("#imgSeg #semi_auto_inference_btn").off("click").on("click", function() {
@@ -5292,35 +5322,6 @@
 								
 							
 							that.computed.semiAutoInference(dataId, taskId, modelName);
-							
-						});
-						
-						
-						// 관련 이벤트 
-						that.bind.semiAutoLabellingListener();
-						
-					},
-					
-					semiAutoLabellingListener() {
-						
-						const that = imgSegQuick
-						
-						// 프로젝트 옵션 선택 이벤트 
-						$("#imgSeg select#project_option").off("change").on("change", function(e){
-							
-							let resetHtml = '<option selected disabled>No options</option>'
-							$("#imgSeg select#task_option").html(resetHtml);
-							$("#imgSeg select#model_option").html(resetHtml);
-							that.computed.getTaskOptionList(e.target.value); // 테스크 목록 조회 api 호출 
-							
-						});
-						
-						// 테스크 옵션 선택 이벤트
-						$("#imgSeg select#task_option").off("change").on("change", function(e){
-							
-							let resetHtml = '<option selected disabled>No options</option>'
-							$("#imgSeg select#model_option").html(resetHtml);
-							that.computed.getCheckPointList(e.target.value, "2");
 							
 						});
 						
@@ -6183,10 +6184,23 @@
 							url : baseUrl + "task/semiAutoInference.json",
 							data : ajaxData,
 							type : "POST",
+							beforeSend: function() {
+								$("#loader").show();
+		                    },
+		                    complete : function() {
+		                    	$("#loader").hide();
+		                    },
 							success : function(res) {
 								$("#loader").hide();
 								console.log("=====semiAutoInference=====", res);
 								if (res.result.code == "200") {
+							
+									alert(res.result.data);
+									// meta reload
+									$("#imgSeg .category_wrap").html("");
+									imgSeg.data.canvasObj.isModified = 0;
+									imgSeg.computed.initImgData(imgSeg.data.canvasObj['currDataNum']*1-1);
+									imgSeg.computed.updateDataset(imgSeg.data.canvasObj['datasetId'], ajaxData['data_id']);
 									
 								}  else {
 									alert(res.result.data);

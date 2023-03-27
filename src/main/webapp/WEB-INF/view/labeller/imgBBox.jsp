@@ -3952,7 +3952,7 @@
  							async : false,
  							success : function(res) {
 								$("#loader").hide();
-	//  						console.log("=======updateDataset======", res);
+	  						console.log("=======updateDataset======", res);
 	 							console.log("SUCCESS");	 						
  							}, 
  							error : function(err) {
@@ -4888,11 +4888,41 @@
 					
 					const that = imgBBoxQuick;
 					
-					// 초기화 해줘야 할 것들?
-					that.computed.getProjectList(null, "2");
+					// 초기화 해줘야 할 것들
+					that.computed.getProjectList(null, "2"); // 프로젝트 목록
+					
+					// 나머지 selectBox 초기화
 					let resetHtml = '<option selected disabled>No options</option>'
 					$("#imgBBox select#task_option").html(resetHtml);
 					$("#imgBBox select#model_option").html(resetHtml);
+					
+					// 관련 이벤트 
+					that.bind.semiAutoLabellingListener();
+					
+				},
+				
+				semiAutoLabellingListener() {
+					
+					const that = imgBBoxQuick;
+					
+					// 프로젝트 옵션 선택 이벤트 
+					$("#imgBBox select#project_option").off("change").on("change", function(e){
+						
+						let resetHtml = '<option selected disabled>No options</option>'
+						$("#imgBBox select#task_option").html(resetHtml);
+						$("#imgBBox select#model_option").html(resetHtml);
+						that.computed.getTaskOptionList(e.target.value); // 테스크 목록 조회 api 호출 
+						
+					});
+					
+					// 테스크 옵션 선택 이벤트
+					$("#imgBBox select#task_option").off("change").on("change", function(e){
+						
+						let resetHtml = '<option selected disabled>No options</option>'
+						$("#imgBBox select#model_option").html(resetHtml);
+						that.computed.getCheckPointList(e.target.value, "2");
+						
+					});
 					
 					// semi-auto 버튼 눌렀을떄 이벤트
 					$("#imgBBox #semi_auto_inference_btn").off("click").on("click", function() {
@@ -4922,35 +4952,6 @@
 							
 						
 						that.computed.semiAutoInference(dataId, taskId, modelName);
-						
-					});
-					
-					
-					// 관련 이벤트 
-					that.bind.semiAutoLabellingListener();
-					
-				},
-				
-				semiAutoLabellingListener() {
-					
-					const that = imgBBoxQuick;
-					
-					// 프로젝트 옵션 선택 이벤트 
-					$("#imgBBox select#project_option").off("change").on("change", function(e){
-						
-						let resetHtml = '<option selected disabled>No options</option>'
-						$("#imgBBox select#task_option").html(resetHtml);
-						$("#imgBBox select#model_option").html(resetHtml);
-						that.computed.getTaskOptionList(e.target.value); // 테스크 목록 조회 api 호출 
-						
-					});
-					
-					// 테스크 옵션 선택 이벤트
-					$("#imgBBox select#task_option").off("change").on("change", function(e){
-						
-						let resetHtml = '<option selected disabled>No options</option>'
-						$("#imgBBox select#model_option").html(resetHtml);
-						that.computed.getCheckPointList(e.target.value, "2");
 						
 					});
 					
@@ -5815,10 +5816,23 @@
 						url : baseUrl + "task/semiAutoInference.json",
 						data : ajaxData,
 						type : "GET",
+						beforeSend: function() {
+							$("#loader").show();
+	                    },
+	                    complete : function() {
+	                    	$("#loader").hide();
+	                    },
 						success : function(res) {
 							$("#loader").hide();
 							console.log("=====semiAutoInference=====", res);
 							if (res.result.code == "200") {
+								
+								alert(res.result.data);
+								// meta reload
+								$("#imgBBox .category_wrap").html("");
+								imgBBox.data.canvasObj.isModified = 0;
+								imgBBox.computed.initImgData(imgBBox.data.canvasObj['currDataNum']*1-1);
+								imgBBox.computed.updateDataset(imgBBox.data.canvasObj['datasetId'], ajaxData['data_id']);
 								
 							} else {
 								alert(res.result.data);
