@@ -381,8 +381,8 @@ public class VocExportUtil {
                     // 이미지에 폴리곤 그리기
                     //Imgproc.fillConvexPoly(maskImage, polygon, color, Imgproc.LINE_8);
                     //Imgproc.drawContours(maskImage, polygonList, i, new Scalar(255, 255, 255), 8, Imgproc.LINE_8);
-                    Imgproc.polylines(maskImage, polygonList, true, new Scalar(255, 255,255), 4, Imgproc.LINE_4);
-                    Imgproc.fillPoly(maskImage, polygonList, color, Imgproc.LINE_4);
+                    Imgproc.polylines(maskImage, polygonList, true, new Scalar(255, 255,255), 4, Imgproc.LINE_8);
+                    Imgproc.fillPoly(maskImage, polygonList, color, Imgproc.LINE_8);
                 }
 
                 // 저장될 이미지 읽어서 byte[]로 변환

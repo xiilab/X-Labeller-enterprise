@@ -34,6 +34,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -1358,7 +1359,7 @@ public class TaskService {
 
                 result = sessionCmdExecute.callCustomYolov4Inference(projectId, taskId, gpuIndex, modelName, csvSavePath, classificationThreshold, "multi");
 
-            } else if (algorithmId.equals("7")) {
+            } else if (algorithmId.equals("7") || algorithmId.equals("8")) {
                 JSONParser parser = new JSONParser();
                 Object obj = parser.parse(config);
                 JSONObject jsonObj = (JSONObject) obj;
@@ -1396,7 +1397,7 @@ public class TaskService {
         String dataId = inferenceVO.getData_id();
         String taskId = inferenceVO.getTask_id();
         String gpuNodeId = "1";
-        String gpuIndex = "0";
+        String gpuIndex = "1";
 
         if (!StringUtils.hasText(inferenceVO.getData_id())) {
             return Output.JsonOutput("4506", "선택된 알고리즘이 없거나 손상되었습니다.\n새로 고침 후 다시 시도해주시고 지속저으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
@@ -1487,20 +1488,31 @@ public class TaskService {
 
         UUID uuid = UUID.randomUUID();
         String csvSaveFullPath = WORKSPACE_PATH + "semi_auto/result/" + uuid + ".csv";
+        String csvSaveDir = WORKSPACE_PATH + "semi_auto/result/";
+        // 디렉토리 하위 파일 모두 지우기
+        deleteFileList(csvSaveDir);
         String csvSaveFileName = uuid + ".csv";
-        try {
-//			String csvSavePath = "semi_auto_result.csv";
-//			String csvSaveFullPath = WORKSPACE_PATH + "semi_auto/result/semi_auto_result.csv";
 
-            //Object result;
+        try {
             // s.kim 임시 추가, 시연
             if (algorithmId.equals("2")) {
-//				JSONParser parser = new JSONParser();
-//				Object obj = parser.parse(config);
-//				JSONObject jsonObj = (JSONObject) obj;
-
-//				String classificationThreshold = String.valueOf(jsonObj.get("classification_threshold"));
-                String classificationThreshold = "0.5";
+                AlgorithmVO algorithmVO = new AlgorithmVO();
+                algorithmVO.setAlgorithm_id(algorithmId);
+                AlgorithmVO algorithmById = algorithmDao.getAlgorithmById(algorithmVO);
+                String algotirhmConfig = algorithmById.getInference_param();
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(algotirhmConfig);
+                JSONArray jsonArr = (JSONArray) obj;
+                String classificationThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "classification_threshold".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.5"));
+                                })
+                                .findFirst()
+                                .get();
 
                 sessionCmdExecute.callCustomYolov4Inference(projectId, taskId, gpuIndex, modelName, csvSaveFileName, classificationThreshold, "single");
 
@@ -1520,19 +1532,60 @@ public class TaskService {
             long elapsedTime = 0;
             int idx = 0;
 
+            // 파일 디렉토리 탐색 명령어
+            List<String> commands = new ArrayList<>();
+            commands.add("ls");
+            commands.add(csvSaveDir);
+
             while (true) {
+                Process process = null;
+                InputStreamReader inputReader = null;
+                BufferedReader bufferedReader = null;
                 try {
                     Thread.sleep(3000); // 3초마다 체크
+
+                    // 프로세스 빌더 생성 후 명령어
+                    ProcessBuilder processBuilder = new ProcessBuilder(commands);
+                    process = processBuilder.start();
+
+                    // 명령어 결과값 받아오고 출력
+                    inputReader = new InputStreamReader(process.getInputStream(), "UTF-8");
+                    bufferedReader = new BufferedReader(inputReader);
+
+                    String line = "";
+                    logger.info("실행 결과!\n");
+                    while ((line = bufferedReader.readLine()) != null) {
+                        if (line.trim().length() == 0) {
+                            continue;
+                        }
+
+                        logger.info(line + "\n");
+                    }
+
+                    elapsedTime = System.currentTimeMillis() - startTime; // 경과 시간 업데이트
+                    logger.info("semi-auto Inference 경과 시간 : " + elapsedTime);
+                    logger.info("csvSaveFullPath : " + csvSaveFullPath);
+
+                    // 파일 확인
+                    file = new File(csvSaveFullPath);
+                    logger.info("파일 존재 여부 : " + file.exists());
+                    if (file.exists() || idx == 20) {
+                        break;
+                    }
+
+                    idx++;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-                //file = new File(csvSaveFullPath); // 파일이 존재하지 않으면 다시 생성
-                idx++;
-                elapsedTime = System.currentTimeMillis() - startTime; // 경과 시간 업데이트
-                logger.info("semi-auto Inference 경과 시간 : " + elapsedTime);
-                file = new File(csvSaveFullPath);
-                if (file.exists() || idx == 20) {
-                    break;
+                } finally {
+//                    if (inputReader != null) {
+//                        inputReader.close();
+//                    }
+//                    if (bufferedReader != null) {
+//                        bufferedReader.close();
+//                    }
+                    if (process != null) {
+                        process.destroy();
+                    }
                 }
             }
 
@@ -1543,6 +1596,9 @@ public class TaskService {
             // 생성된 CSV파일 읽어서 DB에 추가하기 위한 형식으로 변환
             CsvReader cr = new CsvReader(csvSaveFullPath);
             List<InferenceResultVO> resultList = cr.read();
+            if (resultList.size() == 0) {
+                return Output.JsonOutput("4301", "생성할 라벨이 존재하지 않습니다.");
+            }
             List<String> infoList = new ArrayList<>();
             for (InferenceResultVO inferenceResultVO : resultList) {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -1568,9 +1624,9 @@ public class TaskService {
             insertMetaVO.setTask_id(taskId);
             insertMetaVO.setType("single");
             insertMetaVO.setPath(csvSaveFileName);
-            Object OutputResult = dataService.insertMetaByInference(insertMetaVO);
+            //Object OutputResult = dataService.insertMetaByInference(insertMetaVO);
 
-            return OutputResult;
+            return dataService.insertMetaByInference(insertMetaVO);
         } catch (Exception e) {
             logger.error("Exception Error!", e);
             return Output.JsonOutput("801", "실행중에 예기치 않은 문제가 발생했습니다. 문의 부탁드립니다");
@@ -1585,6 +1641,14 @@ public class TaskService {
         }
 
 //		return Output.JsonOutput("200", "Inference를 시작하였습니다.");
+    }
+
+    private void deleteFileList(String csvSaveDir) {
+        File deleteFolder = new File(csvSaveDir);
+        File[] deleteFileList = deleteFolder.listFiles();
+        for (int i = 0; i < deleteFileList.length; i++) {
+            deleteFileList[i].delete();
+        }
     }
 
 
@@ -2542,7 +2606,6 @@ public class TaskService {
 
         // sessionObj 메소드에서 list 크기가 0일 경우 JsonOutputVO로 반환하기 때문에 사이즈 체크 필요 X
         List<Session> sessionList = (List<Session>) sessionObj;
-
 
         // 연결된 각 세션들에 이미지 체크를 수행하기 위한 콜렉션 리스트
         Collection resultImageCheckCmd = new ArrayList();

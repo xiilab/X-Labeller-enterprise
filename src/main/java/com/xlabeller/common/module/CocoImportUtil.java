@@ -227,8 +227,8 @@ public class CocoImportUtil {
                             x2 = (k == 0 || x2 < point) ? point : x2;
                             pointJson.put("x", point);
                         } else {
-                            y1 = (k == 0 || y1 > point) ? point : y1;
-                            y2 = (k == 0 || y2 < point) ? point : y2;
+                            y1 = (k == 1 || y1 > point) ? point : y1;
+                            y2 = (k == 1 || y2 < point) ? point : y2;
                             pointJson.put("y", point);
                             pointSegmentation.add(pointJson);
                             pointJson = new JSONObject();

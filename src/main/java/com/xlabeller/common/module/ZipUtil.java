@@ -1,19 +1,25 @@
 package com.xlabeller.common.module;
 
 import com.xlabeller.common.exception.HandlerCustomException;
+import com.xlabeller.imExport.ImExportService;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtil {
-    private ByteArrayOutputStream baos = null;
+    //private ByteArrayOutputStream baos = null;
+    private static Logger logger = Logger.getLogger(ZipUtil.class);
+    private FileOutputStream fos = null;
     private ZipOutputStream zip = null;
+    private String filePath = null;
 
-    public ZipUtil() {
-        this.baos = new ByteArrayOutputStream();
-        this.zip = new ZipOutputStream(this.baos);
+    public ZipUtil(String filePath) throws FileNotFoundException {
+        this.filePath = filePath;
+        this.fos = new FileOutputStream(filePath);
+        this.zip = new ZipOutputStream(this.fos);
     }
 
     public void putDirectoryEntry(String dirName) {
@@ -37,8 +43,19 @@ public class ZipUtil {
         }
     }
 
-    public byte[] getZipOutputStream() {
-        return this.baos.toByteArray();
+//    public byte[] getZipOutputStream() {
+//        return this.baos.toByteArray();
+//    }
+    public byte[] getZipOutputStream()  {
+        InputStream in = null;
+        try {
+            in = new FileInputStream(this.filePath);
+            return IOUtils.toByteArray(in);
+        } catch (IOException e) {
+            logger.error("IOException Error!", e);
+            throw new HandlerCustomException("500", "ZIP파일을 export하는 과정에서 오류가 발생했습니다.");
+        }
+
     }
 
     public void close() {

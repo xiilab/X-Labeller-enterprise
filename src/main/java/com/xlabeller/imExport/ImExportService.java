@@ -36,6 +36,7 @@ public class ImExportService {
     private final MetaDao metaDao;
 
     private static Logger logger = Logger.getLogger(ImExportService.class);
+    private String EXPORT_PATH = "/export_temp";
     private String NFS_MOUNT_ROOT_PATH = "/xlabeller";
     //	private String NFS_MOUNT_ROOT_PATH = "/usr/local/uploadFile/xlabeller";
     private String WORKSPACE_PATH = "/usr/local/uploadFile";
@@ -60,10 +61,17 @@ public class ImExportService {
         CocoExportUtil cocoExportUtil = new CocoExportUtil();
         JSONObject exportCocoJson = cocoExportUtil.createAllByList(exportAnnotationList);
 
+        // 압축될 ZIP파일 경로
+        String exportPath = WORKSPACE_PATH + NFS_MOUNT_ROOT_PATH + "/" + EXPORT_PATH + "/";
+        // 디렉토리 생성
+        File file = new File(exportPath);
+        file.mkdirs();
+        String saveZipFileName = String.valueOf(UUID.randomUUID()) + ".zip";
+        String exportZipFullPath = exportPath + saveZipFileName;
+
         // 4. json + image zip파일로 다운로드
-        String saveZipFileName = "exports_coco.zip";
         byte[] jsonBytes = exportCocoJson.toJSONString().getBytes();
-        ZipUtil zipUtil = new ZipUtil();
+        ZipUtil zipUtil = new ZipUtil(exportZipFullPath);
         zipUtil.putEntry("coco.json", jsonBytes);
         for (String imagePath : imagePathList) {
             InputStream in = new FileInputStream(imagePath);
@@ -72,10 +80,28 @@ public class ImExportService {
         zipUtil.close();
 
         response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; fileName=" + saveZipFileName);
+        response.setHeader("Content-Disposition", "attachment; fileName=export_coco.zip");
+        FileInputStream fileInputStream = new FileInputStream(exportZipFullPath);
         try (OutputStream out = response.getOutputStream()) {
-            out.write(zipUtil.getZipOutputStream());
+            int read = 0;
+            byte[] buffer = new byte[4096];
+            while ((read = fileInputStream.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        } catch (Exception e) {
+            logger.error("response outputException", e);
+        } finally {
+            File deleteFile = new File(exportZipFullPath);
+            deleteFile.delete();
         }
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
+//        try (OutputStream out = response.getOutputStream()) {
+//            out.write(zipUtil.getZipOutputStream());
+//        } finally {
+//            File deleteFile = new File(exportZipFullPath);
+//            deleteFile.delete();
+//        }
     }
 
     public Object importCoco(ImExportVO imExportVO) throws HandlerCustomException, IOException {
@@ -213,6 +239,8 @@ public class ImExportService {
         // 4. Zip파일에 디렉토리 추가
         String rootDir = "exports_voc/";
         String vocDir = rootDir + "VOC/";
+        // String exportZipName = "VOC.zip";
+//        String vocDir = "VOC/";
         String annotationsDir = vocDir + "Annotations/";
         String imageSetsDir = vocDir + "ImageSets/";
         String mainDir = imageSetsDir + "main/";
@@ -220,7 +248,14 @@ public class ImExportService {
         String jpegImagesDir = vocDir + "JPEGImages/";
         String segmentationObjectDir = vocDir + "SegmentationObject/";
 
-        ZipUtil zipUtil = new ZipUtil();
+        // 압축될 ZIP파일 경로
+        String exportPath = WORKSPACE_PATH + NFS_MOUNT_ROOT_PATH + "/" + EXPORT_PATH + "/";
+        File file = new File(exportPath);
+        file.mkdirs();
+        String exportZipName = UUID.randomUUID().toString() + ".zip";
+        String exportZipFullPath = exportPath + exportZipName;
+
+        ZipUtil zipUtil = new ZipUtil(exportZipFullPath);
         zipUtil.putDirectoryEntry(vocDir);
         zipUtil.putDirectoryEntry(annotationsDir);
         zipUtil.putDirectoryEntry(imageSetsDir);
@@ -243,6 +278,7 @@ public class ImExportService {
 
         // 7. ImageSets/Segmentation 디렉토리에 세그멘테이션 생성된 파일명 목록 저장
         List<String> allSegImageNameList = new ArrayList<>(exportSegImageLabelInfoMap.keySet());
+        // 오륲 수정
         String allSegImageName = String.join("\n", allSegImageNameList);
         String allSegImageTxtPath = segmentationDir + "VOC.txt";
         zipUtil.putEntry(allSegImageTxtPath, allSegImageName.getBytes());
@@ -269,12 +305,24 @@ public class ImExportService {
 
         zipUtil.close();
 
-        String saveZipFileName = "exports_voc.zip";
+        // String saveZipFileName = "exports_voc.zip";
         response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; fileName=" + saveZipFileName);
+        response.setHeader("Content-Disposition", "attachment; fileName=export_voc.zip");
+        FileInputStream fileInputStream = new FileInputStream(exportZipFullPath);
         try (OutputStream out = response.getOutputStream()) {
-            out.write(zipUtil.getZipOutputStream());
+            int read = 0;
+            byte[] buffer = new byte[4096];
+            while ((read = fileInputStream.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        } catch (Exception e) {
+            logger.error("response outputException", e);
+        } finally {
+            File deleteFile = new File(exportZipFullPath);
+            deleteFile.delete();
         }
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
     }
 
     public Object importVoc(ImExportVO imExportVO) throws HandlerCustomException, IOException {

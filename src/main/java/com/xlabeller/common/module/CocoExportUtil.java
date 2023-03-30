@@ -161,7 +161,7 @@ public class CocoExportUtil {
 			for(int i = 0 ; i < imageList.size();i++) {
 				JSONObject imageObj = new JSONObject();
 				String filePath = WORKSPACE_PATH + imageList.get(i);
-				System.out.println(filePath);
+				//System.out.println(filePath);
 				bi = ImageIO.read(new File(filePath));
 				imageObj.put("id", i);
 				imageObj.put("width", bi.getWidth());
@@ -177,7 +177,7 @@ public class CocoExportUtil {
 				resultArr.add(imageObj);
 			}
 
-			System.out.println(resultArr.toJSONString());
+			//System.out.println(resultArr.toJSONString());
 			return resultArr;
 		}catch(Exception e) {
 			e.printStackTrace();	

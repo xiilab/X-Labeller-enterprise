@@ -55,11 +55,11 @@ public class JSONReader {
 				s = "";
 				JSONObject annotationJson = (JSONObject)annotations.get(i); 
 //				String fileName = ((JSONObject)images.get(i)).get("file_name").toString(); 
-				String info = (String)annotationJson.get("bbox");
-				String category_id = (String)annotationJson.get("category_id"); 
+				String info = String.valueOf(annotationJson.get("bbox"));
+				String category_id = String.valueOf(annotationJson.get("category_id"));
 						//((JSONObject)annotations.get(i)).get("category_id").toString();
 				String label_name = categoriMap.get(category_id);
-				String fileName = imageMap.get((String)annotationJson.get("image_id")); 
+				String fileName = imageMap.get(String.valueOf(annotationJson.get("image_id")));
 						//imageMap.get(((JSONObject)annotations.get(i)).get("image_id").toString());
 				info = info.replace("[", "");
 				info = info.replace("]", "");

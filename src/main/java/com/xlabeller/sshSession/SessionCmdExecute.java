@@ -402,6 +402,33 @@ public class SessionCmdExecute implements Callable<Object> {
 					+ " --batch " + batch
 					+ " --epochs " + epochs
 					+ " --model " + model;
+		} else if (algorithmId.equals("9")) { // yoloV5:latest
+			String batch = null;
+			String epochs = null;
+			String model = null;
+			String learning_rate = null;
+			JSONParser parser = new JSONParser();
+			Object obj = null;
+			try {
+				obj = parser.parse(config.replaceAll("\\\\",""));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			JSONObject jsonObj = (JSONObject) obj;
+			batch = String.valueOf(jsonObj.get("batch_size"));
+			epochs = String.valueOf(jsonObj.get("epochs"));
+			model = String.valueOf(jsonObj.get("model"));
+			learning_rate = String.valueOf(jsonObj.get("learning_rate"));
+
+			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
+					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
+					+ taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller efficientdet:latest " + "python3 run_efficientdet.py"
+					+ " --pid " + projectId
+					+ " --tid " + taskId
+					+ " --learning_rate " + learning_rate
+					+ " --batch " + batch
+					+ " --epochs " + epochs
+					+ " --model " + model;
 		} else {
 			cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=t_" + projectId + "_"
 				+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller ca_"
