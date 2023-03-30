@@ -141,7 +141,7 @@
 					<div class="download btn_wrap">
 						<button class="save">Export Start</button>
 						<label class="loading hide">Generate export file...</label>
-						<a class="download_link hide">export.zip</a>
+						<!-- <a class="download_link hide">export.zip</a> -->
 					</div>
 				</div>
 			</div>
@@ -334,18 +334,18 @@
 							
 							// console.log("## fileName : ", fileName);
 							
-							var a = that.pt.find("a.download_link");
+							/* var a = that.pt.find("a.download_link");
  							a.attr("href", URL.createObjectURL(this.response));
  							a.attr("download", fileName);
- 							a.removeClass("hide");
+ 							a.removeClass("hide"); */
 							
-							/* var a = document.createElement('a');
+							var a = document.createElement('a');
 							var url = URL.createObjectURL(this.response);
 							a.href = url;
-							a.download = fileName;=
+							a.download = fileName;
 							document.body.appendChild(a);
 							a.click();
-							window.URL.revokeObjectURL(url); */
+							window.URL.revokeObjectURL(url);
 							
 						} else if(this.readyState == 4 && this.status != 200 ) {
 							
@@ -393,10 +393,18 @@
 					             
 							}
 							
-							var a = that.pt.find("a.download_link");
+							/* var a = that.pt.find("a.download_link");
  							a.attr("href", URL.createObjectURL(this.response));
  							a.attr("download", fileName);
- 							a.removeClass("hide");
+ 							a.removeClass("hide"); */
+ 							
+ 							var a = document.createElement('a');
+							var url = URL.createObjectURL(this.response);
+							a.href = url;
+							a.download = fileName;
+							document.body.appendChild(a);
+							a.click();
+							window.URL.revokeObjectURL(url);
 							
 						} else if(this.readyState == 4 && this.status != 200 ) {
 							
