@@ -1780,6 +1780,7 @@ public class DataService {
 		if(datasetVO.getDataset_ids() == null || datasetVO.getDataset_ids().length() <= 0) {
 			return Output.JsonOutput("4061", "복사할 데이터셋을 선택해주세요.");
 		}
+
 		String[] splitDatasetID = datasetVO.getDataset_ids().split(",");
 		if(splitDatasetID == null || splitDatasetID.length <= 0) {
 			return Output.JsonOutput("4061", "복사할 데이터셋을 선택해주세요.");
@@ -1797,7 +1798,7 @@ public class DataService {
 		selectDataVO.setDataset_id(sourceDataset.getDataset_id());
 		selectDataVO.setStatus("1");
 		selectDataVO.setPage_num("0");
-		selectDataVO.setPage_size("99999");
+		selectDataVO.setPage_size("9999999");
 		List<DataVO> sourceDataList = dataDao.getDataList(selectDataVO);
 		if (sourceDataList == null || sourceDataList.isEmpty() || sourceDataList.size() <= 0) {
 			throw new CustomException("4001#등록이 올바르지 않습니다.");
@@ -1816,11 +1817,13 @@ public class DataService {
 			}
 		}
 		
-		DataVO insertDataVO = new DataVO();
-		ReplicaMetaVO replicaMetaVO = new ReplicaMetaVO();
+		//DataVO insertDataVO = new DataVO();
+		//ReplicaMetaVO replicaMetaVO = new ReplicaMetaVO();
 		for (int i = 0; i < splitDatasetID.length; i++) {
 			for (int j = 0; j < sourceDataList.size(); j++) {
-				DataVO findDataVO = dataDao.getDataById(sourceDataList.get(i));
+				ReplicaMetaVO replicaMetaVO = new ReplicaMetaVO();
+				DataVO findDataVO = dataDao.getDataById(sourceDataList.get(j));
+				DataVO insertDataVO = new DataVO();
 				insertDataVO.setDataset_id(splitDatasetID[i]);
 				insertDataVO.setPath(sourceDataList.get(j).getPath());
 				insertDataVO.setUser_id(userInfo.getUser_id());
@@ -1899,10 +1902,10 @@ public class DataService {
 		if (sourceDataList == null || sourceDataList.isEmpty() || sourceDataList.size() <= 0) {
 			throw new CustomException("4001#복사할 데이터가 존재하지 않습니다.");
 		}
-		
-		DataVO insertDataVO = new DataVO();
-		ReplicaMetaVO replicaMetaVO = new ReplicaMetaVO();
+
 		for (int i = 0; i < sourceDataList.size(); i++) {
+			DataVO insertDataVO = new DataVO();
+			ReplicaMetaVO replicaMetaVO = new ReplicaMetaVO();
 			DataVO findDataVO = dataDao.getDataById(sourceDataList.get(i));
 			insertDataVO.setDataset_id(targetDatasetId);
 			insertDataVO.setPath(sourceDataList.get(i).getPath());

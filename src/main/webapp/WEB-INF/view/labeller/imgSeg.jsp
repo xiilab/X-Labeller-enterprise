@@ -5609,6 +5609,7 @@
 					
 					getAlgorithmById(data, num){
 						const that = imgSegQuick;
+						if(!data) return;
 						$("#loader").show();
 						const deffered = $.ajax({
 							url : baseUrl + "algorithm/getAlgorithmById.json",
@@ -5681,6 +5682,7 @@
 								if(res.result.code == "200"){
 									if(num == "0"){ // 학습 
 										that.render.drawInheritTaskList(task_list_data, res.result.data);
+										that.render.drawProjectList(res.result.data);
 									} else if (num == "1"){ // 추론 
 										that.render.drawTaskList(task_list_data, res.result.data);
 									} else if (num == "2") { // semi autolabelling
@@ -6183,7 +6185,7 @@
 						$.ajax({
 							url : baseUrl + "task/semiAutoInference.json",
 							data : ajaxData,
-							type : "POST",
+							type : "GET",
 							beforeSend: function() {
 								$("#loader").show();
 		                    },

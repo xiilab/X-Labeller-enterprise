@@ -5,20 +5,26 @@
     <!-- 해상도별 데이터 수량 -->
     <select id="getDataQuantityPerResolution" parameterType="VisualizationVO" resultType="VisualizationVO">
         <![CDATA[
-        SELECT
-        COUNT(CASE WHEN (WIDTH * HEIGHT < 921690) THEN 1 END) AS hd_data_cnt
-        , COUNT(CASE WHEN (WIDTH * HEIGHT BETWEEN 921690 AND 2073600) THEN 1 END) AS fhd_data_cnt
-        , COUNT(CASE WHEN (WIDTH * HEIGHT BETWEEN 2073600 AND 3686400) THEN 1 END) AS qhd_data_cnt
-        , COUNT(CASE WHEN (WIDTH * HEIGHT > 3686400) THEN 1 END) AS fk_data_cnt
-        FROM DATA AS DT
-        JOIN META AS MT ON MT.DATA_ID = DT.DATA_ID
-        
-        WHERE (WIDTH IS NOT NULL AND HEIGHT IS NOT NULL)
-        AND DATASET_ID = #{dataset_id}
-        ]]>
-        <if test='label != null and !"".equals(label)'>
-        	AND LABEL = #{label}
-        </if>
+            SELECT
+                COUNT(CASE WHEN (JOIN_DM.WIDTH * JOIN_DM.HEIGHT < 921690) THEN 1 END) AS hd_data_cnt
+                , COUNT(CASE WHEN (JOIN_DM.WIDTH * JOIN_DM.HEIGHT BETWEEN 921690 AND 2073600) THEN 1 END) AS fhd_data_cnt
+                , COUNT(CASE WHEN (JOIN_DM.WIDTH * JOIN_DM.HEIGHT BETWEEN 2073601 AND 3686400) THEN 1 END) AS qhd_data_cnt
+                , COUNT(CASE WHEN (JOIN_DM.WIDTH * JOIN_DM.HEIGHT > 3686400) THEN 1 END) AS fk_data_cnt
+            ]]>
+	        FROM (
+		        SELECT
+			        DT.DATA_ID
+                    , DT.WIDTH
+                    , DT.HEIGHT
+                FROM DATA AS DT
+                LEFT JOIN META AS M ON DT.DATA_ID = M.DATA_ID
+                WHERE (DT.WIDTH IS NOT NULL AND DT.HEIGHT IS NOT NULL)
+		        AND DT.DATASET_ID = #{dataset_id}
+                <if test='label != null and !"".equals(label)'>
+                    AND M.LABEL = #{label}
+                </if>
+                GROUP BY DT.DATA_ID
+	        ) AS JOIN_DM
 
     </select>
 
@@ -56,11 +62,11 @@
         	AND LABEL = #{label}
        	</if>
     </select>
-    
+
     <!-- 해상도별 객체 수량 -->
     <select id="getLabelList" parameterType="VisualizationVO" resultType="VisualizationVO">
         <![CDATA[
-        SELECT 
+        SELECT
 			LABEL AS "label"
 		FROM META AS MT
 		JOIN DATA AS DT ON MT.DATA_ID = DT.DATA_ID
@@ -70,5 +76,5 @@
 		ORDER BY LABEL
         ]]>
     </select>
-	    
+
 </mapper>

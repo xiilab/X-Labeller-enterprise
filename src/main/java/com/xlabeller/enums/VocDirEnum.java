@@ -1,12 +1,12 @@
 package com.xlabeller.enums;
 
 public enum VocDirEnum {
-    ANNOTATIONS("VOC/Annotations/"),
-    IMAGE_SETS("VOC/ImageSets/"),
-    IMAGE_SETS_MAIN("VOC/ImageSets/main/"),
-    IMAGE_SETS_SEGMENTATION("VOC/ImageSets/Segmentation/"),
-    JPEG_IMAGES("VOC/JPEGImages/"),
-    SEGMENTATION_OBJECT("VOC/SegmentationObject/")
+    ANNOTATIONS("VOC/ANNOTATIONS/"),
+    IMAGE_SETS("VOC/IMAGESETS/"),
+    IMAGE_SETS_MAIN("VOC/IMAGESETS/MAIN/"),
+    IMAGE_SETS_SEGMENTATION("VOC/IMAGESETS/SEGMENTATION/"),
+    JPEG_IMAGES("VOC/JPEGIMAGES/"),
+    SEGMENTATION_OBJECT("VOC/SEGMENTATIONOBJECT/")
     ;
     private final String dirPath;
 

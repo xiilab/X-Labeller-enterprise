@@ -391,33 +391,7 @@ public class SessionCmdExecute implements Callable<Object> {
 			batch = String.valueOf(jsonObj.get("batch_size"));
 			epochs = String.valueOf(jsonObj.get("epochs"));
 			model = String.valueOf(jsonObj.get("model"));
-			learning_rate = String.valueOf(jsonObj.get("learning_rate"));
-			
-			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
-					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
-					+ taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller efficientdet:latest " + "python3 run_efficientdet.py"
-					+ " --pid " + projectId
-					+ " --tid " + taskId
-					+ " --learning_rate " + learning_rate
-					+ " --batch " + batch
-					+ " --epochs " + epochs
-					+ " --model " + model;
-		} else if (algorithmId.equals("9")) { // yoloV5:latest
-			String batch = null;
-			String epochs = null;
-			String model = null;
-			String learning_rate = null;
-			JSONParser parser = new JSONParser();
-			Object obj = null;
-			try {
-				obj = parser.parse(config.replaceAll("\\\\",""));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			JSONObject jsonObj = (JSONObject) obj;
-			batch = String.valueOf(jsonObj.get("batch_size"));
-			epochs = String.valueOf(jsonObj.get("epochs"));
-			model = String.valueOf(jsonObj.get("model"));
+			// savePeriod = String.valueOf(jsonObj.get("save_period"));
 			learning_rate = String.valueOf(jsonObj.get("learning_rate"));
 
 			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
@@ -429,6 +403,28 @@ public class SessionCmdExecute implements Callable<Object> {
 					+ " --batch " + batch
 					+ " --epochs " + epochs
 					+ " --model " + model;
+
+		} else if (algorithmId.equals("9")) { // yoloV5:latest
+			String epochs = null;
+			String savePeriod;
+			JSONParser parser = new JSONParser();
+			Object obj = null;
+			try {
+				obj = parser.parse(config.replaceAll("\\\\",""));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			JSONObject jsonObj = (JSONObject) obj;
+			epochs = String.valueOf(jsonObj.get("epochs"));
+			savePeriod = String.valueOf(jsonObj.get("epochs"));
+
+			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
+					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
+					+ taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller yolov5_seg:v0 python3 segment/test_train.py"
+					+ " --pid " + projectId
+					+ " --tid " + taskId
+					+ " --epochs " + epochs
+					+ " --save_period " + savePeriod;
 		} else {
 			cmd = "docker run --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=t_" + projectId + "_"
 				+ taskId + " --name xlabeller_t_" + projectId + "_" + taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller ca_"
@@ -555,6 +551,34 @@ public class SessionCmdExecute implements Callable<Object> {
 				" --data_type IMAGE";
 
 		logger.info("yolo image command::" + cmd);
+		// System.out.println(cmd);
+		String cmdResult = cmdExcute(cmd);
+		JSONObject rObj = new JSONObject();
+		if (cmdResult == null) {
+			rObj.put("code", "551");
+			rObj.put("data", "Inference 과정 중에 오류가 발생했습니다.\n잠시 후에 다시 시도해주시길 바랍니다.");
+		} else if (cmdResult.length() > 0) {
+			rObj.put("code", "200");
+			rObj.put("data", "Inference를 시작합니다.");
+		}
+		return rObj;
+	}
+
+	public Object callCustomYolov5Inference(String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String confThreshold, String iouThreshold, String type) {
+		String cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +"  --rm -itd --label gpu_id=" + gpuIndex + " --label " + "xlabeller=i_" + projectId + "_" + taskId +
+				" --name xlabeller_i_" + projectId + "_" + taskId +
+				" --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller" +
+				" yolov5_seg:v0" +
+				" python3 segment/test_predict.py" +
+				" --type " + type +
+				" --output_csv " + csvFileName +
+				" --conf_thres " + confThreshold +
+				" --iou_thres " + iouThreshold +
+				" --weight_name " + modelName +
+				" --pid " + projectId +
+				" --tid " + taskId;
+
+		logger.info("YOLOV5 command::" + cmd);
 		// System.out.println(cmd);
 		String cmdResult = cmdExcute(cmd);
 		JSONObject rObj = new JSONObject();

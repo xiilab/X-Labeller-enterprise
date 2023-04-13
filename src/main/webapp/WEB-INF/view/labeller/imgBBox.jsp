@@ -4786,7 +4786,7 @@
 					// 팝업창 닫기
 					$("#imgBBox #quick_training .quick_close").off("click").on("click", function() {
 						$("#imgBBox .quick_training").removeClass("active");
-						$("#imgBBox .checkpoint_list .selected_task_name").html("");					
+						$("#imgBBox .checkpoint_list .selected_task_name").html("");
 					});
 					$("#imgBBox #quick_training .add_project .side_btn_wrap .cancel_btn").off("click").on("click", function() {
 						$("#imgBBox .add_project").removeClass("active");
@@ -5240,6 +5240,8 @@
 				
 				getAlgorithmById(data, num){
 					const that = imgBBoxQuick;
+					console.log("data::", data);
+					if(!data) return;
 					$("#loader").show();
 					const deffered = $.ajax({
 						url : baseUrl + "algorithm/getAlgorithmById.json",

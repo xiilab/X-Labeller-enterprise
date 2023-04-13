@@ -7,10 +7,12 @@ import com.xlabeller.enums.VisualLabelResultTypeEnum;
 import com.xlabeller.meta.MetaDao;
 import com.xlabeller.models.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -66,7 +68,7 @@ public class VisualizationService {
     public Object getDistributionByObjectSize(VisualizationVO visualizationVO) {
     	String datasetId = visualizationVO.getDataset_id();
     	String label = visualizationVO.getLabel();
-    	if (datasetId == null || "".equals(datasetId)) {
+    	if (!StringUtils.hasText(datasetId)) {
             return Output.JsonOutput("300", "데이터셋ID 파라미터가 전달되지 않았습니다.\n새로 고침 후, 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
         
@@ -103,6 +105,7 @@ public class VisualizationService {
 
     /**
      * Object width별 분포
+     * ㅌㅍ
      */
     public Object getLabelCountByWidth(VisualizationVO visualizationVO) {
     	String datasetId = visualizationVO.getDataset_id();
@@ -125,6 +128,7 @@ public class VisualizationService {
                     String dataId = metaVO.getData_id();
                     String labelType = metaVO.getLabel_type();
                     String info = metaVO.getInfo();
+                    // dataId가 일치하는 이미지 width, height를 10으로 나눈 값 변수로 저장
                     JSONObject imageWhValue = imageWhMap.get(dataId);
                     double imageWhMapWidth = (double) imageWhValue.get("width");
                     double imageWhMapHeight = (double) imageWhValue.get("height");
@@ -399,7 +403,7 @@ public class VisualizationService {
                 .toArray();
 
         // score = (label width or height) / 원본 이미지의 (width or height)를 10으로 나눈 값
-        double objectWidthScore = objectSize[2] / imageWhMapWidth;
+        double objectWidthScore =  objectSize[2] / imageWhMapWidth;
         double objectHeightScore = objectSize[3] / imageWhMapHeight;
 
         JSONObject scoreJson = new JSONObject();

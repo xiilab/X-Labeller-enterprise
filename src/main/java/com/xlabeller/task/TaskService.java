@@ -1367,10 +1367,42 @@ public class TaskService {
                 String classificationThreshold = String.valueOf(jsonObj.get("classification_threshold"));
 
                 result = sessionCmdExecute.callCustomEfficientdetInference(projectId, taskId, gpuIndex, modelName, csvSavePath, "multi");
+            } else if (algorithmId.equals("9")) {
+                AlgorithmVO algorithmVO = new AlgorithmVO();
+                algorithmVO.setAlgorithm_id(algorithmId);
+                AlgorithmVO algorithmById = algorithmDao.getAlgorithmById(algorithmVO);
+                String algorithmConfig = algorithmById.getInference_param();
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(algorithmConfig);
+                JSONArray jsonArr = (JSONArray) obj;
+                String confThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "conf_thres".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.25"));
+                                })
+                                .findFirst()
+                                .get();
+                String iouThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "iou_thres".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.25"));
+                                })
+                                .findFirst()
+                                .get();
+                //JSONObject jsonObj = (JSONObject)parser.parse(config);
+                // (String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String confThreshold, String iouThreshold, String type) {
+                result = sessionCmdExecute.callCustomYolov5Inference(projectId, taskId, gpuIndex, modelName, csvSavePath, confThreshold, iouThreshold, "multi");
             } else {
                 config = config.replaceAll("\"", "\\\\\"");
                 result = sessionCmdExecute.callCustomInference(projectId, taskId, algorithmId, gpuIndex, mode, modelName, csvSavePath, config);
             }
+
             //Object result = gu.callCustomInference(GRPC_ADDRESS, GRPC_PORT, gpuObj, gpuIndex, imageName, config, projectId, taskId, modelName, csvSavePath, imagePath);
             return result;
 //			gu.callInference(GRPC_ADDRESS, GRPC_PORT, projectId, taskId, classes, backbone, modelName, score, csvSavePath, imagePath,isConvertModel);
@@ -1397,7 +1429,7 @@ public class TaskService {
         String dataId = inferenceVO.getData_id();
         String taskId = inferenceVO.getTask_id();
         String gpuNodeId = "1";
-        String gpuIndex = "1";
+        String gpuIndex = "3";
 
         if (!StringUtils.hasText(inferenceVO.getData_id())) {
             return Output.JsonOutput("4506", "선택된 알고리즘이 없거나 손상되었습니다.\n새로 고침 후 다시 시도해주시고 지속저으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
@@ -1490,7 +1522,7 @@ public class TaskService {
         String csvSaveFullPath = WORKSPACE_PATH + "semi_auto/result/" + uuid + ".csv";
         String csvSaveDir = WORKSPACE_PATH + "semi_auto/result/";
         // 디렉토리 하위 파일 모두 지우기
-        deleteFileList(csvSaveDir);
+        // deleteFileList(csvSaveDir);
         String csvSaveFileName = uuid + ".csv";
 
         try {
@@ -1520,6 +1552,37 @@ public class TaskService {
                 JSONParser parser = new JSONParser();
                 //JSONObject jsonObj = (JSONObject)parser.parse(config);
                 sessionCmdExecute.callCustomEfficientdetInference(projectId, taskId, gpuIndex, modelName, csvSaveFileName, "single");
+            } else if (algorithmId.equals("9")) {
+                AlgorithmVO algorithmVO = new AlgorithmVO();
+                algorithmVO.setAlgorithm_id(algorithmId);
+                AlgorithmVO algorithmById = algorithmDao.getAlgorithmById(algorithmVO);
+                String algorithmConfig = algorithmById.getInference_param();
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(algorithmConfig);
+                JSONArray jsonArr = (JSONArray) obj;
+                String confThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "conf_thres".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.25"));
+                                })
+                                .findFirst()
+                                .get();
+                String iouThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "iou_thres".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.25"));
+                                })
+                                .findFirst()
+                                .get();
+                //JSONObject jsonObj = (JSONObject)parser.parse(config);
+                // (String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String confThreshold, String iouThreshold, String type) {
+                sessionCmdExecute.callCustomYolov5Inference(projectId, taskId, gpuIndex, modelName, csvSaveFileName, confThreshold, iouThreshold, "single");
             } else {
                 config = config.replaceAll("\"", "\\\\\"");
                 sessionCmdExecute.callCustomInference(projectId, taskId, algorithmId, gpuIndex, mode, modelName, csvSaveFileName, config);
@@ -1542,7 +1605,7 @@ public class TaskService {
                 InputStreamReader inputReader = null;
                 BufferedReader bufferedReader = null;
                 try {
-                    Thread.sleep(3000); // 3초마다 체크
+                    Thread.sleep(2000); // 3초마다 체크
 
                     // 프로세스 빌더 생성 후 명령어
                     ProcessBuilder processBuilder = new ProcessBuilder(commands);
@@ -1569,7 +1632,7 @@ public class TaskService {
                     // 파일 확인
                     file = new File(csvSaveFullPath);
                     logger.info("파일 존재 여부 : " + file.exists());
-                    if (file.exists() || idx == 20) {
+                    if (file.exists() || idx == 60) {
                         break;
                     }
 

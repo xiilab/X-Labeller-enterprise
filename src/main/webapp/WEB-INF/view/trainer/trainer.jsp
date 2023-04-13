@@ -153,21 +153,22 @@
 			
 			if(sessionStorage.length > 0){
 				if(sessionStorage.selected_task_id != undefined || sessionStorage.selected_task_id != null) {
-					that.data.quick_task_id = sessionStorage.selected_task_id;
-					that.data.quick_pId = sessionStorage.selected_pId;
-					console.log("quick_task_id: ", that.data.quick_task_id);
-					console.log("quick_poject_id: ", that.data.quick_pId);
-
-					
-					that.list("1", sessionStorage);	
-					
-	 				let project_node = wsObj[that.data.initObj.key].dir.getNodeByParam("id",that.data.quick_pId);
-	 				console.log("project_node :: ", project_node);
-					that.refreshTask(project_node);
-	 				wsObj[that.data.initObj.key].dir.selectNode(project_node);
-// 	 				wsObj[that.data.initObj.key].dir.expandNode(project_node);
-				
-					sessionStorage.clear();						// 나중에 세션에 다른 값을 저장해야 할 경우 해당 값만 삭제해야 함
+// 					that.data.quick_task_id = sessionStorage.selected_task_id;
+// 					that.data.quick_pId = sessionStorage.selected_pId;
+// 					console.log("quick_task_id: ", that.data.quick_task_id);
+// 					console.log("quick_poject_id: ", that.data.quick_pId);
+//
+//
+// 					that.list("1", sessionStorage);
+//
+// 	 				let project_node = wsObj[that.data.initObj.key].dir.getNodeByParam("id",that.data.quick_pId);
+// 	 				console.log("project_node :: ", project_node);
+// 					that.refreshTask(project_node);
+// 	 				wsObj[that.data.initObj.key].dir.selectNode(project_node);
+// // 	 				wsObj[that.data.initObj.key].dir.expandNode(project_node);
+//
+// 					sessionStorage.clear();						// 나중에 세션에 다른 값을 저장해야 할 경우 해당 값만 삭제해야 함
+					return false;
 				} else if(sessionStorage.selected_task_id == undefined || sessionStorage.selected_task_id == null){
 					return false;
 				};					

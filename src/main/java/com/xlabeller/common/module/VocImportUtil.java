@@ -110,15 +110,17 @@ public class VocImportUtil {
             while ((entry = zis.getNextEntry()) != null) {
                 if (entryValidate(entry, true)) continue;
                 String entryName = entry.getName();
-                if (entryName.contains(VocDirEnum.ANNOTATIONS.getDirPath())) {
+                // 디렉토리 소문자로 변환 후 문자열 비교하기 위한 변수
+                String entryNameUpper = entryName.toUpperCase();
+                if (entryNameUpper.contains(VocDirEnum.ANNOTATIONS.getDirPath())) {
                     addAnnotationsInfoMap(zis);
-                } else if ("IMAGE_BBOX".equals(labelType) && entryName.contains(VocDirEnum.IMAGE_SETS_MAIN.getDirPath())) {
+                } else if ("IMAGE_BBOX".equals(labelType) && entryNameUpper.contains(VocDirEnum.IMAGE_SETS_MAIN.getDirPath())) {
                     addVocImageSetsMainList(zis);
-                } else if ("IMAGE_SEGMENTATION".equals(labelType) && entryName.contains(VocDirEnum.IMAGE_SETS_SEGMENTATION.getDirPath())) {
+                } else if ("IMAGE_SEGMENTATION".equals(labelType) && entryNameUpper.contains(VocDirEnum.IMAGE_SETS_SEGMENTATION.getDirPath())) {
                     addVocImageSetsSegList(zis);
-                } else if (entryName.contains(VocDirEnum.JPEG_IMAGES.getDirPath())) {
+                } else if (entryNameUpper.contains(VocDirEnum.JPEG_IMAGES.getDirPath())) {
                     addJpegImagesMap(zis, entryName);
-                } else if ("IMAGE_SEGMENTATION".equals(labelType) && entryName.contains(VocDirEnum.SEGMENTATION_OBJECT.getDirPath())) {
+                } else if ("IMAGE_SEGMENTATION".equals(labelType) && entryNameUpper.contains(VocDirEnum.SEGMENTATION_OBJECT.getDirPath())) {
                     addImportSegmentationObjectInfoMap(zis, entryName);
                 }
             }
@@ -196,6 +198,9 @@ public class VocImportUtil {
                 for (int i = 0; i < contours.size(); i++) {
                     MatOfPoint contour = contours.get(i);
                     List<Point> points = new ArrayList<>();
+                    if (contour.toArray().length < 3) {
+                        continue;
+                    }
                     // mask 값을 포인트로 변환 후 넣기
                     for (Point point : contour.toArray()) {
                         points.add(point);
@@ -437,23 +442,23 @@ public class VocImportUtil {
             while ((entry = zis.getNextEntry()) != null) {
                 if (entryValidate(entry, false)) continue;
                 if (entry.isDirectory()) {
-                    switch (entry.getName()) {
-                        case "VOC/Annotations/":
+                    switch (entry.getName().toUpperCase()) {
+                        case "VOC/ANNOTATIONS/":
                             isAnnotations = true;
                             break;
-                        case "VOC/ImageSets/":
+                        case "VOC/IMAGESETS/":
                             isImageSets = true;
                             break;
-                        case "VOC/ImageSets/main/":
+                        case "VOC/IMAGESETS/MAIN/":
                             isMain = true;
                             break;
-                        case "VOC/ImageSets/Segmentation/":
+                        case "VOC/IMAGESETS/SEGMENTATION/":
                             isSegmentation = true;
                             break;
-                        case "VOC/JPEGImages/":
+                        case "VOC/JPEGIMAGES/":
                             isJpegImage = true;
                             break;
-                        case "VOC/SegmentationObject/":
+                        case "VOC/SEGMENTATIONOBJECT/":
                             isSegmentationObject = true;
                             break;
                     }
@@ -478,10 +483,7 @@ public class VocImportUtil {
         if (entry.getName().contains(".DS_Store")) {
             return true;
         }
-        if (dirSkipStatus && entry.isDirectory()) {
-            return true;
-        }
-        return false;
+        return dirSkipStatus && entry.isDirectory();
     }
 
     public List<String> getImportVocImageSetsMainList() {
