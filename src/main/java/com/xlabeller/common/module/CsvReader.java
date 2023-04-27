@@ -8,6 +8,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -63,8 +64,13 @@ public class CsvReader {
 						float float_x = 0;
 						float float_y = 0;
 						try {
-							float_x = Float.valueOf(cursor[0]);
-							float_y = Float.valueOf(cursor[1]);
+							// float_x = Float.valueOf(cursor[0]);
+							// float_y = Float.valueOf(cursor[1]);
+							if (!StringUtils.hasText(cursor[0]) || !StringUtils.hasText(cursor[1])) {
+								continue;
+							}
+							float_x = (float) (Math.floor(Float.parseFloat(cursor[0]) * 10) / 10);
+							float_y = (float) (Math.floor(Float.parseFloat(cursor[1]) * 10) / 10);
 						} catch (NumberFormatException e) {
 							// TODO: handle exception
 							logger.error("Float 형변환 중 오류발생!", e);

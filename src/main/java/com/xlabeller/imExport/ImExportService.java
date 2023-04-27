@@ -47,6 +47,9 @@ public class ImExportService {
             throw new HandlerCustomException("4061", "추출할 데이터셋 ID가 존재하지 않습니다.\n 새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
 
+        // 데이터셋 ID가 제일 높은걸로 다운받는 ZIP파일명 수정
+        String downloadFileNameDatasetTitle = getDownloadFileNameDatasetTitle(imExportVO);
+
         // 2. datasetIds를 WHERE절에 넘겨, DATASET, DATA, META가 JOIN된 데이터 출력
         List<ImExportVO> exportAnnotationList = imExportDao.getExportAnnotationData(imExportVO);
         // 중복된 이미지 경로 제거 후 String List로 반환
@@ -80,7 +83,7 @@ public class ImExportService {
         zipUtil.close();
 
         response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; fileName=export_coco.zip");
+        response.setHeader("Content-Disposition", "attachment; fileName=" + downloadFileNameDatasetTitle + "_coco.zip");
         FileInputStream fileInputStream = new FileInputStream(exportZipFullPath);
         try (OutputStream out = response.getOutputStream()) {
             int read = 0;
@@ -102,6 +105,14 @@ public class ImExportService {
 //            File deleteFile = new File(exportZipFullPath);
 //            deleteFile.delete();
 //        }
+    }
+
+    private String getDownloadFileNameDatasetTitle(ImExportVO imExportVO) {
+        String downloadFileNameDatasetId = imExportVO.getDataset_ids().split(",")[0];
+        DatasetVO findDatasetVO = new DatasetVO();
+        findDatasetVO.setDataset_id(downloadFileNameDatasetId);
+        String downloadFileName = dataDao.getDatasetById(findDatasetVO).getTitle();
+        return downloadFileName;
     }
 
     public Object importCoco(ImExportVO imExportVO) throws HandlerCustomException, IOException {
@@ -221,6 +232,9 @@ public class ImExportService {
             throw new HandlerCustomException("4061", "추출할 데이터셋 ID가 존재하지 않습니다.\n 새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
 
+        // zip 다운로드 파일명 추출
+        String downloadFileNameDatasetTitle = getDownloadFileNameDatasetTitle(imExportVO);
+
         // 2. datasetIds를 WHERE절에 넘겨, DATASET, DATA, META가 JOIN된 데이터 출력
         List<ImExportVO> exportAnnotationList = imExportDao.getExportAnnotationData(imExportVO);
 
@@ -307,7 +321,7 @@ public class ImExportService {
 
         // String saveZipFileName = "exports_voc.zip";
         response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; fileName=export_voc.zip");
+        response.setHeader("Content-Disposition", "attachment; fileName="+ downloadFileNameDatasetTitle + "_voc.zip");
         FileInputStream fileInputStream = new FileInputStream(exportZipFullPath);
         try (OutputStream out = response.getOutputStream()) {
             int read = 0;

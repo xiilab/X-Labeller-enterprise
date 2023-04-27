@@ -3718,6 +3718,7 @@ public class TaskService {
                 if (classesFileMap.containsKey(inferenceListMap.get(i))) {
                     check = true;
                 } else {
+                    logger.error("inferenceListMap.get(i) ::" + inferenceListMap.get(i));
                     check = false;
                     break;
                 }
