@@ -29,10 +29,10 @@ public class VocImportUtil {
     private MultipartFile vocZipFile;
     // import할 확장자를 제외한 모든 이미지 파일명이 담겨있는 List, VOC/Imagesets/main의 txt파일을 읽어 생성된 결과
     // IMAGE_BBOX import할 때, 필요
-    private List<String> importVocImageSetsMainList;
+    // private List<String> importVocImageSetsMainList;
     // import할 확장자를 제외한 세그멘테이션이 생성된 이미지 파일명이 담겨있는 List, VOC/Imagesets/Segmentation의 txt파일을 읽어 생성된 결과
     // IMAGE_SEGMENTATION import할 때, 필요
-    private List<String> importVocImageSetsSegList;
+    // private List<String> importVocImageSetsSegList;
     // import할 이미지 경로가 담겨있는 Map, VOC/JPEGImages에 있는 파일들을 읽어 생성된 결과
     // IMAGE_SEGMENTATION, IMAGE_BBOX import할 때, 필요
     // (key : 확장자를 제외한 fileName, value : 이미지 파일 byte[])
@@ -50,9 +50,9 @@ public class VocImportUtil {
     public VocImportUtil(MultipartFile multipartFile) {
         this.vocZipFile = multipartFile;
         this.importAnnotationsInfoMap = new HashMap<>();
-        this.importVocImageSetsMainList = new ArrayList<>();
+        //this.importVocImageSetsMainList = new ArrayList<>();
         this.importVocJpegImagesMap = new HashMap<>();
-        this.importVocImageSetsSegList = new ArrayList<>();
+        // this.importVocImageSetsSegList = new ArrayList<>();
         this.importSegmentationObjectInfoMap = new HashMap<>();
     }
 
@@ -68,15 +68,15 @@ public class VocImportUtil {
     }
 
     private void addImportSegmentationObjectInfo() {
-        if (this.importVocImageSetsSegList.size() <= 0) {
-            throw new HandlerCustomException("500", "Import할 SegmentationObject가 존재하지 않습니다.");
-        }
+//        if (this.importVocImageSetsSegList.size() <= 0) {
+//            throw new HandlerCustomException("500", "Import할 SegmentationObject가 존재하지 않습니다.");
+//        }
         if (this.importSegmentationObjectInfoMap.size() <= 0) {
             throw new HandlerCustomException("500", "Import할 SegmentationObject가 존재하지 않습니다.");
         }
 
         // area근사값으로 라벨명 찾기
-        this.importVocImageSetsSegList.forEach((fileName) -> {
+        for (String fileName : importSegmentationObjectInfoMap.keySet()) {
             JSONArray annotationsResultArray = this.importAnnotationsInfoMap.get(fileName);
             JSONArray segmentationInfoArray = this.importSegmentationObjectInfoMap.get(fileName);
             segmentationInfoArray.forEach((jsonObject) -> {
@@ -99,9 +99,34 @@ public class VocImportUtil {
                         segmentationInfoObj.put("label", labelName);
                     }
                 }
-                //segmentationInfoObj.remove("area");
             });
-        });
+        }
+//        this.importSegmentationObjectInfoMap.for((fileName) -> {
+//            JSONArray annotationsResultArray = this.importAnnotationsInfoMap.get(fileName);
+//            JSONArray segmentationInfoArray = this.importSegmentationObjectInfoMap.get(fileName);
+//            segmentationInfoArray.forEach((jsonObject) -> {
+//                JSONObject segmentationInfoObj = (JSONObject) jsonObject;
+//                // 세그멘테이션 area값 꺼내오기
+//                double segArea = (double) segmentationInfoObj.get("area");
+//                double min = Double.MAX_VALUE;
+//
+//                // XML에 있는 bbox값을 읽어 area를 구한 뒤, 세그멘테이션 area와 가장 근접한 값 찾기
+//                for (int i = 0; i < annotationsResultArray.size(); i++) {
+//                    JSONObject annotationsResultObject = (JSONObject) annotationsResultArray.get(i);
+//                    String labelName = (String) annotationsResultObject.get("label");
+//                    String[] boxInfo = ((String) annotationsResultObject.get("info")).split(",");
+//                    double width = Double.parseDouble(boxInfo[2]);
+//                    double height = Double.parseDouble(boxInfo[3]);
+//                    double area = width * height;
+//                    double abs = Math.abs(segArea - area);
+//                    if (abs < min) {
+//                        min = abs;
+//                        segmentationInfoObj.put("label", labelName);
+//                    }
+//                }
+//                //segmentationInfoObj.remove("area");
+//            });
+//        });
     }
 
     private void readImportVocZipFile(String labelType) {
@@ -115,9 +140,9 @@ public class VocImportUtil {
                 if (entryNameUpper.contains(VocDirEnum.ANNOTATIONS.getDirPath())) {
                     addAnnotationsInfoMap(zis);
                 } else if ("IMAGE_BBOX".equals(labelType) && entryNameUpper.contains(VocDirEnum.IMAGE_SETS_MAIN.getDirPath())) {
-                    addVocImageSetsMainList(zis);
+                    // addVocImageSetsMainList(zis);
                 } else if ("IMAGE_SEGMENTATION".equals(labelType) && entryNameUpper.contains(VocDirEnum.IMAGE_SETS_SEGMENTATION.getDirPath())) {
-                    addVocImageSetsSegList(zis);
+                    // addVocImageSetsSegList(zis);
                 } else if (entryNameUpper.contains(VocDirEnum.JPEG_IMAGES.getDirPath())) {
                     addJpegImagesMap(zis, entryName);
                 } else if ("IMAGE_SEGMENTATION".equals(labelType) && entryNameUpper.contains(VocDirEnum.SEGMENTATION_OBJECT.getDirPath())) {
@@ -376,13 +401,13 @@ public class VocImportUtil {
     private void addVocImageSetsSegList(ZipInputStream zis) throws IOException {
         String imageSetsSegStr = new String(IOUtils.toByteArray(zis));
         String[] splitImageSetsMainStr = imageSetsSegStr.split("\n");
-        this.importVocImageSetsSegList.addAll(Arrays.asList(splitImageSetsMainStr));
+        // this.importVocImageSetsSegList.addAll(Arrays.asList(splitImageSetsMainStr));
     }
 
     private void addVocImageSetsMainList(ZipInputStream zis) throws IOException {
         String imageSetsMainStr = new String(IOUtils.toByteArray(zis));
         String[] splitImageSetsMainStr = imageSetsMainStr.split("\n");
-        this.importVocImageSetsMainList.addAll(Arrays.asList(splitImageSetsMainStr));
+        //this.importVocImageSetsMainList.addAll(Arrays.asList(splitImageSetsMainStr));
     }
 
     private void addAnnotationsInfoMap(ZipInputStream zis) throws IOException {
@@ -486,13 +511,6 @@ public class VocImportUtil {
         return dirSkipStatus && entry.isDirectory();
     }
 
-    public List<String> getImportVocImageSetsMainList() {
-        return importVocImageSetsMainList;
-    }
-
-    public List<String> getImportVocImageSetsSegList() {
-        return importVocImageSetsSegList;
-    }
 
     public Map<String, byte[]> getImportVocJpegImagesMap() {
         return importVocJpegImagesMap;

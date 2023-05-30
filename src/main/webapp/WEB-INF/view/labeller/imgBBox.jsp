@@ -5154,7 +5154,7 @@
 					$("#loader").show();
 					const deffered = $.ajax({
 						url : baseUrl + "task/getQuickInferenceTaskList.json",
-						data : {project_id : null, dataset_id : imgBBox.data.canvasObj.datasetId},
+						data : {project_id : null, dataset_id : imgBBox.data.canvasObj.datasetId, label_type: "IMAGE_BBOX"},
 						type : "POST",
 						success(res){
 							console.log("=======getQuickInferenceTaskList=======", res);

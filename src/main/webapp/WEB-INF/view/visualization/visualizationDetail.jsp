@@ -164,13 +164,7 @@
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
                 </section>
-                <!-- 경계범위(bounding box)중심분포 -->
-                <section id="boundaryRangeCentroidDistribution">
-                    <div class="chart_wrap">
-                        <div class="chart"></div>
-                        <div class='no_result'>조회된 결과가 없습니다.</div>
-                    </div>
-                </section>
+
                 <!-- width 별 분포-->
                 <section id="labelCountByWidth">
                     <div class="chart_wrap">
@@ -178,7 +172,6 @@
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
                 </section>
-                <!-- ========================================================= -->
 
                 <!-- heigh별 분포 -->
                 <section id="labelCountByHeight">
@@ -187,8 +180,11 @@
                         <div class='no_result'>조회된 결과가 없습니다.</div>
                     </div>
                 </section>
-                <!-- center y별 분포 -->
-                <section id="labelCountByCenterY">
+
+                <!-- ========================================================= -->
+
+                <!-- 경계범위(bounding box)중심분포 -->
+                <section id="boundaryRangeCentroidDistribution">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
@@ -196,6 +192,13 @@
                 </section>
                 <!-- center x별 분포 -->
                 <section id="labelCountByCenterX">
+                    <div class="chart_wrap">
+                        <div class="chart"></div>
+                        <div class='no_result'>조회된 결과가 없습니다.</div>
+                    </div>
+                </section>
+                <!-- center y별 분포 -->
+                <section id="labelCountByCenterY">
                     <div class="chart_wrap">
                         <div class="chart"></div>
                         <div class='no_result'>조회된 결과가 없습니다.</div>
@@ -290,9 +293,9 @@
                 that.computed.getDataQuantityPerClass(param),
                 that.computed.getClassQuantityPerResolution(param),
        			that.computed.getBoundaryRangeCentroidDistribution(param),
-				that.computed.getDistributionByObjectSize(param),
-               	that.computed.getLabelCountByWidth(param),
+                that.computed.getLabelCountByWidth(param),
                 that.computed.getLabelCountByHeight(param),
+				that.computed.getDistributionByObjectSize(param),
        			that.computed.getLabelCountByCenterY(param),
        			that.computed.getLabelCountByCenterX(param),
         	).done(function(){

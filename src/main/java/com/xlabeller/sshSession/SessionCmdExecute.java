@@ -368,13 +368,15 @@ public class SessionCmdExecute implements Callable<Object> {
 			}
 			JSONObject jsonObj = (JSONObject) obj;
 			batch = String.valueOf(jsonObj.get("batch_size"));
+			String epochs = String.valueOf(jsonObj.get("epochs"));
 			cmd = "docker run --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES="+ gpuIndex +" --rm -itd --label gpu_id=" + gpuIndex +
 					" --label " + "xlabeller=t_" + projectId + "_" + taskId + " --name xlabeller_t_" + projectId + "_"
 					+ taskId + " --shm-size 10000000m --ipc host -v /xlabeller:/xlabeller xlabeller_yolov4:2.0 " + "python3 xlabeller_yolov4_train.py"
 					+ " --pid " + projectId
 					+ " --tid " + taskId
 					+ " --batch " + batch
-					+ " --subdivisions " + batch;
+					+ " --subdivisions " + batch
+					+ " --epochs " + epochs;
 		} else if (algorithmId.equals("7") || algorithmId.equals("8")) { // efficientdet:latest
 			String batch = null;
 			String epochs = null;
