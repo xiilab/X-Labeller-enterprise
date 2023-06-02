@@ -1870,7 +1870,7 @@
 						html += '<div class="input_wrap flex light">';
 						html += '<label>'+inference_param_data[i].param+'<span class="tooltip_wrap"></span></label>';
 						html += '<span class="tooltip">'+inference_param_data[i].helper+'</span>';
-						html += '<input type="text" name="'+inference_param_data[i].param+'" value="'+inference_param_data[i].defaultvalue+'"/>';
+						html += '<input type="text" name="'+inference_param_data[i].param+'" value="'+inference_param_data[i].defaultvalue+'" validationParam/>';
 						html += '</div>';
 						$(target).append(html);
 						continue;
@@ -1878,7 +1878,7 @@
 						html += '<div class="input_wrap flex light">';
 						html += '<label>'+inference_param_data[i].param+'<span class="tooltip_wrap"></span></label>';
 						html += '<span class="tooltip">'+inference_param_data[i].helper+'</span>';
-						html += '<input type="number" name="'+inference_param_data[i].param+'" value="'+inference_param_data[i].defaultvalue+'" onKeyPress="return checkNum(event);"/>';
+						html += '<input type="number" name="'+inference_param_data[i].param+'" value="'+inference_param_data[i].defaultvalue+'" onKeyPress="return checkNum(event);" validationParam/>';
 						html += '</div>';	
 						$(target).append(html);
 						continue;
@@ -1927,6 +1927,34 @@
 			})
 			
 			that.setDefaultListener();
+			
+			that.inferenceParamListener();
+		},
+		
+		/* 추론 파라미터 입력 이벤트 : input foucusout 시 입력값 유효성 검사 */
+		inferenceParamListener : function () {
+			
+			var that = this;
+			var validationParam = that.pt.find(".box_wrap input[validationParam]");
+			
+			validationParam.off("focusout").on("focusout", function(e){
+				
+				var targetValue = e.target.value;
+				var targetName = e.target.name;
+				var targetObj = that.pt.find('input[name=' + targetName + ']');
+				
+				var checkResultObj = checkParamValue(targetName, targetValue); // checkParamValue ( xValidate.js )
+				
+				console.log("## inferenceParamListener :", targetName, targetValue, targetObj, checkResultObj)
+				
+				if(!checkResultObj.result && targetObj ) {
+					alert(checkResultObj.validationMsg); // 안내메세지 출력 
+					targetObj.attr("value", checkResultObj.defaultValue); // value 값 혹시 모르니 바꿔줌 
+					targetObj.val(checkResultObj.defaultValue);  // input text 변경 
+				} 
+				
+			});
+			
 		},
 		
 		// 사용가능한 GPU Node select list 

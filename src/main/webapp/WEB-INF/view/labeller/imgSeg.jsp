@@ -5462,7 +5462,61 @@
 						    	options[i].selected = true;
 						    }
 						}
-					},				
+					},	
+					
+					/* Quick Training Parameter 입력 이벤트 */
+					trainingConfigListener : function () {
+						
+						var that = imgSegQuick;
+						var validationParam = $("#imgSeg #training_config .config_wrap input[validationParam]");
+						console.log('### trainingConfigListener : ', validationParam)
+						
+						validationParam.off("focusout").on("focusout", function(e){
+							
+							var targetValue = e.target.value;
+							var targetName = e.target.name;
+							var targetObj = $('#imgSeg #training_config .config_wrap input[name=' + targetName + ']');
+							
+							var checkResultObj = checkParamValue(targetName, targetValue); // checkParamValue ( xValidate.js )
+							
+							console.log("## trainingConfigListener : ", targetName, targetValue, targetObj, checkResultObj);
+							
+							if(!checkResultObj.result && targetObj ) {
+								alert(checkResultObj.validationMsg); // 안내메세지 출력 
+								targetObj.attr("value", checkResultObj.defaultValue); // value 값 혹시 모르니 바꿔줌 
+								targetObj.val(checkResultObj.defaultValue);  // input text 변경 
+							} 
+							
+						});
+						
+					},
+					
+					/* Quick Inference Parameter 입력 이벤트 */
+					inferenceConfigListener : function () {
+						
+						var that = imgSegQuick;
+						var validationParam = $("#imgSeg #inference_config .config_wrap input[validationParam]");
+						console.log('### inferenceConfigListener : ', validationParam)
+						
+						validationParam.off("focusout").on("focusout", function(e){
+							
+							var targetValue = e.target.value;
+							var targetName = e.target.name;
+							var targetObj = $('#imgSeg #inference_config .config_wrap input[name=' + targetName + ']');
+							
+							var checkResultObj = checkParamValue(targetName, targetValue); // checkParamValue ( xValidate.js )
+							
+							console.log("## inferenceConfigListener : ", targetName, targetValue, targetObj, checkResultObj);
+							
+							if(!checkResultObj.result && targetObj ) {
+								alert(checkResultObj.validationMsg); // 안내메세지 출력 
+								targetObj.attr("value", checkResultObj.defaultValue); // value 값 혹시 모르니 바꿔줌 
+								targetObj.val(checkResultObj.defaultValue);  // input text 변경 
+							} 
+							
+						});
+						
+					},
 					
 				},
 				computed : {
@@ -6526,14 +6580,14 @@
 									html += '<div class="input_wrap flex light">';
 									html += '<label>'+configData[i].param+'<span class="tooltip_wrap"></span></label>';
 									html += '<span class="tooltip">'+configData[i].helper+'</span>';
-									html += '<input type="text" name="'+configData[i].param+'" value="'+configData[i].defaultvalue+'"/>';
+									html += '<input type="text" name="'+configData[i].param+'" value="'+configData[i].defaultvalue+'" validationParam/>';
 									html += '</div>';
 									$(target).append(html);
 								} else if(configData[i].type == "number"){
 									html += '<div class="input_wrap flex light">';
 									html += '<label>'+configData[i].param+'<span class="tooltip_wrap"></span></label>';
 									html += '<span class="tooltip">'+configData[i].helper+'</span>';
-									html += '<input type="number" name="'+configData[i].param+'" value="'+configData[i].defaultvalue+'" onKeyPress="return checkNum(event);"/>';
+									html += '<input type="number" name="'+configData[i].param+'" value="'+configData[i].defaultvalue+'" onKeyPress="return checkNum(event);" validationParam/>';
 									html += '</div>';	
 									$(target).append(html);
 								} else if (configData[i].type = "boolean"){
@@ -6584,9 +6638,12 @@
 							});					
 						}
 						
+						// Quick Training Config Parameter 입력 이벤트
+						that.bind.trainingConfigListener();
+						
 					},
 					
-					// quick inference 에서 task 선택 시 config 셋팅 
+					/* quick inference 에서 task 선택 시 config 셋팅 */ 
 					setInferenceConfig(data, taskId){
 						const that = imgSegQuick;
 						
@@ -6624,14 +6681,14 @@
 									html += '<div class="input_wrap flex light">';
 									html += '<label>'+configData[i].param+'<span class="tooltip_wrap"></span></label>';
 									html += '<span class="tooltip">'+configData[i].helper+'</span>';
-									html += '<input type="text" name="'+configData[i].param+'" value="'+configData[i].defaultvalue+'"/>';
+									html += '<input type="text" name="'+configData[i].param+'" value="'+configData[i].defaultvalue+'" validationParam/>';
 									html += '</div>';
 									$(target).append(html);
 								} else if(configData[i].type == "number"){
 									html += '<div class="input_wrap flex light">';
 									html += '<label>'+configData[i].param+'<span class="tooltip_wrap"></span></label>';
 									html += '<span class="tooltip">'+configData[i].helper+'</span>';
-									html += '<input type="number" name="'+configData[i].param+'" value="'+configData[i].defaultvalue+'" onKeyPress="return checkNum(event);"/>';
+									html += '<input type="number" name="'+configData[i].param+'" value="'+configData[i].defaultvalue+'" onKeyPress="return checkNum(event);" validationParam/>';
 									html += '</div>';	
 									$(target).append(html);
 								} else if (configData[i].type = "boolean"){
@@ -6688,7 +6745,8 @@
 							$(description_target).html("Please select task data");
 						};
 						
-
+						// Quick Inference Config Parameter 입력 이벤트
+						that.bind.inferenceConfigListener();
 						
 					},			
 					

@@ -1078,14 +1078,14 @@
 						html += '<div class="input_wrap flex light">';
 						html += '<label>'+train_param_data[i].param+'<span class="tooltip_wrap"></span></label>';
 						html += '<span class="tooltip">'+train_param_data[i].helper+'</span>';
-						html += '<input type="text" name="'+train_param_data[i].param+'" value="'+train_param_data[i].defaultvalue+'"/>';
+						html += '<input type="text" name="'+train_param_data[i].param+'" value="'+train_param_data[i].defaultvalue+'" validationParam/>';
 						html += '</div>';
 						$(target).append(html);
 					} else if(train_param_data[i].type == "number"){
 						html += '<div class="input_wrap flex light">';
 						html += '<label>'+train_param_data[i].param+'<span class="tooltip_wrap"></span></label>';
 						html += '<span class="tooltip">'+train_param_data[i].helper+'</span>';
-						html += '<input type="number" name="'+train_param_data[i].param+'" value="'+train_param_data[i].defaultvalue+'" onKeyPress="return checkNum(event);"/>';
+						html += '<input type="number" name="'+train_param_data[i].param+'" value="'+train_param_data[i].defaultvalue+'" onKeyPress="return checkNum(event);" validationParam/>';
 						html += '</div>';	
 						$(target).append(html);
 					} else if (train_param_data[i].type = "boolean"){
@@ -1134,8 +1134,37 @@
 						that.createJson(data);
 					});						
 			};
+			
+			
+			// 유효성 검사 이벤트를 위해 호출 
+			that.trainParameterListener();
 		},
 		
+		/* 학습 파라미터 입력 이벤트 : input foucusout 시 입력값 유효성 검사 */ 
+		trainParameterListener: function() {
+			
+			var that = this;
+			var validationParam = that.pt.find(".box_wrap input[validationParam]");
+			// var epochsInput = that.pt.find(".box_wrap input[name='epochs']");
+			
+			validationParam.off("focusout").on("focusout", function(e){
+				
+				var targetValue = e.target.value;
+				var targetName = e.target.name;
+				var targetObj = that.pt.find('input[name=' + targetName + ']');
+				
+				var checkResultObj = checkParamValue(targetName, targetValue); // checkParamValue ( xValidate.js )
+				
+				console.log("## trainParameterListener : ", targetName, targetValue, targetObj, checkResultObj);
+				
+				if(!checkResultObj.result && targetObj ) {
+					alert(checkResultObj.validationMsg); // 안내메세지 출력 
+					targetObj.attr("value", checkResultObj.defaultValue); // value 값 혹시 모르니 바꿔줌 
+					targetObj.val(checkResultObj.defaultValue);  // input text 변경 
+				} 
+				
+			});
+		},
 		
 		selectboxListener : function(){
 			let that = this;

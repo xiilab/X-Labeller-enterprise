@@ -8,7 +8,7 @@ function procDataCountByResolution (xAxisData, seriesData) {
             xAxisName: "",
             xAxisData: [],
             yAxisName: "",
-            legendData: null,
+            lagened: null,
             series: []
         };
 
@@ -31,6 +31,8 @@ function procDataCountByResolution (xAxisData, seriesData) {
                 }
             }
         ];
+        
+        optionObj['xAxisInterval'] = 0; // 0 로 표시할시 xAxis 가 다 표시
 
         return optionObj;
 
@@ -111,6 +113,8 @@ function procObjectCountByResolution (xAxisData, seriesData) {
             }
         }
     ];
+    
+    optionObj['xAxisInterval'] = 0; // 0 로 표시할시 xAxis 가 다 표시0
 
     return optionObj;
 

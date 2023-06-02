@@ -239,3 +239,64 @@
              return true;
 
     }
+    
+    
+function checkParamValue(paramName, targetValue) {
+	
+	var checkResult = {
+		result  : false, // 실패 
+		defaultValue : "",
+		validationMsg : "",
+	};
+	
+	switch(paramName){
+		
+		case "epochs" : 
+			if( 1 > Number(targetValue) || 2000 < Number(targetValue) ) {
+				checkResult.defaultValue = "300";
+				checkResult.validationMsg = "1 이상 2000 이하의 값만 입력가능합니다.";
+			} else checkResult.result = true;
+			
+			break;
+			
+		case "batch_size" :
+			if( 1 > Number(targetValue) || 128 < Number(targetValue) ) {
+				checkResult.defaultValue = "2";
+				checkResult.validationMsg = "1 이상 128 이하의 값만 입력가능합니다.";
+			} else checkResult.result = true; 
+			
+			break;
+			
+		case "learning_rate" :
+			if( 0.0001 > Number(targetValue) || 0.1 < Number(targetValue) ) {
+				checkResult.defaultValue = "0.01";
+				checkResult.validationMsg = "0.0001 이상 0.1 이하의 값만 입력가능합니다.";
+			} else checkResult.result = true;
+			
+			break;
+			
+		case "conf_thres" :
+			if( 0.1 > Number(targetValue) || 0.95 < Number(targetValue) ) {
+				checkResult.defaultValue = "0.5";
+				checkResult.validationMsg = "0.1 이상 0.95 이하의 값만 입력가능합니다.";
+			} else checkResult.result = true;
+			
+			break;
+		case "iou_thres" :
+			if( 0.1 > Number(targetValue) || 0.95 < Number(targetValue) ) {
+				checkResult.defaultValue = "0.5";
+				checkResult.validationMsg = "0.1 이상 0.95 이하의 값만 입력가능합니다.";
+			} else checkResult.result = true;
+			
+			break;
+			
+		default: // 유효성 검사가 필요 없는 것들은 true 로 넘겨버
+			checkResult.result = true;
+			break;
+			
+	}
+	
+	return checkResult;
+	
+}	
+

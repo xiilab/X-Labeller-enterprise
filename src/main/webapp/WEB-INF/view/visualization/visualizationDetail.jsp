@@ -382,10 +382,10 @@
                             // 	return { type: item, count: Math.floor(Math.random() * 1000) }
                             // });
                             const result = [
-                                {type: 'HD이하', count: Math.floor(data.hd_data_cnt)},
-                                {type: 'FHD', count: Math.floor(data.fhd_data_cnt)},
-                                {type: 'QHD', count: Math.floor(data.qhd_data_cnt)},
-                                {type: '4K이상', count: Math.floor(data.fk_data_cnt)}
+                                {type: 'HD이하 (1280x720)', count: Math.floor(data.hd_data_cnt)},
+                                {type: 'FHD (1920x1080)', count: Math.floor(data.fhd_data_cnt)},
+                                {type: 'QHD (2560x1440)', count: Math.floor(data.qhd_data_cnt)},
+                                {type: '4K이상 (3840x2160)', count: Math.floor(data.fk_data_cnt)}
                             ]
 
                             // that.computed.initDataQuantityPerResolution(result);
@@ -576,10 +576,10 @@
                             // 	return { type: item, count: Math.floor(Math.random() * 1000) }
                             // });
                             const result = [
-                                {type: 'HD이하', count: Math.floor(data.hd_meta_cnt)}
-                                , {type: 'FHD', count: Math.floor(data.fhd_meta_cnt)}
-                                , {type: 'QHD', count: Math.floor(data.qhd_meta_cnt)}
-                                , {type: '4K이상', count: Math.floor(data.fk_meta_cnt)}
+                                {type: 'HD이하 (1280x720)', count: Math.floor(data.hd_meta_cnt)}, 
+                                {type: 'FHD (1920x1080)', count: Math.floor(data.fhd_meta_cnt)},
+                                {type: 'QHD (2560x1440)', count: Math.floor(data.qhd_meta_cnt)},
+                                {type: '4K이상 (3840x2160)', count: Math.floor(data.fk_meta_cnt)}
                             ]
 
                             that.computed.initClassQuantityPerResolution(result);
@@ -1223,7 +1223,8 @@
                                 LineHeight: 30,
 //	 								formatter : function(value) {
 //	 									return "";
-//	 								}						
+//	 								}			
+                                interval : 'auto',
                             },
                             axisLine: {onZero: false, lineStyle: {color: "#e4e4e4"}},
                         },
@@ -1231,6 +1232,8 @@
                             type: 'category',
                             axisTick: {show: false},
                             axisLine: {onZero: false, lineStyle: {color: "#e4e4e4"}},
+                            // 여기!! 
+                            /// axisLabel : { interval : 0 },
 
                         }
                     ],
@@ -1283,9 +1286,14 @@
                 }
 
                 if (optionObj['stacked']) {
-
+	
                 }
+                
+               	if (typeof optionObj['xAxisInterval'] != 'undefined') {
+               		chartOption['xAxis'][0]['axisLabel']['interval'] = optionObj['xAxisInterval'];
+               	}
 
+               	
                 that.vis.set(optionObj['target'] + " .chart", chartOption, optionObj['chartName']);
 
             },
