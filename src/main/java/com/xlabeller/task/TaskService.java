@@ -16,7 +16,6 @@ import com.xlabeller.sshSession.SessionCmdExecute;
 import com.xlabeller.sshSession.SessionSingletone;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.util.StringUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,10 +30,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -1397,7 +1394,38 @@ public class TaskService {
                                 .get();
                 //JSONObject jsonObj = (JSONObject)parser.parse(config);
                 // (String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String confThreshold, String iouThreshold, String type) {
-                result = sessionCmdExecute.callCustomYolov5Inference(projectId, taskId, gpuIndex, modelName, csvSavePath, confThreshold, iouThreshold, "multi");
+                result = sessionCmdExecute.callCustomYolov5InferenceBySeg(projectId, taskId, gpuIndex, modelName, csvSavePath, confThreshold, iouThreshold, "multi");
+            } else if (algorithmId.equals("10")) {
+                AlgorithmVO algorithmVO = new AlgorithmVO();
+                algorithmVO.setAlgorithm_id(algorithmId);
+                AlgorithmVO algorithmById = algorithmDao.getAlgorithmById(algorithmVO);
+                String algorithmConfig = algorithmById.getInference_param();
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(algorithmConfig);
+                JSONArray jsonArr = (JSONArray) obj;
+                String confThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "conf_thres".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.25"));
+                                })
+                                .findFirst()
+                                .get();
+                String iouThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "iou_thres".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.25"));
+                                })
+                                .findFirst()
+                                .get();
+                //JSONObject jsonObj = (JSONObject)parser.parse(config);
+                // (String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String confThreshold, String iouThreshold, String type) {
+                result = sessionCmdExecute.callCustomYolov5InferenceByBbox(projectId, taskId, gpuIndex, modelName, csvSavePath, confThreshold, iouThreshold, "multi");
             } else {
                 config = config.replaceAll("\"", "\\\\\"");
                 result = sessionCmdExecute.callCustomInference(projectId, taskId, algorithmId, gpuIndex, mode, modelName, csvSavePath, config);
@@ -1582,7 +1610,38 @@ public class TaskService {
                                 .get();
                 //JSONObject jsonObj = (JSONObject)parser.parse(config);
                 // (String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String confThreshold, String iouThreshold, String type) {
-                sessionCmdExecute.callCustomYolov5Inference(projectId, taskId, gpuIndex, modelName, csvSaveFileName, confThreshold, iouThreshold, "single");
+                sessionCmdExecute.callCustomYolov5InferenceBySeg(projectId, taskId, gpuIndex, modelName, csvSaveFileName, confThreshold, iouThreshold, "single");
+            } else if (algorithmId.equals("10")) {
+                AlgorithmVO algorithmVO = new AlgorithmVO();
+                algorithmVO.setAlgorithm_id(algorithmId);
+                AlgorithmVO algorithmById = algorithmDao.getAlgorithmById(algorithmVO);
+                String algorithmConfig = algorithmById.getInference_param();
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(algorithmConfig);
+                JSONArray jsonArr = (JSONArray) obj;
+                String confThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "conf_thres".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.25"));
+                                })
+                                .findFirst()
+                                .get();
+                String iouThreshold =
+                        (String) jsonArr.stream()
+                                .filter((jsonObj) -> {
+                                    return "iou_thres".equals((String) ((JSONObject) jsonObj).get("param"));
+                                })
+                                .map((jsonObj) -> {
+                                    return String.valueOf(((JSONObject)jsonObj).getOrDefault("defaultvalue", "0.25"));
+                                })
+                                .findFirst()
+                                .get();
+                //JSONObject jsonObj = (JSONObject)parser.parse(config);
+                // (String projectId, String taskId, String gpuIndex, String modelName, String csvFileName, String confThreshold, String iouThreshold, String type) {
+                sessionCmdExecute.callCustomYolov5InferenceByBbox(projectId, taskId, gpuIndex, modelName, csvSaveFileName, confThreshold, iouThreshold, "single");
             } else {
                 config = config.replaceAll("\"", "\\\\\"");
                 sessionCmdExecute.callCustomInference(projectId, taskId, algorithmId, gpuIndex, mode, modelName, csvSaveFileName, config);

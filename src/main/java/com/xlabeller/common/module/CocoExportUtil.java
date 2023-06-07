@@ -256,6 +256,7 @@ public class CocoExportUtil {
     public JSONArray createAnnotationByList(List<ImExportVO> exportAnnotationList) {
         try {
             JSONArray resultArr = new JSONArray();
+			int index = 0;
             for(ImExportVO exportAnnotation : exportAnnotationList) {
                 JSONObject resultObj = new JSONObject();
 
@@ -272,7 +273,6 @@ public class CocoExportUtil {
                 JSONArray bboxArray = new JSONArray();
                 // annotation['segmentation']로 저장될 변수
                 JSONArray pointsArray = new JSONArray();
-                int index = 0;
                 if (exportAnnotation.getLabel_type().equals("IMAGE_BBOX")) {
                     // 라벨타입이 BBOX인 경우, x,y,w,h로 저장되어 있는 값을 ","기준으로 잘라, 하나씩 값을 꺼내옴
                     String[] splitBbox = info.split(",");
