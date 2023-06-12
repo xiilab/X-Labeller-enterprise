@@ -109,11 +109,16 @@ public class FileDecompress{
 					String streamToString = streamOfString.collect(Collectors.joining());
 					streamToString = streamToString.replaceAll("[\\p{Cf}]", "");
 					JSONArray tempArr = (JSONArray) jp.parse(streamToString);
-					JSONObject tempObj = (JSONObject) tempArr.get(0);
-					tempObj.put("path", path);
+					for (int j = 0; j < tempArr.size(); j++) {
+						JSONObject tempObj = (JSONObject) tempArr.get(j);
+						tempObj.put("path", path);
+						metaJson.add(tempObj);
+					}
+					// JSONObject tempObj = (JSONObject) tempArr.get(0);
+					// tempObj.put("path", path);
 					//hc.park
 					//마지막 label만 추가되는 부분 fix
-					metaJson.add(tempObj);
+					// metaJson.add(tempObj);
 				}else {
 					
 					
