@@ -6350,7 +6350,8 @@
 						
 						let html = "<option value=''>Please select the project</option>"; 
 						for(let i=0, len = data.length; i<len; i++){
-							html += "<option data-id='"+data[i]["id"]+"' value='"+data[i]["title"]+"'>";
+							// html += "<option data-id='"+data[i]["id"]+"' value='"+data[i]["title"]+"'>";
+							html += "<option data-id='"+data[i]["project_id"]+"' value='"+data[i]["title"]+"'>";
 							html += data[i]["title"];
 							html += "</option>";
 				
