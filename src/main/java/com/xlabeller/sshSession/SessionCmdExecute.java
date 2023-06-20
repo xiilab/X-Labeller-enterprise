@@ -224,22 +224,40 @@ public class SessionCmdExecute implements Callable<Object> {
 		for (int i = 0; i < gpuNum; i++) {
 			String getGpuStatusCmd = "docker ps --filter \"label=gpu_id=" + i + "\"";
 			String getGpuStatusCmdOutput = cmdExcute(getGpuStatusCmd);
-			String[] GpuStatusResult = getGpuStatusCmdOutput.split("\n");
-			if (i == 0) {
-				if (GpuStatusResult.length == 1) {
+			String[] gpuStatusResult = getGpuStatusCmdOutput.split("\n");
+
+			if (gpuStatusResult.length == 1) {
+				if (availableGpuIndex.length() == 0) {
 					availableGpuIndex.append(String.valueOf(i));
 				} else {
-					unAvailableGpuIndex.append(String.valueOf(i));
-				}
-			} else {
-				if (GpuStatusResult.length == 1) {
 					availableGpuIndex.append(",");
 					availableGpuIndex.append(String.valueOf(i));
+				}
+			} else {
+				if (unAvailableGpuIndex.length() == 0) {
+					unAvailableGpuIndex.append(String.valueOf(i));
 				} else {
 					unAvailableGpuIndex.append(",");
 					unAvailableGpuIndex.append(String.valueOf(i));
 				}
 			}
+
+
+//			if (i == 0) {
+//				if (gpuStatusResult.length == 1) {
+//					availableGpuIndex.append(String.valueOf(i));
+//				} else {
+//					unAvailableGpuIndex.append(String.valueOf(i));
+//				}
+//			} else {
+//				if (gpuStatusResult.length == 1) {
+//					availableGpuIndex.append(",");
+//					availableGpuIndex.append(String.valueOf(i));
+//				} else {
+//					unAvailableGpuIndex.append(",");
+//					unAvailableGpuIndex.append(String.valueOf(i));
+//				}
+//			}
 		}
 
 		GpuNodeStatusVO gpuResult = new GpuNodeStatusVO();

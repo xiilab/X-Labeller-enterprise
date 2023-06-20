@@ -16,6 +16,7 @@ import com.xlabeller.sshSession.SessionCmdExecute;
 import com.xlabeller.sshSession.SessionSingletone;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -2052,6 +2053,70 @@ public class TaskService {
             }
         }
     }
+//    public Object getTrainLog(TrainLogVO trainLogVO) {
+//        UserVO userInfo = SessionUtil.getUserInfo();
+//        if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
+//            return Output.JsonOutput("2001", "로그인 세션이 만료 되었습니다");
+//        }
+//        if (trainLogVO.getTask_id() == null || trainLogVO.getTask_id().length() <= 0) {
+//            return Output.JsonOutput("4584", "Occured Loading Log");
+//        }
+//        TaskVO inputTaskVO = new TaskVO();
+//        inputTaskVO.setTask_id(trainLogVO.getTask_id());
+//        TaskVO oneTask = taskDao.getTaskById(inputTaskVO);
+//        if (oneTask == null) {
+//            return Output.JsonOutput("200", null);
+//        }
+//        if (oneTask.getProject_id() == null || oneTask.getProject_id().length() <= 0) {
+//            return Output.JsonOutput("200", null);
+//        }
+//        if (oneTask.getTask_id() == null || oneTask.getTask_id().length() <= 0) {
+//            return Output.JsonOutput("200", null);
+//        }
+//        String projectId = oneTask.getProject_id();
+//        String taskId = oneTask.getTask_id();
+//        String logPath = WORKSPACE_PATH + projectId + "/" + taskId + "/" + "log/run.log";
+//        TextReader tr;
+//        String log = "";
+//        try {
+//            tr = new TextReader(logPath);
+//            if (trainLogVO.getStart() == null || trainLogVO.getStart().equals("")) {
+//                int start = tr.getFileLength() - Integer.valueOf(trainLogVO.getSize());
+//
+//                if (start <= 0) {
+//                    start = 0;
+//                }
+//
+//                log = tr.getRandomAccess(start, Integer.valueOf(trainLogVO.getSize()));
+//
+//                TrainLogVO result = new TrainLogVO();
+//                result.setLog(log);
+//
+//                trainLogVO.setStart(String.valueOf(start));
+//
+//                return Output.JsonOutput("200", result);
+//            } else {
+//                log = tr.getRandomAccess(Integer.valueOf(trainLogVO.getStart()), Integer.valueOf(trainLogVO.getSize()));
+//                TrainLogVO result = new TrainLogVO();
+//                result.setLog(log);
+//                return Output.JsonOutput("200", result);
+//            }
+//        } catch (Exception e) {
+//            if (e instanceof NumberFormatException) {
+//                logger.error("NumberFormatException Error!", e);
+//                return Output.JsonOutput("4584", "Occured Loading Log");
+//            } else if (e instanceof FileNotFoundException) {
+//                logger.error("FileNotFoundException Error!", e);
+//                return Output.JsonOutput("4584", "Occured Loading Log");
+//            } else if (e instanceof IOException) {
+//                logger.error("IOException Error!", e);
+//                return Output.JsonOutput("4584", "Occured Loading Log");
+//            } else {
+//                logger.error("Excpetion Error!", e);
+//                return Output.JsonOutput("4584", "Occured Loading Log");
+//            }
+//        }
+//    }
 
     private static int countLines(String str) {
         if (str == null || str.length() <= 0) {
@@ -2823,7 +2888,7 @@ public class TaskService {
 
         for (int i = 0; i < availableGpuNodeResult.size(); i++) {
             try {
-                GpuNodeStatusVO gpuNodeStatusVO = availableGpuNodeResult.get(i).get();
+                //GpuNodeStatusVO gpuNodeStatusVO = availableGpuNodeResult.get(i).get();
                 resultAvailableGpuNodeList.add(availableGpuNodeResult.get(i).get());
             } catch (InterruptedException | ExecutionException e) {
                 if (e instanceof InterruptedException) {
@@ -2850,6 +2915,15 @@ public class TaskService {
 
         for (int i = 0; i < resultAvailableGpuNodeList.size(); i++) {
             resultAvailableGpuNodeList.get(i).setGpu_node_id(gpuMap.get(resultAvailableGpuNodeList.get(i).getNode_ip()));
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String s = null;
+        try {
+            s = objectMapper.writeValueAsString(resultAvailableGpuNodeList);
+            logger.info("AVALIABLE GPU : "+ s);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         return Output.JsonOutput("200", resultAvailableGpuNodeList);
@@ -3124,6 +3198,7 @@ public class TaskService {
         if (dataList == null || dataList.isEmpty() || dataList.size() <= 0) {
             return Output.JsonOutput("3500", "유효하지 않은 접근입니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
         }
+
         // 가져온 dataList를 통해 MetaDataList를 가져옴, Annotation에 Path를 저장하기 위함
         List<MetaVO> metaList = new ArrayList<MetaVO>();
         for (int i = 0; i < dataList.size(); i++) {

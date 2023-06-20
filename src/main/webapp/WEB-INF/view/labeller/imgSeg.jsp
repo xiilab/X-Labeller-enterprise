@@ -1078,7 +1078,7 @@
 										data-length="200" 
 										placeholder="Please enter the task description">
 								</div>
-								<div class="input_wrap flex">
+								<div class="input_wrap flex hide">
 									<label>Inheritance</label> <select id="task_result"
 										class="task_result" name="task_result">
 		

@@ -50,9 +50,7 @@ public class VocImportUtil {
     public VocImportUtil(MultipartFile multipartFile) {
         this.vocZipFile = multipartFile;
         this.importAnnotationsInfoMap = new HashMap<>();
-        //this.importVocImageSetsMainList = new ArrayList<>();
         this.importVocJpegImagesMap = new HashMap<>();
-        // this.importVocImageSetsSegList = new ArrayList<>();
         this.importSegmentationObjectInfoMap = new HashMap<>();
     }
 
@@ -101,32 +99,6 @@ public class VocImportUtil {
                 }
             });
         }
-//        this.importSegmentationObjectInfoMap.for((fileName) -> {
-//            JSONArray annotationsResultArray = this.importAnnotationsInfoMap.get(fileName);
-//            JSONArray segmentationInfoArray = this.importSegmentationObjectInfoMap.get(fileName);
-//            segmentationInfoArray.forEach((jsonObject) -> {
-//                JSONObject segmentationInfoObj = (JSONObject) jsonObject;
-//                // 세그멘테이션 area값 꺼내오기
-//                double segArea = (double) segmentationInfoObj.get("area");
-//                double min = Double.MAX_VALUE;
-//
-//                // XML에 있는 bbox값을 읽어 area를 구한 뒤, 세그멘테이션 area와 가장 근접한 값 찾기
-//                for (int i = 0; i < annotationsResultArray.size(); i++) {
-//                    JSONObject annotationsResultObject = (JSONObject) annotationsResultArray.get(i);
-//                    String labelName = (String) annotationsResultObject.get("label");
-//                    String[] boxInfo = ((String) annotationsResultObject.get("info")).split(",");
-//                    double width = Double.parseDouble(boxInfo[2]);
-//                    double height = Double.parseDouble(boxInfo[3]);
-//                    double area = width * height;
-//                    double abs = Math.abs(segArea - area);
-//                    if (abs < min) {
-//                        min = abs;
-//                        segmentationInfoObj.put("label", labelName);
-//                    }
-//                }
-//                //segmentationInfoObj.remove("area");
-//            });
-//        });
     }
 
     private void readImportVocZipFile(String labelType) {
@@ -237,7 +209,6 @@ public class VocImportUtil {
 
 
             JSONArray resultJsonArray = new JSONArray();
-            //JSONArray pointJsonArray = new JSONArray();
             JSONObject pointJsonObject = new JSONObject();
 
             for (List<Point> contoursPoint : contoursPoints) {
@@ -247,8 +218,8 @@ public class VocImportUtil {
                 int loopCnt = 0;
                 double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
                 for (Point p : contoursPoint) {
-                    // point 중복 로직 추가
                     long count = getDuplicatePointCount(pointJsonArray, p);
+                    // 중복되는 point 있으면 continue
                     if (count > 0) {
                         continue;
                     }
@@ -379,7 +350,7 @@ public class VocImportUtil {
     }
 
     private long getDuplicatePointCount(JSONArray pointJsonArray, Point p) {
-        // point 중복제거 로직 추가
+        // 중복되는 포인트 개수 반환
         return pointJsonArray.stream().filter((pointJson) -> {
             JSONObject jsonObject = (JSONObject) pointJson;
             return (double) jsonObject.get("x") == p.x && (double) jsonObject.get("y") == p.y;

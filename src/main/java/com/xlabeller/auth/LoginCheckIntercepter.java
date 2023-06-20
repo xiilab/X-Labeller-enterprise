@@ -16,57 +16,57 @@ import java.io.PrintWriter;
 public class LoginCheckIntercepter extends HandlerInterceptorAdapter {
 	
  
-//	@Override
-//	public boolean preHandle(HttpServletRequest request,HttpServletResponse response,Object handler){
-//
-//
-//		boolean result   =  false;
-//		response.setContentType("application/json");
-//		response.setCharacterEncoding("UTF-8");
-////		String rootPath   =  request.getContextPath();
-//		try{
-////			logger.debug("enter intercepter");
-//			HttpSession session  =  request.getSession(false);
-////			System.out.println("session : " + session.getId());
-////			session.setMaxInactiveInterval(60*60*24);
-//
-//			if(session == null){
-//				JSONObject errObj = new JSONObject();
-//				PrintWriter out = response.getWriter();
-//				errObj.put("code", "2001");
-//				errObj.put("data", "로그인 세션 기간이 만료 되었습니다");
-//				out.print(errObj);
-//				out.flush();
-//				return false;
-//			}else{
-//
-//				UserVO userVO  =  (UserVO)session.getAttribute("userInfo");
-//				//UserInfo 로 세션 등록
-//				if(userVO != null && userVO.getUser_id() != null){
-//				// session exist
-//					if(SessionUtil.checkSessionMap(userVO.getUser_id(), session)) {return true;}
-//					SessionUtil.putSessionMap(userVO.getUser_id(), session);
-//
-//				}else{
-//					JSONObject errObj = new JSONObject();
-//					PrintWriter out = response.getWriter();
-//					errObj.put("code", "2001");
-//					errObj.put("data", "로그인 세션 기간이 만료 되었습니다");
-//					out.print(errObj);
-//					out.flush();
-//					return false;
-//				}
-//
-//			}
-//
-//			result =  true;
-//
-//		}catch(Exception e){
-//			e.printStackTrace();
-//			//logger.debug(e.getMessage());
-//			return false;
-//		}
-//
-//		return result;
-//	}
+	@Override
+	public boolean preHandle(HttpServletRequest request,HttpServletResponse response,Object handler){
+
+
+		boolean result   =  false;
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+//		String rootPath   =  request.getContextPath();
+		try{
+//			logger.debug("enter intercepter");
+			HttpSession session  =  request.getSession(false);
+//			System.out.println("session : " + session.getId());
+//			session.setMaxInactiveInterval(60*60*24);
+
+			if(session == null){
+				JSONObject errObj = new JSONObject();
+				PrintWriter out = response.getWriter();
+				errObj.put("code", "2001");
+				errObj.put("data", "로그인 세션 기간이 만료 되었습니다");
+				out.print(errObj);
+				out.flush();
+				return false;
+			}else{
+
+				UserVO userVO  =  (UserVO)session.getAttribute("userInfo");
+				//UserInfo 로 세션 등록
+				if(userVO != null && userVO.getUser_id() != null){
+				// session exist
+					if(SessionUtil.checkSessionMap(userVO.getUser_id(), session)) {return true;}
+					SessionUtil.putSessionMap(userVO.getUser_id(), session);
+
+				}else{
+					JSONObject errObj = new JSONObject();
+					PrintWriter out = response.getWriter();
+					errObj.put("code", "2001");
+					errObj.put("data", "로그인 세션 기간이 만료 되었습니다");
+					out.print(errObj);
+					out.flush();
+					return false;
+				}
+
+			}
+
+			result =  true;
+
+		}catch(Exception e){
+			e.printStackTrace();
+			//logger.debug(e.getMessage());
+			return false;
+		}
+
+		return result;
+	}
 }

@@ -1,6 +1,8 @@
 package com.xlabeller.data;
 
+import com.xlabeller.common.exception.HandlerCustomException;
 import com.xlabeller.common.module.*;
+import com.xlabeller.meta.MetaDao;
 import com.xlabeller.models.*;
 import com.xlabeller.task.TaskDao;
 import org.apache.log4j.Logger;
@@ -13,7 +15,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -27,6 +31,9 @@ import java.util.Base64.Encoder;
 public class DataService {
 	@Autowired
 	private DataDao dataDao;
+
+	@Autowired
+	private MetaDao metaDao;
 	
 	@Autowired
 	private TaskDao taskDao;
@@ -3236,334 +3243,445 @@ public class DataService {
 //		return Output.JsonOutput("200", "등록이 완료되었습니다");
 //
 //	}
-	// 수정됨 
-	public Object importDataset(ImportDatasetVO importDatasetVO) throws Exception {
-		UserVO userInfo = SessionUtil.getUserInfo();
-		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
-			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
-		}
-		if(importDatasetVO.getTitle() == null || importDatasetVO.getTitle().length() <= 0) {
-			return Output.JsonOutput("4061", "타이틀(제목)이 존재하지 않습니다.");
-		}
-		if(importDatasetVO.getContents() == null || importDatasetVO.getContents().length() <= 0) {
-			return Output.JsonOutput("4061","컨텐츠(내용)이 존재하지 않습니다");
-		}
-		
-		// 압축해제
-		FileDecompress fd = new FileDecompress();
-		
-		fd.open(importDatasetVO.getFiles()[0].getInputStream(), XLABELLER_ROOT_PATH + "dataset/", "dataset/",
-				importDatasetVO.getIs_new());
-		fd.proc();
-		// 압축파일의 data.json파일이 JSON형태로 반환
-		
-		// IMAGE_SEGMENTATION, IMAGE_BBOX용
-		JSONArray jArr = fd.getMeta();
-		
-		if (jArr == null || jArr.isEmpty() || jArr.size() <= 0) {
-			throw new Exception("4001#지원하지 않는 데이터 포맷입니다. 지속적으로 발생시 문의 부탁드립니다.");
-		}
-		
-//		String label_type = importDatasetVO.getLabel_type();
-		String label_type = (String)((JSONObject)jArr.get(0)).get("label_type");
-		if(label_type == null || label_type.length() <= 0) {
-			return Output.JsonOutput("4071", "import할 수 없는 파일입니다.");
-		}
-		
-		List<MetaVO> metaList = new ArrayList<MetaVO>();
-		
-		if(!(label_type.equals("#IMAGE_BBOX") || label_type.equals("#IMAGE_SEGMENTATION") || label_type.equals("#VIDEO_BBOX"))) {
-			return Output.JsonOutput("4071", "import할 수 없는 파일입니다.");
-		}
-		
-		if (importDatasetVO.getFiles() == null || importDatasetVO.getFiles().length <= 0) {
-			return Output.JsonOutput("200", "등록이 완료되었습니다");
-		}
+	// 수정됨
 
-		List<String> pathList = fd.getPath();
-		// 파일명
-		HashMap<String, String> originalPathList = fd.getOriginalPath();
-		if (pathList == null || pathList.isEmpty() || pathList.size() <= 0) {
-			throw new Exception("4001#등록이 올바르지 않습니다.");
-		}
-		
-		if (originalPathList == null || originalPathList.isEmpty() || originalPathList.size() <= 0) {
-			throw new Exception("4001#등록이 올바르지 않습니다.");
-		}
-		// dataset생성까지 공통된 플로우
-		if (label_type.equals("#IMAGE_BBOX") || label_type.equals("#IMAGE_SEGMENTATION")) {
-			// IMAGE_BBOX, IMAGE_SEGMENTATION일 때
-			label_type = label_type.substring(1);
-			DatasetVO datasetVO = new DatasetVO();
-			datasetVO.setContents(importDatasetVO.getContents());
-			datasetVO.setTitle(importDatasetVO.getTitle());
-			datasetVO.setUser_id(userInfo.getUser_id());
-			datasetVO.setLabel_type(label_type);
-			datasetVO.setMedia_type("IMAGE");
-			datasetVO.setStatus("1");
-
-			int cnt = dataDao.insertDataset(datasetVO);
-			if (cnt != 1) {
-				throw new Exception("4001#등록이 올바르지 않습니다.");
-			}
-
-			if (datasetVO == null || datasetVO.getDataset_id() == null || datasetVO.getDataset_id().length() <= 0) {
-				throw new Exception("4001#등록이 올바르지 않습니다.");
-			}
-			
-			String datasetId = datasetVO.getDataset_id();
-			
-			// 썸네일
-//			String tempPath = null;
-//			StringBuffer sb = null;
-//			for (int i = 0; i < pathList.size(); i++) {
-//				tempPath = pathList.get(i);
-//				sb = new StringBuffer(tempPath);
-//				int lastIndex = sb.lastIndexOf(".");
-//				sb.insert(lastIndex, "_tb");
+	// OG
+//	public Object importDataset(ImportDatasetVO importDatasetVO) throws Exception {
+//		UserVO userInfo = SessionUtil.getUserInfo();
+//		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
+//			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
+//		}
+//		if(importDatasetVO.getTitle() == null || importDatasetVO.getTitle().length() <= 0) {
+//			return Output.JsonOutput("4061", "타이틀(제목)이 존재하지 않습니다.");
+//		}
+//		if(importDatasetVO.getContents() == null || importDatasetVO.getContents().length() <= 0) {
+//			return Output.JsonOutput("4061","컨텐츠(내용)이 존재하지 않습니다");
+//		}
 //
-//				Thumbnails.of(new File(XLABELLER_ROOT_PATH + tempPath)).size(100, 100).outputQuality(0.8)
-//						.toFile(new File(XLABELLER_ROOT_PATH + sb));
+//		// 압축해제
+//		FileDecompress fd = new FileDecompress();
+//
+//		fd.open(importDatasetVO.getFiles()[0].getInputStream(), XLABELLER_ROOT_PATH + "dataset/", "dataset/",
+//				importDatasetVO.getIs_new());
+//		fd.proc();
+//		// 압축파일의 data.json파일이 JSON형태로 반환
+//
+//		// IMAGE_SEGMENTATION, IMAGE_BBOX용
+//		JSONArray jArr = fd.getMeta();
+//
+//		if (jArr == null || jArr.isEmpty() || jArr.size() <= 0) {
+//			throw new Exception("4001#지원하지 않는 데이터 포맷입니다. 지속적으로 발생시 문의 부탁드립니다.");
+//		}
+//
+////		String label_type = importDatasetVO.getLabel_type();
+//		String label_type = (String)((JSONObject)jArr.get(0)).get("label_type");
+//		if(label_type == null || label_type.length() <= 0) {
+//			return Output.JsonOutput("4071", "import할 수 없는 파일입니다.");
+//		}
+//
+//		List<MetaVO> metaList = new ArrayList<MetaVO>();
+//
+//		if(!(label_type.equals("#IMAGE_BBOX") || label_type.equals("#IMAGE_SEGMENTATION") || label_type.equals("#VIDEO_BBOX"))) {
+//			return Output.JsonOutput("4071", "import할 수 없는 파일입니다.");
+//		}
+//
+//		if (importDatasetVO.getFiles() == null || importDatasetVO.getFiles().length <= 0) {
+//			return Output.JsonOutput("200", "등록이 완료되었습니다");
+//		}
+//
+//		List<String> pathList = fd.getPath();
+//		// 파일명
+//		HashMap<String, String> originalPathList = fd.getOriginalPath();
+//		if (pathList == null || pathList.isEmpty() || pathList.size() <= 0) {
+//			throw new Exception("4001#등록이 올바르지 않습니다.");
+//		}
+//
+//		if (originalPathList == null || originalPathList.isEmpty() || originalPathList.size() <= 0) {
+//			throw new Exception("4001#등록이 올바르지 않습니다.");
+//		}
+//		// dataset생성까지 공통된 플로우
+//		if (label_type.equals("#IMAGE_BBOX") || label_type.equals("#IMAGE_SEGMENTATION")) {
+//			// IMAGE_BBOX, IMAGE_SEGMENTATION일 때
+//			label_type = label_type.substring(1);
+//			DatasetVO datasetVO = new DatasetVO();
+//			datasetVO.setContents(importDatasetVO.getContents());
+//			datasetVO.setTitle(importDatasetVO.getTitle());
+//			datasetVO.setUser_id(userInfo.getUser_id());
+//			datasetVO.setLabel_type(label_type);
+//			datasetVO.setMedia_type("IMAGE");
+//			datasetVO.setStatus("1");
+//
+//			int cnt = dataDao.insertDataset(datasetVO);
+//			if (cnt != 1) {
+//				throw new Exception("4001#등록이 올바르지 않습니다.");
 //			}
-
-			HashMap<String, String> dataPathMap = new HashMap<String, String>();
-			DataVO inputDataVO = new DataVO();
-			for (int i = 0; i < pathList.size(); i++) {
-				File convFile = null;
-				BufferedImage bimg = null;
-				
-				try {			
-					convFile = new File(XLABELLER_ROOT_PATH + pathList.get(i));
-					bimg = ImageIO.read(convFile);
-					// import 수정되어야 함.
-					inputDataVO.setDataset_id(datasetId);
-					inputDataVO.setPath(pathList.get(i));
-					inputDataVO.setMedia_type("IMAGE");
-					inputDataVO.setWidth(String.valueOf(bimg.getWidth()));
-					inputDataVO.setHeight(String.valueOf(bimg.getHeight()));
-					inputDataVO.setFps("1");
-					inputDataVO.setStatus("1");
-					if(originalPathList.get(pathList.get(i)) == null || originalPathList.get(pathList.get(i)).length() <= 0) {
-						inputDataVO.setFilename(pathList.get(i));
-					} else {
-						inputDataVO.setFilename(originalPathList.get(pathList.get(i)));
-					}
-					inputDataVO.setFrame("1");
-					inputDataVO.setDuration("0");
-					inputDataVO.setConfirm_status("1");
-					inputDataVO.setUser_id(userInfo.getUser_id());
-					cnt = dataDao.insertDataOne(inputDataVO);
-					if (cnt != 1) {
-						continue;
-						//throw new Exception("4002#등록이 올바르지 않습니다.");
-					}
-					dataPathMap.put(pathList.get(i), inputDataVO.getData_id());
-					
-				} catch (IOException e) {
-					logger.error("IOException Error!", e);
-					continue;
-					//throw new Exception("4072#등록이 올바르지 않습니다.");
-				} finally {
-					bimg.flush();
-					bimg = null;
-				}
-			}
-
-			// 메타정보의 data_id를 통해 이미지 path가져옴
-
-			for (int i = 0; i < jArr.size(); i++) {
-				DataVO dataVO = new DataVO();
-				JSONObject jObj = (JSONObject) jArr.get(i);
-				String dataPath = (String) (jObj.get("path"));
-				if (dataPath == null || dataPath.length() <= 0) {
-					throw new Exception("4001#압축된 파일에 손상된 파일이 포함되어있습니다.\n파일을 확인 후 다시 시도해주세요.");
-				}
-
-				String dataId = dataPathMap.get(dataPath);
-				if (dataId == null || dataPath.length() <= 0 || dataPath.equals("")) {
-					continue;
-				}
-
-				dataVO.setData_id(dataId);
-
-//				String w = (String) jObj.get("x1");
+//
+//			if (datasetVO == null || datasetVO.getDataset_id() == null || datasetVO.getDataset_id().length() <= 0) {
+//				throw new Exception("4001#등록이 올바르지 않습니다.");
+//			}
+//
+//			String datasetId = datasetVO.getDataset_id();
+//
+//			// 썸네일
+////			String tempPath = null;
+////			StringBuffer sb = null;
+////			for (int i = 0; i < pathList.size(); i++) {
+////				tempPath = pathList.get(i);
+////				sb = new StringBuffer(tempPath);
+////				int lastIndex = sb.lastIndexOf(".");
+////				sb.insert(lastIndex, "_tb");
+////
+////				Thumbnails.of(new File(XLABELLER_ROOT_PATH + tempPath)).size(100, 100).outputQuality(0.8)
+////						.toFile(new File(XLABELLER_ROOT_PATH + sb));
+////			}
+//
+//			HashMap<String, String> dataPathMap = new HashMap<String, String>();
+//			DataVO inputDataVO = new DataVO();
+//			for (int i = 0; i < pathList.size(); i++) {
+//				File convFile = null;
+//				BufferedImage bimg = null;
+//
+//				try {
+//					convFile = new File(XLABELLER_ROOT_PATH + pathList.get(i));
+//					bimg = ImageIO.read(convFile);
+//					// import 수정되어야 함.
+//					inputDataVO.setDataset_id(datasetId);
+//					inputDataVO.setPath(pathList.get(i));
+//					inputDataVO.setMedia_type("IMAGE");
+//					inputDataVO.setWidth(String.valueOf(bimg.getWidth()));
+//					inputDataVO.setHeight(String.valueOf(bimg.getHeight()));
+//					inputDataVO.setFps("1");
+//					inputDataVO.setStatus("1");
+//					if(originalPathList.get(pathList.get(i)) == null || originalPathList.get(pathList.get(i)).length() <= 0) {
+//						inputDataVO.setFilename(pathList.get(i));
+//					} else {
+//						inputDataVO.setFilename(originalPathList.get(pathList.get(i)));
+//					}
+//					inputDataVO.setFrame("1");
+//					inputDataVO.setDuration("0");
+//					inputDataVO.setConfirm_status("1");
+//					inputDataVO.setUser_id(userInfo.getUser_id());
+//					cnt = dataDao.insertDataOne(inputDataVO);
+//					if (cnt != 1) {
+//						continue;
+//						//throw new Exception("4002#등록이 올바르지 않습니다.");
+//					}
+//					dataPathMap.put(pathList.get(i), inputDataVO.getData_id());
+//
+//				} catch (IOException e) {
+//					logger.error("IOException Error!", e);
+//					continue;
+//					//throw new Exception("4072#등록이 올바르지 않습니다.");
+//				} finally {
+//					bimg.flush();
+//					bimg = null;
+//				}
+//			}
+//
+//			// 메타정보의 data_id를 통해 이미지 path가져옴
+//
+//			for (int i = 0; i < jArr.size(); i++) {
+//				DataVO dataVO = new DataVO();
+//				JSONObject jObj = (JSONObject) jArr.get(i);
+//				String dataPath = (String) (jObj.get("path"));
+//				if (dataPath == null || dataPath.length() <= 0) {
+//					throw new Exception("4001#압축된 파일에 손상된 파일이 포함되어있습니다.\n파일을 확인 후 다시 시도해주세요.");
+//				}
+//
+//				String dataId = dataPathMap.get(dataPath);
+//				if (dataId == null || dataPath.length() <= 0 || dataPath.equals("")) {
+//					continue;
+//				}
+//
+//				dataVO.setData_id(dataId);
+//
+////				String w = (String) jObj.get("x1");
+////				if (w == null || w.length() <= 0) {
+////					continue;
+////				}
+////				String h = (String) jObj.get("h");
+////				if (h == null || h.length() <= 0) {
+////					continue;
+////				}
+////				String x = (String) jObj.get("x1");
+////				if (x == null || x.length() <= 0) {
+////					continue;
+////				}
+////				String y = (String) jObj.get("y1");
+////				if (y == null || y.length() <= 0) {
+////					continue;
+////				}
+//
+//				int x1 = Integer.valueOf(jObj.get("x1").toString());
+//				int x2 = Integer.valueOf(jObj.get("x2").toString());
+//				int y1 = Integer.valueOf(jObj.get("y1").toString());
+//				int y2 = Integer.valueOf(jObj.get("y2").toString());
+//
+//				String w = String.valueOf(x2 - x1);
 //				if (w == null || w.length() <= 0) {
 //					continue;
 //				}
-//				String h = (String) jObj.get("h");
+//				String h = String.valueOf(y2 - y1);
 //				if (h == null || h.length() <= 0) {
 //					continue;
 //				}
-//				String x = (String) jObj.get("x1");
+//				String x = String.valueOf(x1);
 //				if (x == null || x.length() <= 0) {
 //					continue;
 //				}
-//				String y = (String) jObj.get("y1");
+//				String y = String.valueOf(y1);
 //				if (y == null || y.length() <= 0) {
 //					continue;
 //				}
-				
-				int x1 = Integer.valueOf(jObj.get("x1").toString());
-				int x2 = Integer.valueOf(jObj.get("x2").toString());
-				int y1 = Integer.valueOf(jObj.get("y1").toString());
-				int y2 = Integer.valueOf(jObj.get("y2").toString());
-				
-				String w = String.valueOf(x2 - x1);
-				if (w == null || w.length() <= 0) {
-					continue;
-				}
-				String h = String.valueOf(y2 - y1);
-				if (h == null || h.length() <= 0) {
-					continue;
-				}
-				String x = String.valueOf(x1);
-				if (x == null || x.length() <= 0) {
-					continue;
-				}
-				String y = String.valueOf(y1);
-				if (y == null || y.length() <= 0) {
-					continue;
-				}
-				
-				String label = (String) jObj.get("className");
-				if (label == null || label.length() <= 0) {
-					continue;
-				}
-				if(jObj.get("label_type") == null || ((String)jObj.get("label_type")).length() <= 0) {
-					continue;
-				}
-				if(!(((String)jObj.get("label_type")).equals("#IMAGE_BBOX") || ((String)jObj.get("label_type")).equals("#IMAGE_SEGMENTATION"))) {
-					continue;
-				}
-				
-				
-				// temperate code : 211123 - k.park
-				String info = x + "," + y + "," + w + "," + h;
-				
-				// original code : 211123 - k.park
-//				if(((String)jObj.get("label_type")).equals("#IMAGE_SEGMENTATION")) {
-//					JSONArray jsonArray = new JSONArray();
-//					seg = (String)jObj.get("segmentation");
-//					if(seg == null || seg.length() <= 0) {
-//						continue;
-//					}
-//					String box = x + "," + y + "," + w + "," + h;
-//					JSONObject segJson = new JSONObject();
-//					segJson.put("segmentation", seg);
-//					segJson.put("box", box);
-//					jsonArray.add(segJson);
-//					String json = jsonArray.toJSONString();
-//					info = json.replace("\"[", "[");
-//					info = info.replace("]\"", "]");
-//					info = info.replace("\\", "");
-////					info = segJson.toJSONString();
-//					//info = json;
-//				} else if(((String)jObj.get("label_type")).equals("#IMAGE_BBOX")) {
-//					info = x + "," + y + "," + w + "," + h;
+//
+//				String label = (String) jObj.get("className");
+//				if (label == null || label.length() <= 0) {
+//					continue;
 //				}
-				
-				MetaVO metaTempVO = new MetaVO();
-				metaTempVO.setData_id(dataId);
-				metaTempVO.setLabel(label);
-				metaTempVO.setInfo(info);
-				metaTempVO.setUser_id(userInfo.getUser_id());
-				String[] split_label_type = ((String)jObj.get("label_type")).split("#");
-				if(split_label_type.length < 2) {
-					continue;
-				}
-				metaTempVO.setLabel_type(split_label_type[1]);
-				metaList.add(metaTempVO);
-			}
-		} else if(label_type.equals("#VIDEO_BBOX")) {
-			DatasetVO datasetVO = new DatasetVO();
-			datasetVO.setContents(importDatasetVO.getContents());
-			datasetVO.setTitle(importDatasetVO.getTitle());
-			datasetVO.setUser_id(userInfo.getUser_id());
-			datasetVO.setLabel_type("VIDEO_BBOX");
-			datasetVO.setMedia_type("VIDEO");
-			datasetVO.setStatus("1");
+//				if(jObj.get("label_type") == null || ((String)jObj.get("label_type")).length() <= 0) {
+//					continue;
+//				}
+//				if(!(((String)jObj.get("label_type")).equals("#IMAGE_BBOX") || ((String)jObj.get("label_type")).equals("#IMAGE_SEGMENTATION"))) {
+//					continue;
+//				}
+//
+//
+//				// temperate code : 211123 - k.park
+//				String info = x + "," + y + "," + w + "," + h;
+//
+//				// original code : 211123 - k.park
+////				if(((String)jObj.get("label_type")).equals("#IMAGE_SEGMENTATION")) {
+////					JSONArray jsonArray = new JSONArray();
+////					seg = (String)jObj.get("segmentation");
+////					if(seg == null || seg.length() <= 0) {
+////						continue;
+////					}
+////					String box = x + "," + y + "," + w + "," + h;
+////					JSONObject segJson = new JSONObject();
+////					segJson.put("segmentation", seg);
+////					segJson.put("box", box);
+////					jsonArray.add(segJson);
+////					String json = jsonArray.toJSONString();
+////					info = json.replace("\"[", "[");
+////					info = info.replace("]\"", "]");
+////					info = info.replace("\\", "");
+//////					info = segJson.toJSONString();
+////					//info = json;
+////				} else if(((String)jObj.get("label_type")).equals("#IMAGE_BBOX")) {
+////					info = x + "," + y + "," + w + "," + h;
+////				}
+//
+//				MetaVO metaTempVO = new MetaVO();
+//				metaTempVO.setData_id(dataId);
+//				metaTempVO.setLabel(label);
+//				metaTempVO.setInfo(info);
+//				metaTempVO.setUser_id(userInfo.getUser_id());
+//				String[] split_label_type = ((String)jObj.get("label_type")).split("#");
+//				if(split_label_type.length < 2) {
+//					continue;
+//				}
+//				metaTempVO.setLabel_type(split_label_type[1]);
+//				metaList.add(metaTempVO);
+//			}
+//		} else if(label_type.equals("#VIDEO_BBOX")) {
+//			DatasetVO datasetVO = new DatasetVO();
+//			datasetVO.setContents(importDatasetVO.getContents());
+//			datasetVO.setTitle(importDatasetVO.getTitle());
+//			datasetVO.setUser_id(userInfo.getUser_id());
+//			datasetVO.setLabel_type("VIDEO_BBOX");
+//			datasetVO.setMedia_type("VIDEO");
+//			datasetVO.setStatus("1");
+//
+//			HashMap<String, String> dataPathMap = new HashMap<String, String>();
+//			int cnt = dataDao.insertDataset(datasetVO);
+//			if (cnt != 1) {
+//				throw new Exception("4001#등록이 올바르지 않습니다.");
+//			}
+//			for (int i = 0; i < pathList.size(); i++) {
+//				VideoMetaUtil vmu = new VideoMetaUtil(XLABELLER_ROOT_PATH + pathList.get(i));
+//				if (!vmu.isAvailable()) {
+//					continue;
+//					// throw new Exception("4001#지원하는 동영상 포맷이 아닙니다.");
+//				}
+//
+//				String width = String.valueOf(vmu.getWidth());
+//				String height = String.valueOf(vmu.getHeight());
+//
+//				DataVO dataVO = new DataVO();
+//				dataVO.setDataset_id(datasetVO.getDataset_id());
+//				dataVO.setPath(pathList.get(i));
+//
+//				dataVO.setMedia_type("VIDEO");
+//				dataVO.setWidth(String.valueOf(width));
+//				dataVO.setHeight(String.valueOf(height));
+//				dataVO.setFps(String.valueOf(vmu.getFps()));
+//				dataVO.setFilename(originalPathList.get(i));
+//				dataVO.setStatus("1");
+//				dataVO.setConfirm_status("0");
+//				dataVO.setFrame(String.valueOf(vmu.getTotalFrame()));
+//				dataVO.setDuration(String.valueOf(vmu.getDuration()));
+//				dataVO.setUser_id(datasetVO.getUser_id());
+//
+//				int insertDataCnt = dataDao.insertDataOne(dataVO);
+//				if (insertDataCnt != 1) {
+//					continue;
+//					//throw new Exception("4001#등록이 올바르지 않습니다.");
+//				}
+//				dataPathMap.put(pathList.get(i), dataVO.getData_id());
+//
+//			}
+//			for (int i = 0; i < jArr.size(); i++) {
+//				JSONObject json = (JSONObject) jArr.get(i);
+//				String dataPath = (String) (json.get("path"));
+//				if (dataPath == null || dataPath.length() <= 0) {
+//					continue;
+//					//throw new Exception("4001#압축된 파일에 손상된 파일이 포함되어있습니다.\n파일을 확인 후 다시 시도해주세요.");
+//				}
+//
+//				String dataId = dataPathMap.get(dataPath);
+//				if (dataId == null || dataPath.length() <= 0 || dataPath.equals("")) {
+//					continue;
+//				}
+//
+//				String metas = (String)json.get("metas");
+//
+//				MetaVO metaTempVO = new MetaVO();
+//				metaTempVO.setData_id(dataId);
+//				metaTempVO.setLabel((String) json.get("label"));
+//				metaTempVO.setInfo(metas);
+//				metaTempVO.setUser_id(userInfo.getUser_id());
+//				String[] split_label_type = label_type.split("#");
+//				if(split_label_type.length < 2) {
+//					continue;
+//				}
+//				metaTempVO.setLabel_type(split_label_type[1]);
+//
+//				metaList.add(metaTempVO);
+//			}
+//
+//		}
+//		HashMap<String, Object> hm = new HashMap<String, Object>();
+//		hm.put("metaList", metaList);
+//		if (metaList.size() <= 0) {
+//			throw new Exception("4001#등록이 올바르지 않습니다.");
+//		}
+//
+//		int insertMeta_cnt = dataDao.insertMeta(hm);
+//		if (insertMeta_cnt != metaList.size()) {
+//			throw new Exception("4001#등록이 올바르지 않습니다.");
+//		}
+//
+//		return Output.JsonOutput("200", "등록이 완료되었습니다");
+//
+//	}
 
-			HashMap<String, String> dataPathMap = new HashMap<String, String>();
-			int cnt = dataDao.insertDataset(datasetVO);
-			if (cnt != 1) {
-				throw new Exception("4001#등록이 올바르지 않습니다.");
-			}
-			for (int i = 0; i < pathList.size(); i++) {
-				VideoMetaUtil vmu = new VideoMetaUtil(XLABELLER_ROOT_PATH + pathList.get(i));
-				if (!vmu.isAvailable()) {
-					continue;
-					// throw new Exception("4001#지원하는 동영상 포맷이 아닙니다.");
-				}
-
-				String width = String.valueOf(vmu.getWidth());
-				String height = String.valueOf(vmu.getHeight());
-
-				DataVO dataVO = new DataVO();
-				dataVO.setDataset_id(datasetVO.getDataset_id());
-				dataVO.setPath(pathList.get(i));
-
-				dataVO.setMedia_type("VIDEO");
-				dataVO.setWidth(String.valueOf(width));
-				dataVO.setHeight(String.valueOf(height));
-				dataVO.setFps(String.valueOf(vmu.getFps()));
-				dataVO.setFilename(originalPathList.get(i));
-				dataVO.setStatus("1");
-				dataVO.setConfirm_status("0");
-				dataVO.setFrame(String.valueOf(vmu.getTotalFrame()));
-				dataVO.setDuration(String.valueOf(vmu.getDuration()));
-				dataVO.setUser_id(datasetVO.getUser_id());
-
-				int insertDataCnt = dataDao.insertDataOne(dataVO);
-				if (insertDataCnt != 1) {
-					continue;
-					//throw new Exception("4001#등록이 올바르지 않습니다.");
-				}
-				dataPathMap.put(pathList.get(i), dataVO.getData_id());
-
-			}
-			for (int i = 0; i < jArr.size(); i++) {
-				JSONObject json = (JSONObject) jArr.get(i);
-				String dataPath = (String) (json.get("path"));
-				if (dataPath == null || dataPath.length() <= 0) {
-					continue;
-					//throw new Exception("4001#압축된 파일에 손상된 파일이 포함되어있습니다.\n파일을 확인 후 다시 시도해주세요.");
-				}
-
-				String dataId = dataPathMap.get(dataPath);
-				if (dataId == null || dataPath.length() <= 0 || dataPath.equals("")) {
-					continue;
-				}
-
-				String metas = (String)json.get("metas");
-
-				MetaVO metaTempVO = new MetaVO();
-				metaTempVO.setData_id(dataId);
-				metaTempVO.setLabel((String) json.get("label"));
-				metaTempVO.setInfo(metas);
-				metaTempVO.setUser_id(userInfo.getUser_id());
-				String[] split_label_type = label_type.split("#");
-				if(split_label_type.length < 2) {
-					continue;
-				}
-				metaTempVO.setLabel_type(split_label_type[1]);
-
-				metaList.add(metaTempVO);
-			}
-
+	// NEW
+	public Object importDataset(ImportDatasetVO importDatasetVO) throws Exception {
+//		UserVO userInfo = SessionUtil.getUserInfo();
+//		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
+//			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
+//		}
+		if(!StringUtils.hasText(importDatasetVO.getTitle())) {
+			return Output.JsonOutput("4061", "타이틀(제목)이 존재하지 않습니다.");
 		}
-		HashMap<String, Object> hm = new HashMap<String, Object>();
-		hm.put("metaList", metaList);
-		if (metaList.size() <= 0) {
-			throw new Exception("4001#등록이 올바르지 않습니다.");
+		if(!StringUtils.hasText(importDatasetVO.getContents())) {
+			return Output.JsonOutput("4061","컨텐츠(내용)이 존재하지 않습니다");
+		}
+		if (!StringUtils.hasText(importDatasetVO.getLabel_type())) {
+			return Output.JsonOutput("4061","라벨 타입이 존재하지 않습니다.");
 		}
 
-		int insertMeta_cnt = dataDao.insertMeta(hm);
-		if (insertMeta_cnt != metaList.size()) {
-			throw new Exception("4001#등록이 올바르지 않습니다.");
+		String labelType = importDatasetVO.getLabel_type();
+		String title = importDatasetVO.getTitle();
+		String contents = importDatasetVO.getContents();
+
+		VirtualImportUtil virtualImportUtil = new VirtualImportUtil(importDatasetVO.getFiles()[0].getInputStream());
+		virtualImportUtil.initData(labelType);
+		Map<String, byte[]> importVirtualJpegImagesMap = virtualImportUtil.getImportVirtualJpegImagesMap();
+		Map<String, JSONArray> importBoxObjectsInfoMap = virtualImportUtil.getImportBoxObjectsInfoMap();
+		Map<String, JSONArray> importSegObjectInfoMap = virtualImportUtil.getImportSegObjectInfoMap();
+
+		List<MultipartFile> multipartFileList = new ArrayList<>();
+		importVirtualJpegImagesMap.entrySet().forEach((map) -> {
+			String boxObjectMapKey = map.getKey().split("\\.")[0] + ".json";
+			String segObjectMapKey = map.getKey().split("\\.")[0] + "_seg.png";
+			if ("IMAGE_BBOX".equals(labelType) && importBoxObjectsInfoMap.containsKey(boxObjectMapKey)) {
+				MultipartFile multipartFile = new MockMultipartFile(map.getKey(), map.getKey(), "UTF-8", map.getValue());
+				multipartFileList.add(multipartFile);
+			} else if ("IMAGE_SEGMENTATION".equals(labelType) && importSegObjectInfoMap.containsKey(segObjectMapKey)) {
+				MultipartFile multipartFile = new MockMultipartFile(map.getKey(), map.getKey(), "UTF-8", map.getValue());
+				multipartFileList.add(multipartFile);
+			}
+		});
+
+		MultipartFile[] imageFilesArray = multipartFileList.toArray(new MultipartFile[multipartFileList.size()]);
+
+		// Dataset 및 Data 등록
+		DatasetVO insertDatasetVO = new DatasetVO();
+		insertDatasetVO.setTitle(title);
+		insertDatasetVO.setContents(contents);
+		insertDatasetVO.setFiles(imageFilesArray);
+		insertDatasetVO.setMedia_type("IMAGE");
+		insertDatasetVO.setLabel_type(labelType);
+		try {
+			insertDataset(insertDatasetVO);
+		} catch (Exception e) {
+			throw new HandlerCustomException("500", "VOC Import 데이터셋 등록에 실패했습니다.", e);
 		}
+
+		DataVO selectDataVO = new DataVO();
+		selectDataVO.setDataset_id(insertDatasetVO.getDataset_id());
+		List<DataVO> dataList = dataDao.getDataList(selectDataVO);
+		dataList.stream().forEach(dataVO -> {
+			String fileName = dataVO.getFilename().substring(0, dataVO.getFilename().lastIndexOf("."));
+			String boxObjectMapKey = fileName.split("\\.")[0] + ".json";
+			String segObjectMapKey = fileName.split("\\.")[0] + "_seg.png";
+			JSONArray imageAnnotationArray = "IMAGE_BBOX".equals(labelType)?
+					importBoxObjectsInfoMap.get(boxObjectMapKey) : importSegObjectInfoMap.get(segObjectMapKey);
+			virtualImportmeta(dataVO.getData_id(), labelType, imageAnnotationArray);
+		});
 
 		return Output.JsonOutput("200", "등록이 완료되었습니다");
 
+	}
+
+	private void virtualImportmeta(String dataId, String labelType, JSONArray jsonArray) {
+		List<MetaVO> insertMetaList = new ArrayList<>();
+		if (jsonArray.size() == 0) {
+			return ;
+		}
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JSONObject annotationObj = (JSONObject) jsonArray.get(i);
+			MetaVO metaVO = new MetaVO();
+			if (labelType.equals("IMAGE_BBOX")) {
+				String info = annotationObj.get("info").toString();
+				String label = annotationObj.get("label").toString();
+
+				metaVO.setData_id(dataId);
+				//metaVO.setUser_id(SessionUtil.getUserInfo().getUser_id());
+				metaVO.setLabel_type(labelType);
+				metaVO.setInfo(info);
+				metaVO.setLabel(label);
+				insertMetaList.add(metaVO);
+			} else if (labelType.equals("IMAGE_SEGMENTATION")) {
+				String label = annotationObj.get("label").toString();
+				JSONArray info = new JSONArray();
+				JSONObject infoObj = (JSONObject) annotationObj.get("info");
+				info.add(infoObj);
+
+				metaVO.setData_id(dataId);
+				//metaVO.setUser_id(SessionUtil.getUserInfo().getUser_id());
+				metaVO.setLabel_type(labelType);
+				metaVO.setInfo(info.toJSONString());
+				metaVO.setLabel(label);
+				insertMetaList.add(metaVO);
+			}
+		}
+
+		// Meta등록
+		MetaVO insertMetaVO = new MetaVO();
+		insertMetaVO.setMeta_list(insertMetaList);
+		metaDao.insertMetaList(insertMetaVO);
 	}
 
 //	

@@ -273,7 +273,7 @@ var aa = function(){
 				var epoch = epochArr[0];
 				var data = [];
 				for(var j = 0 ; j < epochArr.length ; j++){
-					if(epochArr[j].indexOf("loss") == -1){continue;}
+					if(epochArr[j].indexOf("loss") == -1){ continue;}
 					var lossArr = epochArr[j].split(" - ");
 					var loss = lossArr[2].replace("loss: ","");
 					var r_loss = lossArr[3].replace("regression_loss: ","");
