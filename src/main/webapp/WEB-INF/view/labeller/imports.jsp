@@ -94,8 +94,10 @@
 					<div class="label_type_wrap">
  						<input id="label-type-box" class="radioBtn" name="lable-type" type="radio" value="box" checked/>
  						<label for="label-type-box" class="radio_label">Bounding Box</label>
- 						<input id="label-type-polygon" class="radioBtn hide" name="lable-type" type="radio" value="polygon"/>
- 						<label for="label-type-polygon" class="radio_label hide">Segmentation</label>
+ 						<input id="label-type-polygon" class="radioBtn" name="lable-type" type="radio" value="polygon"/>
+ 						<label for="label-type-polygon" class="radio_label">Segmentation</label>
+ 						<!-- <input id="label-type-polygon" class="radioBtn hide" name="lable-type" type="radio" value="polygon"/> --> 						
+ 						<!-- <label for="label-type-polygon" class="radio_label hide">Segmentation</label> -->
 						<!-- <span class="radioBtn selected" data-value="box"></span>
 						<span class="radio_label">Bounding Box</span>
 						<span class="radioBtn" data-value="polygon"></span>
@@ -213,7 +215,7 @@
 			});
 			
 			// virtual 선택시, seg 선택 불가,
-			that.pt.find("input[name='dataset-type']").off("change").on("change", function(e){
+			/* that.pt.find("input[name='dataset-type']").off("change").on("change", function(e){
 				
 				console.log(" ### RADIO  ", e.target.value)
 				
@@ -227,7 +229,7 @@
 					that.pt.find("input#label-type-polygon").removeClass("hide");
 					that.pt.find("label[for=label-type-polygon]").removeClass("hide");
 				}
-			});
+			}); */
 			
 			//저장하기
 			that.pt.find(".save").off("click").on("click", function(){
