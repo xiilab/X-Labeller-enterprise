@@ -704,6 +704,11 @@
 			// log 데이터가 2줄 반 // 다음 데이터는 반 + 2줄 반줄 이런식으로 올 가능성이 있음
 			
 			//아니면 replace ??
+			
+			// Military : Log Refresh
+			var area = that.data.logArea;
+			area.empty();
+			// console.log("!! empty !!")
 
 			if(isAppend){
 				for(let i = 0, len = arr.length; i<len; i++){
@@ -755,7 +760,8 @@
 			let that = task_detail;
 			var area = that.data.logArea;
 // 				console.log("log: ::", log);
-
+				console.log("## setLogText  : ", log, isAppend)
+				
 				if(isAppend){
 					area.append(log+"\n");
 				} else {
@@ -943,13 +949,15 @@
 			
 			var ajaxData = {
 				task_id : task_id,
-				size: back_size
+				// Military : Log Refresh
+				// size: back_size
 			};
 			console.log("init");			
 			that.callAjax(ajaxData, "init");			// 막아둠 
 		},
 		
 		getTrainLog : function(){
+			
 			let that = task_detail;
 			var task_id = that.data.taskId;
 			var start_pos = that.data.startPos;
@@ -957,8 +965,9 @@
 			
 			var ajaxData = {
 				task_id : task_id,
-				start : start_pos,
-				size: log_size
+				// Military : Log Refresh
+				// start : start_pos,
+				// size: log_size
 			};
 			console.log("normal");
 			that.callAjax(ajaxData, "normal");			// 막아둠
@@ -1000,14 +1009,18 @@
 				return;
 			}
 			
+			console.log("##################### ")
+			console.log("###", ajaxData)
+			
 			that.data.tempData = guid;
-			console.log("ajaxData", ajaxData);				
+						
 			$.ajax({
 				url : baseUrl + "task/getTrainLog.json",
 				data : ajaxData,
 				type : "POST",
 				success : function(res) {
-					console.log("=======getTraingLog=========",res)			
+					console.log("=======getTraingLog=========",res)	
+					console.log("### ", 'start : ' + res.trainLogVO.start, ' | size : ' + res.trainLogVO.size )
 					if(res.result.code == undefined){return;}
 					else if (res.result.code == "200") {
 						if(res.result.data.log == "파일이 존재하지 않습니다" 
@@ -1028,7 +1041,7 @@
 							}
 							return;
 						}
-						that.drawTrainLog(res, type);	
+						that.drawTrainLog(res, type); // type : init, normal, scroll	
 					} else if(res.result.code == "4584"){
 						if(startTraining){
 							that.data.startTimeout = window.setTimeout(that.resetLogData,10000);
@@ -1051,7 +1064,7 @@
 			});
 		},
 
-		drawTrainLog : function(res, type){
+		drawTrainLog : function(res, type){ // type : init, normal, scroll
 			let that = task_detail;
 			var start_pos = that.data.startPos;
 			var initial_pos = that.data.initialPos;
@@ -1090,16 +1103,16 @@
 						that.data.bh = area[0].scrollHeight;
 						that.data.initial_pos = parseInt(initial_pos) - res.result.data.log.length;
 // 		 				area.prepend(res.result.data.log);
-		 				that.modifyStr(res.result.data.log, false);
+		 				that.modifyStr(res.result.data.log, false); // 앞에 붙이지 않음.
 		 				that.data.ah = area[0].scrollHeight;
 		 				let total = ah-bh; 
 		 				area.scrollTop(total);
 		 				that.data.isPrepend = false;		
 						
-					} else {
+					} else { // type == "normal"
 						that.data.start_pos = parseInt(start_pos) + res.result.data.log.length;
 // 						area.append(res.result.data.log);
-						that.modifyStr(res.result.data.log, true);
+						that.modifyStr(res.result.data.log, true); // 앞에 붙임
 					}
 				} else {
 	 				if(interval != null){
