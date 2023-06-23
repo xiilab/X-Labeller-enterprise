@@ -127,26 +127,26 @@ public class VirtualImportUtil {
             }
 
             // 저장된 이미지 매트릭스로 변환
-//            Mat originalImage = Imgcodecs.imread(PathEnum.IMPORT_VOC_TEMP_PATH.getPath() + "/" + entryName, Imgcodecs.IMREAD_GRAYSCALE);
-            Mat originalImage = Imgcodecs.imread(PathEnum.IMPORT_VOC_TEMP_PATH.getPath() + "/" + entryName, CvType.CV_8U);
+            // Mat originalImage = Imgcodecs.imread(PathEnum.IMPORT_VOC_TEMP_PATH.getPath() + "/" + entryName, CvType.CV_8U);
+            Mat originalImage = Imgcodecs.imread(PathEnum.IMPORT_VOC_TEMP_PATH.getPath() + "/" + entryName, Imgcodecs.IMREAD_COLOR);
             // 이미지의 RGB를 키로 저장할 MAP
             // ex) key: 100,100,100, value: [아무 값]
             Map<String, Integer> colorMap = new HashMap<>();
 
             // matrix로 변환한 이미지의 한 행과 열을 읽어 색상값 추출
-//            for (int i = 0; i < originalImage.rows(); i++) {
-//                for (int j = 0; j < originalImage.cols(); j++) {
-//                    double[] rgb = originalImage.get(i, j);
-//                    if (rgb[0] == 0.0 && rgb[1] == 0.0 && rgb[2] == 0.0 || rgb[0] == 255.0 && rgb[1] == 255.0 && rgb[2] == 255.0) {
-//                        continue;
-//                    }
-//
-//                    // 추출한 색상값을 문자열로 변환
-//                    String rgbStr = rgb[0] + "," + rgb[1] + "," + rgb[2];
-//                    // 변환한 문자열 키로 저장
-//                    colorMap.put(rgbStr, colorMap.size());
-//                }
-//            }
+            for (int i = 0; i < originalImage.rows(); i++) {
+                for (int j = 0; j < originalImage.cols(); j++) {
+                    double[] rgb = originalImage.get(i, j);
+                    if (rgb[0] == 0.0 && rgb[1] == 0.0 && rgb[2] == 0.0 || rgb[0] == 255.0 && rgb[1] == 255.0 && rgb[2] == 255.0) {
+                        continue;
+                    }
+
+                    // 추출한 색상값을 문자열로 변환
+                    String rgbStr = rgb[0] + "," + rgb[1] + "," + rgb[2];
+                    // 변환한 문자열 키로 저장
+                    colorMap.put(rgbStr, colorMap.size());
+                }
+            }
 
             List<List<Point>> contoursPoints = new ArrayList<>();
 
@@ -163,44 +163,45 @@ public class VirtualImportUtil {
                 Mat mask = new Mat();
 
                 // 색상값 범위 지정해서 외곽선 검출
-                // Core.inRange(originalImage, lowerRed, upperRed, mask);
+                Core.inRange(originalImage, lowerRed, upperRed, mask);
 
-//                List<MatOfPoint> contours = new ArrayList<>();
-//                Mat hierarchy = new Mat();
-//                Imgproc.findContours(originalImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
-//
-//                for (int i = 0; i < contours.size(); i++) {
-//                    MatOfPoint contour = contours.get(i);
-//                    List<Point> points = new ArrayList<>();
-//                    if (contour.toArray().length < 3) {
-//                        continue;
-//                    }
-//                    // mask 값을 포인트로 변환 후 넣기
-//                    for (Point point : contour.toArray()) {
-//                        points.add(point);
-//                    }
-//
-//                    contoursPoints.add(points);
-//                }
+                List<MatOfPoint> contours = new ArrayList<>();
+                Mat hierarchy = new Mat();
+                Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
+
+                for (int i = 0; i < contours.size(); i++) {
+                    MatOfPoint contour = contours.get(i);
+                    List<Point> points = new ArrayList<>();
+                    if (contour.toArray().length < 3) {
+                        continue;
+                    }
+                    // mask 값을 포인트로 변환 후 넣기
+                    for (Point point : contour.toArray()) {
+                        points.add(point);
+                    }
+
+                    contoursPoints.add(points);
+                }
             });
 
-            List<MatOfPoint> contours = new ArrayList<>();
-            Mat hierarchy = new Mat();
-            Imgproc.findContours(originalImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
-
-            for (int i = 0; i < contours.size(); i++) {
-                MatOfPoint contour = contours.get(i);
-                List<Point> points = new ArrayList<>();
-                if (contour.toArray().length < 3) {
-                    continue;
-                }
-                // mask 값을 포인트로 변환 후 넣기
-                for (Point point : contour.toArray()) {
-                    points.add(point);
-                }
-
-                contoursPoints.add(points);
-            }
+                // 색상값 지정 안하고 외곽선 검출
+//            List<MatOfPoint> contours = new ArrayList<>();
+//            Mat hierarchy = new Mat();
+//            Imgproc.findContours(originalImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
+//
+//            for (int i = 0; i < contours.size(); i++) {
+//                MatOfPoint contour = contours.get(i);
+//                List<Point> points = new ArrayList<>();
+//                if (contour.toArray().length < 3) {
+//                    continue;
+//                }
+//                // mask 값을 포인트로 변환 후 넣기
+//                for (Point point : contour.toArray()) {
+//                    points.add(point);
+//                }
+//
+//                contoursPoints.add(points);
+//            }
 
             JSONArray resultJsonArray = new JSONArray();
             JSONObject pointJsonObject = new JSONObject();
@@ -241,6 +242,9 @@ public class VirtualImportUtil {
                 double height = y2 - y1;
                 // 세그멘테이션에 해당하는 라벨명을 찾기 위한 area값
                 double area = width * height;
+                if (area <= 300) {
+                    continue;
+                }
                 infoJsonObject.put("segmentation", pointJsonArray);
                 infoJsonObject.put("box", box);
                 infoJsonObject.put("area", area);
@@ -250,6 +254,7 @@ public class VirtualImportUtil {
             importSegObjectInfoMap.put(entryName, resultJsonArray);
 
         } catch (Exception e) {
+            System.out.println(e);
         } finally {
             // 임시로 저장된 SegmentationObject파일 삭제
             if (outputFile != null) {
