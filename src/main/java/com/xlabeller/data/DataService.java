@@ -3605,6 +3605,7 @@ public class DataService {
 		importVirtualJpegImagesMap.entrySet().forEach((map) -> {
 			String boxObjectMapKey = map.getKey().split("\\.")[0] + ".json";
 			String segObjectMapKey = map.getKey().split("\\.")[0] + "_seg.png";
+
 			if ("IMAGE_BBOX".equals(labelType) && importBoxObjectsInfoMap.containsKey(boxObjectMapKey)) {
 				MultipartFile multipartFile = new MockMultipartFile(map.getKey(), map.getKey(), "UTF-8", map.getValue());
 				multipartFileList.add(multipartFile);

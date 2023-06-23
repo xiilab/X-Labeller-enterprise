@@ -1994,65 +1994,146 @@ public class TaskService {
         if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
             return Output.JsonOutput("2001", "로그인 세션이 만료 되었습니다");
         }
-        if (trainLogVO.getTask_id() == null || trainLogVO.getTask_id().length() <= 0) {
+        if (!StringUtils.hasText(trainLogVO.getTask_id())) {
             return Output.JsonOutput("4584", "Occured Loading Log");
         }
+
         TaskVO inputTaskVO = new TaskVO();
         inputTaskVO.setTask_id(trainLogVO.getTask_id());
         TaskVO oneTask = taskDao.getTaskById(inputTaskVO);
         if (oneTask == null) {
             return Output.JsonOutput("200", null);
         }
-        if (oneTask.getProject_id() == null || oneTask.getProject_id().length() <= 0) {
+        if (!StringUtils.hasText(oneTask.getProject_id())) {
             return Output.JsonOutput("200", null);
         }
-        if (oneTask.getTask_id() == null || oneTask.getTask_id().length() <= 0) {
+        if (!StringUtils.hasText(oneTask.getTask_id())) {
             return Output.JsonOutput("200", null);
         }
+
         String projectId = oneTask.getProject_id();
         String taskId = oneTask.getTask_id();
         String logPath = WORKSPACE_PATH + projectId + "/" + taskId + "/" + "log/run.log";
-        TextReader tr;
-        String log = "";
-        try {
-            tr = new TextReader(logPath);
-            if (trainLogVO.getStart() == null || trainLogVO.getStart().equals("")) {
-                int start = tr.getFileLength() - Integer.valueOf(trainLogVO.getSize());
+        int startLine = 0;
+        int lastLine = 0;
 
-                if (start <= 0) {
-                    start = 0;
-                }
+        TrainLogVO result = new TrainLogVO();
+        result.setLog("");
 
-                log = tr.getRandomAccess(start, Integer.valueOf(trainLogVO.getSize()));
+        try (BufferedReader br = new BufferedReader(new FileReader(logPath))){
 
-                TrainLogVO result = new TrainLogVO();
-                result.setLog(log);
+            // String lastLine = null;
 
-                trainLogVO.setStart(String.valueOf(start));
-
-                return Output.JsonOutput("200", result);
-            } else {
-                log = tr.getRandomAccess(Integer.valueOf(trainLogVO.getStart()), Integer.valueOf(trainLogVO.getSize()));
-                TrainLogVO result = new TrainLogVO();
-                result.setLog(log);
-                return Output.JsonOutput("200", result);
+            while (br.readLine() != null) {
+                // lastLine = Integer.parseInt(line);
+                // startLine = lastLine - 5000;
+                lastLine++;
+                startLine = Math.max(lastLine - 5000, 0);
             }
+
         } catch (Exception e) {
             if (e instanceof NumberFormatException) {
-                logger.error("NumberFormatException Error!", e);
-                return Output.JsonOutput("4584", "Occured Loading Log");
-            } else if (e instanceof FileNotFoundException) {
-                logger.error("FileNotFoundException Error!", e);
-                return Output.JsonOutput("4584", "Occured Loading Log");
+                logger.info("NumberFormatException Error : " + e);
+                //return Output.JsonOutput("200", result);
             } else if (e instanceof IOException) {
-                logger.error("IOException Error!", e);
-                return Output.JsonOutput("4584", "Occured Loading Log");
-            } else {
-                logger.error("Excpetion Error!", e);
-                return Output.JsonOutput("4584", "Occured Loading Log");
+                //logger.info("IOException Error : " + e);
             }
+            return Output.JsonOutput("200", result);
         }
+
+        StringBuilder sb = new StringBuilder();
+        int lineCount = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(logPath))) {
+            String line = "";
+
+            while ((line = br.readLine()) != null && lineCount <= lastLine) {
+                if (startLine <= lineCount) {
+                    sb.append(line);
+                    sb.append("\n");
+                }
+                lineCount++;
+            }
+        } catch (Exception e) {
+            if (e instanceof IOException) {
+                // logger.error("IOException Error!", e);
+            } else {
+                logger.error("Exception Error : ", e);
+            }
+
+            return Output.JsonOutput("4584", "Occured Loading Log");
+        }
+
+        result.setStart(String.valueOf(startLine));
+        result.setSize(String.valueOf(lastLine));
+        result.setLog(sb.toString());
+
+        return Output.JsonOutput("200", result);
     }
+
+//    public Object getTrainLog(TrainLogVO trainLogVO) {
+//        UserVO userInfo = SessionUtil.getUserInfo();
+//        if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
+//            return Output.JsonOutput("2001", "로그인 세션이 만료 되었습니다");
+//        }
+//        if (trainLogVO.getTask_id() == null || trainLogVO.getTask_id().length() <= 0) {
+//            return Output.JsonOutput("4584", "Occured Loading Log");
+//        }
+//        TaskVO inputTaskVO = new TaskVO();
+//        inputTaskVO.setTask_id(trainLogVO.getTask_id());
+//        TaskVO oneTask = taskDao.getTaskById(inputTaskVO);
+//        if (oneTask == null) {
+//            return Output.JsonOutput("200", null);
+//        }
+//        if (oneTask.getProject_id() == null || oneTask.getProject_id().length() <= 0) {
+//            return Output.JsonOutput("200", null);
+//        }
+//        if (oneTask.getTask_id() == null || oneTask.getTask_id().length() <= 0) {
+//            return Output.JsonOutput("200", null);
+//        }
+//        String projectId = oneTask.getProject_id();
+//        String taskId = oneTask.getTask_id();
+//        String logPath = WORKSPACE_PATH + projectId + "/" + taskId + "/" + "log/run.log";
+//        TextReader tr;
+//        String log = "";
+//        try {
+//            tr = new TextReader(logPath);
+//            if (trainLogVO.getStart() == null || trainLogVO.getStart().equals("")) {
+//                int start = tr.getFileLength() - Integer.valueOf(trainLogVO.getSize());
+//
+//                if (start <= 0) {
+//                    start = 0;
+//                }
+//
+//                log = tr.getRandomAccess(start, Integer.valueOf(trainLogVO.getSize()));
+//
+//                TrainLogVO result = new TrainLogVO();
+//                result.setLog(log);
+//
+//                trainLogVO.setStart(String.valueOf(start));
+//
+//                return Output.JsonOutput("200", result);
+//            } else {
+//                log = tr.getRandomAccess(Integer.valueOf(trainLogVO.getStart()), Integer.valueOf(trainLogVO.getSize()));
+//                TrainLogVO result = new TrainLogVO();
+//                result.setLog(log);
+//                return Output.JsonOutput("200", result);
+//            }
+//        } catch (Exception e) {
+//            if (e instanceof NumberFormatException) {
+//                logger.error("NumberFormatException Error!", e);
+//                return Output.JsonOutput("4584", "Occured Loading Log");
+//            } else if (e instanceof FileNotFoundException) {
+//                logger.error("FileNotFoundException Error!", e);
+//                return Output.JsonOutput("4584", "Occured Loading Log");
+//            } else if (e instanceof IOException) {
+//                logger.error("IOException Error!", e);
+//                return Output.JsonOutput("4584", "Occured Loading Log");
+//            } else {
+//                logger.error("Excpetion Error!", e);
+//                return Output.JsonOutput("4584", "Occured Loading Log");
+//            }
+//        }
+//    }
 //    public Object getTrainLog(TrainLogVO trainLogVO) {
 //        UserVO userInfo = SessionUtil.getUserInfo();
 //        if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
