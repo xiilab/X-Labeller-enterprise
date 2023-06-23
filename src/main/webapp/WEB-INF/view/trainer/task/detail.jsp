@@ -708,7 +708,7 @@
 			// Military : Log Refresh
 			var area = that.data.logArea;
 			area.empty();
-			// console.log("!! empty !!")
+			console.log("!! empty !!");
 
 			if(isAppend){
 				for(let i = 0, len = arr.length; i<len; i++){
@@ -754,13 +754,15 @@
 					 }
 				}
 			}
+			
+			// console.log('!!', that.data.logArea[0].textContent.length);
 		},
 		
 		setLogText : function(log, isAppend){
 			let that = task_detail;
 			var area = that.data.logArea;
 // 				console.log("log: ::", log);
-				console.log("## setLogText  : ", log, isAppend)
+				// console.log("## setLogText  : ", log, isAppend)
 				
 				if(isAppend){
 					area.append(log+"\n");
@@ -1009,8 +1011,8 @@
 				return;
 			}
 			
-			console.log("##################### ")
-			console.log("###", ajaxData)
+			// console.log("##################### ")
+			// console.log("###", ajaxData)
 			
 			that.data.tempData = guid;
 						
