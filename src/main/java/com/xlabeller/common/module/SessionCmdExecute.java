@@ -216,7 +216,7 @@ public class SessionCmdExecute implements Callable<Object>{
 				// 얘의 결과는
 				String getGpuStatusCmd = "docker ps --filter \"label=gpu_id=" + i + "\"";  
 				String getGpuStatusCmdOutput = cmdExcute(getGpuStatusCmd);
-				String [] GpuStatusResult = getGpuStatusCmdOutput.split("\n");
+				String[] GpuStatusResult = getGpuStatusCmdOutput.split("\n");
 				if(i == 0) {
 					if (GpuStatusResult.length == 1) { 
 					//	availableGpuIndex.add(i);
