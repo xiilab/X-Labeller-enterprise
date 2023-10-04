@@ -52,10 +52,10 @@
 		<div class="border_box">
 			<form id="fileForm" enctype="multipart/form-data">
 				<div class="title_wrap flex">
-					<div>Add File</div>
+					<div>데이터 추가</div>
 				</div>
 				<div class="fileTab_wrap flex">
-					<div class="img_file tab active">ImageFile</div>
+					<div class="img_file tab active">이미지</div>
 					<div class="video_file tab">VideoFile</div>
 					<div class="zip_file tab">ZIPFile</div>
 					<div class="blank"></div>
@@ -64,13 +64,13 @@
 					<div class="h_wrap flex">
 						<div class="checkBox all"></div>
 						<div></div>
-						<div>File</div>
-						<div>Size</div>
+						<div>파일</div>
+						<div>크기</div>
 					</div>
 					<ul class="c_wrap">
 						<li class="file_drop_info flex">
 							<div class="info_wrap">
-								<div class="img"></div><div>Please drag&drop the file.</div>
+								<div class="img"></div><div>등록할 파일을 이 영역으로 옮겨주세요.</div>
 							</div>
 						</li>
 					</ul>
@@ -79,11 +79,11 @@
 					<input type="file" id="files" name="files" class="file" accept="image/*, video/*" multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
-						<div class="delete">Delete</div>
+						<div class="delete">삭제</div>
 						<div class="append">Attatch</div>
 					</div>
 					<div class="btn_wrap fr">
-						<div class="save">Save</div>
+						<div class="save">저장하기</div>
 					</div>
 				</div>
 			</form>
@@ -114,7 +114,7 @@
 			
 			var html = "<li class='file_drop_info flex'>"
 				+ "<div class='info_wrap'>"
-				+ "<div class='img'></div><div>Please drag&drop the file.</div>"
+				+ "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div>"
 				+ "</div>"
 				+ "</li>";
 			
@@ -210,7 +210,7 @@
 				that.pt.find(".c_wrap").empty();
 				var html = "<li class='file_drop_info flex'>"
 					+ "<div class='info_wrap'>"
-					+ "<div class='img'></div><div>Please drag&drop the file.</div>"
+					+ "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div>"
 					+ "</div>"
 					+ "</li>";
 				

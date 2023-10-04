@@ -7,7 +7,7 @@
 	<jsp:param name= "cur_page" value="labeller"/>
 </jsp:include>
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		.ztree .level0 span.button[id$=ico] { background: url("images/icon_tree_dataset_selected.png") !important; }
@@ -132,7 +132,7 @@
 							"LabelList TEST": labeller.event.labelList2,
 							"Enrichment" : labeller.event.openNode,
 							"Data List": labeller.event.list,
-							"Label List": labeller.event.labelList,
+							"라벨 목록": labeller.event.labelList,
 							"Modify" : labeller.event.modify,
 							"Add File" : labeller.event.addImg,
 							"Replicate︎" : {
@@ -147,20 +147,20 @@
 						},
 						*/
 						rMenu : { 
-							"Enrichment" : labeller.event.labelling,
-							"Data List" : labeller.event.list2,
-							"Label List": labeller.event.labelList2,
-							"Modify" : labeller.event.modify,
-							"Add File" : labeller.event.addImg,
-							"Replicate︎" : {
-								"Only Data" : labeller.event.replicate,
-								"With Label" : labeller.event.replicateWith,
+							"색인 작업 화면" : labeller.event.labelling,
+							"데이터 목록" : labeller.event.list2,
+							"라벨 목록": labeller.event.labelList2,
+							"작업 데이터셋 수정" : labeller.event.modify,
+							"데이터 추가" : labeller.event.addImg,
+							"복사" : {
+								"이미지" : labeller.event.replicate,
+								"이미지 + 라벨" : labeller.event.replicateWith,
 							},
 							/* "Export" : labeller.event.labelling, */
-							"Delete︎" : {
-								"Dataset": labeller.event.deleteNode,
-								"Data": labeller.event.deleteDataList,
-								"Label" : labeller.event.deleteMetaList
+							"삭제︎" : {
+								"작업 데이터셋": labeller.event.deleteNode,
+								"이미지": labeller.event.deleteDataList,
+								"라벨" : labeller.event.deleteMetaList
 							},
 						},
 					},
@@ -179,10 +179,10 @@
 		init : function() {
 			var that = this;
 			
-			var html =  "<div class='new_btn filter_color'>New +</div>"
+			var html =  "<div class='new_btn filter_color'>새 데이터셋 업로드</div>"
 						+ "	<div class='half_wrap'>"
-						+ "		<div class='import_btn filter_color'>Import</div>"
-						+ "		<div class='export_btn filter_color'>Export</div>"
+						+ "		<div class='import_btn filter_color'>추출형식 업로드</div>"
+						+ "		<div class='export_btn filter_color'>데이터 추출</div>"
 						+ " </div>";
 // 			var html = "<div class='flex'><div class='new_btn filter_color' style='width: inherit; margin-right: 0px;'>New +</div></div>";
 			$("#workspace .btn_wrap").empty();
@@ -1179,7 +1179,7 @@
 		nodata : function(){
 			var that = this;	
 			
-			var html = "<div class='nodata-wrap flex'><div><img class='' src='<c:url value='/images/icon_nodata_dataset.png' />'><div>No Dataset</div><div>Please add dataset.</div></div></div>"
+			var html = "<div class='nodata-wrap flex'><div><img class='' src='<c:url value='/images/icon_nodata_dataset.png' />'><div>데이터가 없습니다.set</div><div>Please add dataset.</div></div></div>"
 			that.pt.find(".ztree").append(html);
 		},
 		

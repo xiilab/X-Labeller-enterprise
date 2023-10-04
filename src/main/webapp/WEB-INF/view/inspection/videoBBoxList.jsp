@@ -304,7 +304,7 @@
                   	<section class="enrichment">
 	                     <div class="header_wrap flex sb">
 		                  	<div class="page_title_wrap">
-		                  		<span>Label List</span> <span>|</span> Video Bounding Box
+		                  		<span>라벨 목록</span> <span>|</span> Video Bounding Box
 	                  		</div>
 	                  	</div>
 <!--                  		<div class="prev_btn prev_data"></div> -->
@@ -346,10 +346,10 @@
 <!-- 			                 	<div class="data_total">Total <span>0</span></div> -->
 <!-- 								<div class="list_table"> -->
 <!-- 									<div class="h_wrap flex"> -->
-<!-- 										<div class="preview">PREVIEW</div> -->
+<!-- 										<div class="preview">미리보기</div> -->
 <!-- 										<div class="id">ID</div> -->
 <!-- 										<div class="path">PATH</div> -->
-<!-- 										<div class="label_cnt">LABELS</div> -->
+<!-- 										<div class="label_cnt">라벨S</div> -->
 <!-- 									</div> -->
 <!-- 										<ul class="c_wrap"> -->
 <!-- 										</ul> -->
@@ -360,7 +360,7 @@
 <!-- 			                 </div> 	 -->
 	               		</div>              <!-- Image Slide area end -->  
 		                <div class="save_btn_wrap flex">
-                 				<button type="button" class="btn btn-primary save filter_color">Save</button>
+                 				<button type="button" class="btn btn-primary save filter_color">저장하기</button>
                  		</div>	               									                  	                 	
                   	</section>
                   	<section class="label">
@@ -1767,7 +1767,7 @@
                         $("#videoBBoxList .category_wrap").html("");
     					$("#videoBBoxList .img_list_wrap .name_wrap .video_name").html("");
     					$("#videoBBoxList .empty_wrap").remove();
-    					const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">No Data</div><div class="kor_text">you have not selected any data yet</div></div>';
+    					const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">선택된 데이터가 없습니다.</div><div class="kor_text">데이터를 선택해주세요.</div></div>';
     					$("#videoBBoxList section.enrichment #videoBBoxList-video").hide();
     					$("#videoBBoxList section.enrichment .canvas-container").hide();
     					$("#videoBBoxList .frame_wrap .total_frame span").html(""); // jh.sa 201217
@@ -1778,7 +1778,7 @@
                     	const that = videoBBoxList;
     					$("#videoBBoxList .img_list_wrap .name_wrap .video_name").html("");
     					$("#videoBBoxList .empty_wrap").remove();
-    					const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">No Data</div><div class="kor_text">you have not selected any data yet</div></div>';
+    					const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">선택된 데이터가 없습니다.</div><div class="kor_text">데이터를 선택해주세요.</div></div>';
     					$("#videoBBoxList section.enrichment #videoBBoxList-video").hide();
     					$("#videoBBoxList section.enrichment .canvas-container").hide();
     					$("#videoBBoxList section.enrichment .video_wrap").append(html);                    	
@@ -2956,7 +2956,7 @@
 							html += '		<button  class="start_frm btn btn-info">Start</button>';
 							html += '		<button class="end_frm btn btn-info">End</button>';
 							html += '       <button class="delete_frm btn btn-danger">Delete subsequent frames</button>';
-							html += '		<button class="delete btn btn-danger ">Delete</button>';
+							html += '		<button class="delete btn btn-danger ">삭제</button>';
 							html += '	</div>';
 							html += '	<div class="w-100"></div>';
 							html += '	<div class="col-12 text-center p-1">';
@@ -2971,7 +2971,7 @@
 							html += '		<button  class="start_frm btn btn-info">Start</button>';
 							html += '		<button class="end_frm btn btn-info">End</button>';
 							html += '       <button class="delete_frm btn btn-danger">Delete subsequent frames</button>';
-							html += '		<button class="delete btn btn-danger ">Delete</button>';
+							html += '		<button class="delete btn btn-danger ">삭제</button>';
 							html += '	</div>';
 							html += '	<div class="w-100"></div>';
 							html += '	<div class="col-12 text-center p-1">';

@@ -76,20 +76,20 @@
 <body>
 	<div class="container" id="dataList2">
 		<div class="info_wrap">
-			<div class="main_title">Dataset Information</div>
+			<div class="main_title">데이터셋 정보</div>
 			<div class="dataset_title"></div>
 			<div class="dataset_contents"></div>
 		</div>
 		<div class="list_wrap">
-			<div class="list_title">Data List (<span></span>)</div>
+			<div class="list_title">데이터 목록 (<span></span>)</div>
 			<div class="list_table">
 				<div class="h_wrap flex">
 					<div class="checkBox all" ></div>
-					<div class="preview">PREVIEW</div>
+					<div class="preview">미리보기</div>
 					<div class="id">ID</div>
-					<div class="path">File Name</div>
-					<div class="media_type">LABEL TYPE</div>
-					<div class="created_date">CREATED DATE</div>
+					<div class="path">파일명</div>
+					<div class="media_type">라벨 타입</div>
+					<div class="created_date">생성시간</div>
 				</div>
 				<ul class="c_wrap">
 				</ul>
@@ -98,29 +98,29 @@
 				</div>				
 			</div>
 			<div class="btn_wrap">
-				<button class="del_btn filter_color">Delete</button>
-				<button class="copy_btn filter_color">Copy</button>
-				<button class="transfer_btn filter_color">Transfer</button>
-				<button class="add_btn filter_color">Add</button>
+				<button class="del_btn filter_color">삭제</button>
+				<button class="copy_btn filter_color">복사</button>
+				<button class="transfer_btn filter_color">이동</button>
+				<button class="add_btn filter_color">추가</button>
 			</div>
 			<div class="copy_wrap flex">
 				<div class="wrap filter_color">
 					<div class="list_wrap">
-						<div>Select a Dataset to move your data</div>
+						<div>데이터를 이동할 데이터셋을 선택해주세요.</div>
 						<ul></ul>
 					</div>
 					<div class="select_wrap">
-						<div>*Please select a condition</div>
+						<div>*조건을 선택해주세요.</div>
 						<div class="flex">
 							<input class="" type="radio" name="type" id="aa" value="0" checked="checked">
-							<label for="aa" class="flex">Only data</label>
+							<label for="aa" class="flex">이미지만</label>
 							<input class="" type="radio" name="type" id="bb" value="1" >
-							<label for="bb" class="flex">With label</label>
+							<label for="bb" class="flex">이미지 + 라벨</label>
 						</div>
 					</div>
 					<div class="btn_wrap flex">
-						<button class="cancel_btn">cancel</button>
-						<button class="confirm_btn">confirm</button>
+						<button class="cancel_btn">취소</button>
+						<button class="confirm_btn">이동</button>
 					</div>
 				</div>
 			</div>

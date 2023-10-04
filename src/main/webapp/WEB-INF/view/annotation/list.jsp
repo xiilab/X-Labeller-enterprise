@@ -6,7 +6,7 @@
 
 <head>
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -48,7 +48,7 @@
 			<div class="ms">
 				<div class="title_wrap">
 					<span>ANNOTATION LIST</span>
-					<span class="list_total">Total 0</span>
+					<span class="list_total">총개수 0</span>
 				</div>
 
 				<div class="list_wrap">
@@ -67,10 +67,10 @@
 							<tr>
 								<th><div class="checkBox"></div></th>
 								<th>ID</th>
-								<th>USER_ID</th>
-								<th>TITLE</th>
-								<th>CONTENTS</th>
-								<th>CREATED_DATE</th>
+								<th>유저ID</th>
+								<th>제목</th>
+								<th>설명</th>
+								<th>생성 시간</th>
 							</tr>
 						</thead>
 					</table>
@@ -143,7 +143,7 @@
 			let that = this;
 			that.pt.find("button").show();
 			that.pt.find(".empty_wrap").remove();
-			that.pt.find(".list_total").text("Total 0");
+			that.pt.find(".list_total").text("총 개수 0");
 			that.defaultListener();
 			that.getAnnotationList();
 		},
@@ -276,7 +276,7 @@
 				that.data.scrollObj.linked_list.push({"annotation_id" : data[i].annotation_id, "user_id" : data[i].user_id, "title" : data[i].title, "contents" : data[i].contents, "created_date" : data[i].created_date }, id);
 			}
 
-			that.pt.find(".list_total").text("Total " + that.data.scrollObj.linked_list.length);
+			that.pt.find(".list_total").text("총 개수 " + that.data.scrollObj.linked_list.length);
 			that.initAnnotationList();
 		},
 		

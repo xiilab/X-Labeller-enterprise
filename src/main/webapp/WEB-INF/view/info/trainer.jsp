@@ -3,7 +3,7 @@
 
 
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		#info { height: 100%; overflow: overlay; }
@@ -83,12 +83,12 @@
 								<p><span class="step">2. Training</span></p>
 									<img class="border main_img" src="./images/trainer/desc_2_training.png"></img>
 									<div class="text">
-										<p><span class="bold">1. Label List : </span>리스트형태로 나타낸 Label 데이터</p>
+										<p><span class="bold">1. 라벨 목록 : </span>리스트형태로 나타낸 Label 데이터</p>
 										<p><span class="bold">2. Preview : </span>Label 데이터의 이미지</p>
 										<p><span class="bold">3. Config : </span>Task 생성될때 넣은 설정값</p>
 										<p><span class="bold">4. Select GPU Node : </span>학습을 진행할 Node와 GPU 선택</p>
 										<p><span class="bold">5. Refresh : </span>사용 가능한 Node와 GPU 목록을 새로 불러옴</p>
-										<p><span class="bold">6. Start Training : </span>학습 시작</p>
+										<p><span class="bold">6. 학습 시작 : </span>학습 시작</p>
 										<p><span class="bold">7. Log 확대버튼 : </span>Log를 큰 팝업창으로 볼 수 있는 버튼</p>
 										<p><span class="bold">8. Log : </span>Log를 나타내는 공간</p>
 									</div>
@@ -104,7 +104,7 @@
 										<p><span class="bold">5. Select GPU Node : </span>추론을 진행할 Node와 GPU 선택</p>
 										<p><span class="bold">6. Download Model : </span>학습으로 생성 된 모델을 다운로드 할 수 있는 기능</p>
 										<p><span class="bold">7. MODEL : </span>학습 완료후 생성된 모델</p>
-										<p><span class="bold">8. Start Inference : </span>추론 시작</p>
+										<p><span class="bold">8. 추론 시작 : </span>추론 시작</p>
 									</div>
 									
 								<p><span class="step">4. Inference List</span></p>
@@ -159,7 +159,7 @@
 									<p>- 학습시킬 Task 데이터를 우클릭후 Training 버튼 클릭 또는 Drag&Drop 을 이용</p>
 									<p>- 적용된 알고리즘 학습 파라미터 값을 확인</p>
 									<p>- Node 와 GPU 선택</p>
-									<p>- Start Training 버튼으로 학습 시작</p>
+									<p>- 학습 시작 버튼으로 학습 시작</p>
 									<p>- 학습에 대한 진행도는 Log 데이터를 통해 확인 가능</p>
 								</div>
 							
@@ -172,7 +172,7 @@
 									<p>- 추론 파라미터 값 설정</p>
 									<p>- Node 와 GPU 선택 </p>
 									<p>- 추론에 사용할 학습이 완료 된 모델 선택</p>
-									<p>- Start Inference 버튼으로 추론 시작</p>
+									<p>- 추론 시작 버튼으로 추론 시작</p>
 								</div>
 								
 							<span class="step">Step 5. Inference 결과</span>

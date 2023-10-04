@@ -14,7 +14,7 @@
 <script src="<c:url value= "/js/echarts4.min.js"/>"></script>
 
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		/* 해당 페이지에서 헤더 이미지를 못 가져온 부분 */

@@ -5,7 +5,7 @@
 
 <head>
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -93,9 +93,9 @@
 				<div class="ms">
 					<div class="ms_wrap">
 						<div class="title_wrap">
-							<span>Inference List</span>
+							<span>색인 데이터 추론 목록</span>
 							<span class="task_name"></span>
-							<span class="list_total">Total 0</span>
+							<span class="list_total">총개수 0</span>
 						</div>
 						<div class="list_wrap">
 
@@ -114,13 +114,13 @@
 									<thead>
 										<tr>
 <!-- 											<th><div class="checkBox"></div></th> -->
-											<th class="pre">PREVIEW</th>
-											<th>PATH</th>
+											<th class="pre">미리보기</th>
+											<th>파일 경로</th>
 											<th>X_1</th>
 											<th>Y_1</th>
 											<th>X_2</th>
 											<th>Y_2</th>
-											<th>LABEL</th>
+											<th>라벨</th>
 										</tr>
 									</thead>
 								</table>
@@ -148,7 +148,7 @@
 						</div>
 					</div>
 					<div class="btn_wrap">
-						<button class="meta_btn filter_color">Add</button>
+						<button class="meta_btn filter_color">색인(라벨) 추가</button>
 					</div>
 				</div>
 			</div>
@@ -156,10 +156,10 @@
 				<div class="margin">
 					<div class="ms_wrap">
 					<div class="title_wrap">
-							<span class="sub_title">Status</span>
+							<span class="sub_title">상태</span>
 							<div class="status_normal" id="status"></div>
-							<div class="list_reset filter_color">Refresh</div>
-							<span class="list_total">Total 0</span>
+							<div class="list_reset filter_color">새로고침</div>
+							<span class="list_total">총개수 0</span>
 						</div>
 						<div class="list_wrap filter_color">
 							<div class="table_header">
@@ -338,9 +338,9 @@
  			//console.log("target::", target);
  			target.empty();
  			$(target).html("");
- 			that.pt.find(".list_total").text("Total 0");		// total reset
+ 			that.pt.find(".list_total").text("총 개수 0");		// total reset
 			that.pt.find(".meta_btn").hide();
-			that.addEmptyData(that.pt.find(".main_wrap .list_wrap"), "No Data","please open your inference result");
+			that.addEmptyData(that.pt.find(".main_wrap .list_wrap"), "결과가 존재하지 않습니다.","추론 결과를 적용할 파일을 먼저 선택해주세요.");
 			if(status_interval != null){
 				clearInterval(status_interval);
 			}
@@ -477,7 +477,7 @@
 			
 			if(data.length == 0){
 				that.pt.find(".submit_btn").hide();
-				that.addEmptyData(that.pt.find(".sub_wrap .list_wrap"), "No Result","you have not added any result yet");
+				that.addEmptyData(that.pt.find(".sub_wrap .list_wrap"), "검색결과가 없습니다.","추론 결과파일 생성을 위해 추론을 먼저 진행해주세요.");
 			} else {
 				that.pt.find(".submit_btn").show();
 			}
@@ -488,7 +488,7 @@
 			
 			
 			
-			that.pt.find(".sub_wrap .list_total").text("Total " + that.data.searchObj.search_arr.length);
+			that.pt.find(".sub_wrap .list_total").text("총 개수 " + that.data.searchObj.search_arr.length);
 			that.initDrawInferenceResultList();
 		},
 		
@@ -710,12 +710,12 @@
 						if(res.result.data == null) {
 							that.pt.find(".meta_btn").hide();
 							alert("사용 가능한 데이터가 없습니다");
-							that.addEmptyData(that.pt.find(".main_wrap .list_wrap"), "No Data","please open your inference result");
+							that.addEmptyData(that.pt.find(".main_wrap .list_wrap"), "결과가 존재하지 않습니다.","추론 결과를 적용할 파일을 먼저 선택해주세요.");
 						}
 						 if(res.result.data.length == 0){
 							that.pt.find(".meta_btn").hide();
 							alert("사용 가능한 데이터가 없습니다");
-							that.addEmptyData(that.pt.find(".main_wrap .list_wrap"), "No Data","please open your inference result");
+							that.addEmptyData(that.pt.find(".main_wrap .list_wrap"), "결과가 존재하지 않습니다.","추론 결과를 적용할 파일을 먼저 선택해주세요.");
 						} else if (res.result.code == "2001") {
 							alert(res.result.data);
 							location.href = baseUrl + 'login';
@@ -790,7 +790,7 @@
 			
 			let taskName_data = data;
 			let target_title = $("#task_list").find(".task_name");
-			let select_task_name = "( Selected Task : " + taskName_data.title + " )";
+			let select_task_name = "( 선택된 태스크 : " + taskName_data.title + " )";
 			$(target_title).html(select_task_name);
 			console.log("taskName_data : ", taskName_data);
 
@@ -821,7 +821,7 @@
 				}
 			}
 
-			that.pt.find(".main_wrap .list_total").text("Total " + image_arr.length);
+			that.pt.find(".main_wrap .list_total").text("총 개수 " + image_arr.length);
 			that.initInferenceResult();
 		},
 		
@@ -882,7 +882,7 @@
 					html += "   			</div>";
 					html += "   		</div>";
 					html += "   	</div>";				
-					that.pt.find("th.pre").html("PREVIEW");
+					that.pt.find("th.pre").html("미리보기");
 				} else if(label_type == "VIDEO_BBOX"){
 					that.pt.find("th.pre").html("");
 				}

@@ -6,7 +6,7 @@
 	<jsp:param name= "cur_page" value="setup"/>
 </jsp:include>
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		#setup { width: 100%; height: 100%; background-color:#f5f5f5;}

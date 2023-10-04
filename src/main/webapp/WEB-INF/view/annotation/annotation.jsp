@@ -9,7 +9,7 @@
 <head>
 
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -90,7 +90,12 @@
 			let that = annotation;
 			that.defaultListener();
 			that.setView();
-			
+
+			that.pt.find(".new_btn").text("새 데이터세트 패키지 업로드");
+			//var html =  "<div class='new_btn filter_color'>새 데이터세트 패키징 업로드</div>";
+// 			var html = "<div class='flex'><div class='new_btn filter_color' style='width: inherit; margin-right: 0px;'>New +</div></div>";
+			//$("#workspace .btn_wrap").empty();
+			//$("#workspace .btn_wrap").append(html);
 		},
 		
 		defaultListener : function(){
@@ -454,9 +459,9 @@
 				"onDrop" : that.detail
 		}
 		arr2["rMenu"] = {
-			"Modify" : that.detail,
+			"데이터세트 수정" : that.detail,
 // 			"Export" : that.exports,
-			"Delete" : that.del
+			"삭제" : that.del
 		}
 
 		result.push(arr);

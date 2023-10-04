@@ -13,7 +13,7 @@
 <script src="<c:url value= "/js/echarts-all-3.js"/>"></script>
 
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		#workspace #dir_wrap .ztree { height: 100% !important; }

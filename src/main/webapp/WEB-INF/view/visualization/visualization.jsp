@@ -6,7 +6,7 @@
     <jsp:param name="cur_page" value="visualization"/>
 </jsp:include>
 <head>
-    <title>X-labeller</title>
+    <title>밀리터리 이미지넷 객체 라벨기</title>
 
     <style>
         .ztree .level0 span.button[id$=ico] {
@@ -342,7 +342,7 @@
             nodata: function () {
                 var that = visualization;
 
-                var html = "<div class='nodata-wrap flex'><div><img class='' src='<c:url value='/images/icon_nodata_dataset.png' />'><div>No Dataset</div><div>Please add dataset.</div></div></div>"
+                var html = "<div class='nodata-wrap flex'><div><img class='' src='<c:url value='/images/icon_nodata_dataset.png' />'><div>데이터가 없습니다.set</div><div>Please add dataset.</div></div></div>"
                 that.pt.find(".ztree").append(html);
             },
         },

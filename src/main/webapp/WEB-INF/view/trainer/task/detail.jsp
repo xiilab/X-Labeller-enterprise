@@ -5,7 +5,7 @@
 
 <head>
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -138,7 +138,7 @@
 			<div class="main_wrap">
 				<div class="title_wrap ms">
 					<div class="ms_wrap">
-						<span class="main_title">Training Task</span>
+						<span class="main_title">학습 태스크 정보</span>
 						<div class="flex">
 							<div class="anno_wrap">
 								<input class="detail_title" placeholder="제목을 입력해주세요" disabled>
@@ -151,8 +151,8 @@
 				<div class="horizontal_line"></div>
 
 				<div class="list_wrap ms">
-					<span class="list_title">Label List</span>
-					<span class="list_total">Total 0</span>
+					<span class="list_title">라벨 목록</span>
+					<span class="list_total">총개수 0</span>
 					<div class="table_header">
 						<table class="anno_table">
 							<colgroup>
@@ -166,13 +166,13 @@
 							</colgroup>
 							<thead>
 								<tr>
-									<th class="pre">PREVIEW</th>
-									<th>PATH</th>
+									<th class="pre">미리보기</th>
+									<th>파일 경로</th>
 									<th>X_1</th>
 									<th>Y_1</th>
 									<th>X_2</th>
 									<th>Y_2</th>
-									<th>LABEL</th>
+									<th>라벨</th>
 								</tr>
 							</thead>
 						</table>
@@ -198,7 +198,7 @@
 				<div class="margin">
 
 					<div class="ms_wrap ">
-						<span class="sub_title">Training Hyperparameter</span>
+						<span class="sub_title">학습 파라미터 설정 값</span>
 						<span class="algorithm_name"></span>
 						<div class="box_wrap border">
 <!-- 							<div class="input_wrap flex">
@@ -245,9 +245,9 @@
 							</div> -->
 						</div>
 						
-                        <span class="sub_title">Select GPU Node</span>
-                        <div class="gpu_reset">Refresh</div>	
-                 <!--        <span class="list_total">Total 0</span> -->
+                        <span class="sub_title">계산 GPU 선택</span>
+                        <div class="gpu_reset" style="width:8.5rem;">새로고침(GPU 목록 갱신)</div>
+                 <!--        <span class="list_total">총개수 0</span> -->
                         <div class="list_wrap">
                             <div class="table_header">
                                 <table class="gpu_table">
@@ -260,8 +260,8 @@
                                     <thead>
                                         <tr>
                                             <th>GPU NODE</th>
-                                            <th>DRIVER</th>
-                                            <th>STATUS</th>
+                                            <th>GPU 번호</th>
+                                            <th>상태</th>
                                             <th><div class="checkBtn"></div></th>
                                         </tr>
                                     </thead>
@@ -282,7 +282,7 @@
                             </div>
                         </div>						
 						<div class="btn_wrap">
-							<button class="run_btn off">Start Training</button>
+							<button class="run_btn off">학습 시작</button>
 <!-- 							<span class="help_btn"></span> -->
 <!-- 							<span class="help_tooltip">데이터가 10개 미만일 경우 평가 지표가 계산되지 않을 수 있습니다.</span> -->
 						</div>
@@ -292,7 +292,7 @@
 				<div class="log_place">
 					<div class="margin ">
 						<div class="log_size">
-							<span>Log</span>
+							<span>로그</span>
 							<span class="icon_expand"></span>
 							<div class="log_wrap">
 								<pre>
@@ -305,7 +305,7 @@
 			</div>
 			<div class="log_expand">
 				<div class="log_wrap">
-					<span class="log_title">Log</span>
+					<span class="log_title">로그</span>
 					<span class="log_close">&times;</span>
 					<pre>
 						<div class="log_area"></div>
@@ -464,7 +464,7 @@
 			that.data.startTraining = true;
 			that.data.guid = that.guid();
 			that.resetLogData();
-			that.pt.find(".list_total").text("Total 0");
+			that.pt.find(".list_total").text("총 개수 0");
 			that.pt.find(".sub_wrap .box_wrap").html("");
 			
 			// helper 툴팁(training button) 		
@@ -874,7 +874,7 @@
 				} 	else {	
 					run_btn.removeClass("on");
 					run_btn.addClass("off");
-					run_btn.text("Start Training");
+					run_btn.text("학습 시작");
 				}	
 			} else {
 				//사용자가 detail 페이지 보고있을때 다른 사용자가 누를경우...
@@ -891,7 +891,7 @@
 				} 	else {
 					run_btn.removeClass("on");
 					run_btn.addClass("off");
-					run_btn.text("Start Training");
+					run_btn.text("학습 시작");
 				}
 			}
 		},
@@ -1428,7 +1428,7 @@
 				that.setAnnotationScrollListener();
 			}
 			
-			that.pt.find(".list_total").text("Total " + label_arr.length);
+			that.pt.find(".list_total").text("총 개수 " + label_arr.length);
 		},
 		
 		drawAnnotationList : function(type,start,end) {	
@@ -1459,7 +1459,7 @@
 					html += "   			</div>";
 					html += "   		</div>";
 					html += "   	</div>";	
-					that.pt.find("th.pre").html("PREVIEW");
+					that.pt.find("th.pre").html("미리보기");
 				}				
 				html += "   </td>";
 				html += "   <td>" + sp[0] + "</td> ";

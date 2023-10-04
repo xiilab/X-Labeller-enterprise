@@ -4,7 +4,7 @@
 
 
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		#algorithmRegister { width: 100%; height: 100%; background-color:#f5f5f5; overflow: overlay; }
@@ -122,7 +122,7 @@
 									<span class="tooltip_wrap" data-tooltip-text="알고리즘의 제목을 입력해주세요. 영문과 숫자, 특수기호만 입력 가능합니다."></span>
 <!-- 									<span class="tooltip_span" data-tooltip-text="알고리즘의 제목을 입력해주세요. 영문과 숫자, 특수기호만 입력 가능합니다.">Title</span> -->
 								</div>
-								<input class="title" name="title" type="text" data-length="100" placeholder="Please enter the title" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'/>
+								<input class="title" name="title" type="text" data-length="100" placeholder="제목을 입력해주세요." onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'/>
 							</div>
 							<!-- 알고리즘에 대한 설명 -->
 							<div class="description_input_wrap">
@@ -131,7 +131,7 @@
 									<span class="tooltip_wrap"  data-tooltip-text="알고리즘의 설명을 입력해주세요. 한글과 영문 및 숫자, 특수기호 모두 입력 가능합니다."></span>
 <!-- 									<span class="tooltip_span"  data-tooltip-text="알고리즘의 설명을 입력해주세요. 한글과 영문 및 숫자, 특수기호 모두 입력 가능합니다.">Description</span> -->
 								</div>
-								<input class="description" name="description" type="text" data-length="200" placeholder="Please enter the description"/>
+								<input class="description" name="description" type="text" data-length="200" placeholder="설명을 입력해주세요."/>
 							</div>
 							<!-- docker image 기본 옵션 또는 사용자 정의 옵션 -->
 							<div class="docker_img_wrap">
@@ -181,9 +181,9 @@
 											<input class="fl file_name" type="text" name="file_name" placeholder="소스코드를 등록해주세요." disabled/>
 											<select name="label_type">
 												<option value="">유형을 선택해주세요.</option>
-												<option value="IMAGE_BBOX">Image Bounding Box</option>
-												<option value="IMAGE_SEGMENTATION">Image Segmentation</option>
-												<option value="VIDEO_BBOX">Video Bounding Box</option>
+												<option value="IMAGE_BBOX">바운딩 박스</option>
+												<option value="IMAGE_SEGMENTATION">세그멘테이션</option>
+												<%--									<option value="VIDEO_BBOX">Video Bounding Box</option>									--%>
 <!-- 												<option value="box">Bounding Box</option> -->
 <!-- 												<option value="polygon">Segmentation</option> -->
 											</select>

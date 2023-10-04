@@ -3,7 +3,7 @@
 
 
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		#info { height: 100%; overflow: overlay; }
@@ -69,7 +69,7 @@
 								<img class="border main_img" src="./images/annotation/annotation_main2.png"></img>
 								
 								<div class="text">
-									<p><span class="bold">1. Label List : </span>리스트 형태로 나타낸 Label 데이터</p>
+									<p><span class="bold">1. 라벨 목록 : </span>리스트 형태로 나타낸 Label 데이터</p>
 									<p><span class="bold">2. Preview : </span> Label 데이터 이미지</p>
 									<p><span class="bold">3. Tag : </span> Label 데이터를 Label 데이터의 이름으로 분류한 영역
 									<p><span class="bold">4. Label Container : </span> 검색된 Label 데이터의 결과를 담고있는 영역</p>
@@ -119,8 +119,8 @@
 								<img class="border main_img" src="./images/annotation/save_annotation2.png"></img>
 								
 								<div class="text">
-									<p>- Label List 에 포함된 정보들을 확인후 저장
-									<p>- Label List 에는 이미지를 볼수있는 Preview 기능 과 Label 정보가 포함</p>
+									<p>- 라벨 목록 에 포함된 정보들을 확인후 저장
+									<p>- 라벨 목록 에는 이미지를 볼수있는 Preview 기능 과 Label 정보가 포함</p>
 								</div>
 								
 							<span class="step">Step 4. 수출하기</span>	

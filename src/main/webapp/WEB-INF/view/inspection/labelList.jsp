@@ -87,7 +87,7 @@
 			<div class="enrichment_wrap flex">
 				<!-- jpark -->
 				<section class="enrichment">
-					<div class="title-wrap"><span>Label List</span> <span>|</span> Canvas</div>
+					<div class="title-wrap"><span>라벨 목록</span> <span>|</span> Canvas</div>
 					
 					<div class="frame-wrap">
 						<div id="frame-container" >
@@ -153,7 +153,7 @@
 			that.data.groupView = new groupView(that, nodes.id);
 			that.data.preView = new preView(that);
 			
-			const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">No Data</div><div class="kor_text">you have not selected any data yet</div></div>';
+			const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">선택된 데이터가 없습니다.</div><div class="kor_text">데이터를 선택해주세요.</div></div>';
 			that.pt.find(".enrichment #frame-container .canvas-container").hide();
 			that.pt.find(".enrichment #frame-container").append(html);
 			

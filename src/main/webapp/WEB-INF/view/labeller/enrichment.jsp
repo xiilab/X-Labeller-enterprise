@@ -1391,7 +1391,7 @@
 									</div>
 								</label> 
 								<br>
-								<div>*Please select a condition</div>
+								<div>*조건을 선택해주세요.</div>
 								<input class="" type="radio" name="all_option" id="all_and"
 									value="0" checked="checked"> <label for="all_and">and</label>
 								<input class="" type="radio" name="all_option" id="all_or"
@@ -1433,7 +1433,7 @@
 						</div>
 						<div class="input_wrap flex">
 							<label>Annotation</label> 
-							<input type="text" name="annotation_name" data-length="100" placeholder="Please enter the annotation name" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
+							<input type="text" name="annotation_name" data-length="100" placeholder="데이터세트 패키지명을 입력해주세요." onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
 						</div>
 						<div class="input_wrap flex">
 							<label>Project</label> <select id="project_result"
@@ -1443,13 +1443,13 @@
 						</div>
 						<div class="input_wrap flex"> 
 							<label>Task</label> <input type="text" name="task_name"
-								placeholder="Please enter the task name" data-length="100" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
+								placeholder="태스크명을 입력해주세요." data-length="100" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
 						</div>
 						<div class="input_wrap flex">
 							<label>Description</label> <input type="text"
 								name="task_contents"
 								data-length="200" 
-								placeholder="Please enter the task description">
+								placeholder="설명을 입력해주세요.">
 						</div>
 						<div class="input_wrap flex">
 							<label>Inheritance</label> <select id="task_result"
@@ -1465,7 +1465,7 @@
 							</select> <span class="training_config_btn">+</span>
 						</div>
 						<div class="quick_btn_wrap">
-							<div class="quick_training_btn">Start Training</div>
+							<div class="quick_training_btn">학습 시작</div>
 						</div>
 						<div id="add_project" class="add_project">
 							<div class="quick_title">
@@ -1473,10 +1473,10 @@
 								<!-- 								<span class="project_close fr"></span>							 -->
 							</div>
 							<input type="text" name="title"
-								placeholder="Please enter the title" data-length="100" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
+								placeholder="제목을 입력해주세요." data-length="100" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
 							<textarea class="contents_area" name="contents"
 								data-length="200" 
-								placeholder="Please enter the description"></textarea>
+								placeholder="설명을 입력해주세요."></textarea>
 							<div class="side_btn_wrap flex">
 								<div class="cancel_btn">Cancel</div>
 								<div class="add_btn">Create</div>
@@ -1544,7 +1544,7 @@
 						<div class="csv_name_input_wrap">
 							<!-- 							<span>output file name</span> -->
 							<input type="text" name="csv_title"
-								placeholder="Please enter the output file name" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'/>
+								placeholder="추론 결과 파일명을 입력해주세요." onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'/>
 						</div>
 						<div class="quick_task_list">
 							<div class="list_wrap">
@@ -1577,7 +1577,7 @@
 							</div>
 						</div>
 						<div class="quick_btn_wrap">
-							<div class="quick_inference_btn">Start Inference</div>
+							<div class="quick_inference_btn">추론 시작</div>
 						</div>
 						<div id="inference_config" class="inference_config">
 							<div class="quick_title">
@@ -1689,7 +1689,7 @@
 									<span class="name"></span>
 								</div>
 							</label> <br>
-							<div>*Please select a condition</div>
+							<div>*조건을 선택해주세요.</div>
 							<input class="" type="radio" name="option" id="and" value="0"
 								checked="checked"> <label for="and">and</label> <input
 								class="" type="radio" name="option" id="or" value="1"> <label
@@ -4297,7 +4297,7 @@
 				let selectTarget = that.root.pt.find(".quick_training .project_result");
 				$(selectTarget).html("");
 				
-				let html = "<option value=''>Please select the project</option>"; 
+				let html = "<option value=''>프로젝트를 선택해주세요.</option>";
 				for(let i=0, len = data.length; i<len; i++){
 					html += "<option data-id='"+data[i]["id"]+"' value='"+data[i]["title"]+"'>";
 					html += data[i]["title"];
@@ -4320,7 +4320,7 @@
 				let selectTarget = that.root.pt.find(".quick_training .task_result");
 				$(selectTarget).html("");
 				
-				let html = "<option value=''>Please select the task</option>"; 
+				let html = "<option value=''>태스크를 선택해주세요.</option>";
 				for(let i=0; i < task_list_data.length; i++){
 					for(let j=0; j < project_data.length; j++){
 						if(task_list_data[i].project_id === project_data[j].id){
@@ -4755,7 +4755,7 @@
 				
 				let taskName_data = data;
 				let target_title = that.root.pt.find(".checkpoint_list .selected_task_name");
-				let select_task_name = "( Selected Task : " + taskName_data + " )";
+				let select_task_name = "( 선택된 태스크 : " + taskName_data + " )";
 				$(target_title).html(select_task_name);
 				console.log("taskName_data : ", taskName_data);
 

@@ -6,7 +6,7 @@
 
 <head>
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -48,8 +48,8 @@
 		<div class="contents">
 			<div class="ms filter_color">
 				<div class="title_wrap">
-					<span>TASK LIST</span>
-					<span class="list_total">Total 0</span>
+					<span>태스크 목록</span>
+					<span class="list_total">총개수 0</span>
 				</div>
 
 				<div class="list_wrap">
@@ -67,10 +67,10 @@
 								<tr>
 									<th><div class="checkBox"></div></th>
 									<th>ID</th>
-									<th>USER_ID</th>
-									<th>TITLE</th>
-									<th>CONTENTS</th>
-									<th>CREATED_DATE</th>
+									<th>유저ID</th>
+									<th>제목</th>
+									<th>설명</th>
+									<th>생성 시간</th>
 								</tr>
 							</thead>
 						</table>
@@ -169,7 +169,7 @@
 			that.pt.find(".empty_wrap").remove();
 			that.pt.find("thead tr .checkBox").removeClass("selected");
 			that.pt.find("tbody tr .checkBox").removeClass("selected");
-			that.pt.find(".list_total").text("Total 0");
+			that.pt.find(".list_total").text("총 개수 0");
 		},
 		
 		refresh : function(){
@@ -282,7 +282,7 @@
 			
 			if(data.length == 0){
 				that.pt.find(".del_btn").hide();
-				that.addEmptyData(that.pt.find(".list_wrap"), "No Data","you have not added any data yet");
+				that.addEmptyData(that.pt.find(".list_wrap"), "데이터가 없습니다.","you have not added any data yet");
 				alert("Task가 존재하지 않습니다\nTask를 추가해주세요");
 				trainer.pt.find("div.section").removeClass("selected");
 				var nodes = wsObj["trainer"].dir.getSelectedNodes();
@@ -311,7 +311,7 @@
     		}
 			
 			
-			that.pt.find(".list_total").text("Total " + that.data.scrollObj.linked_list.length);
+			that.pt.find(".list_total").text("총 개수 " + that.data.scrollObj.linked_list.length);
 			that.initTaskList();
 		},
 		

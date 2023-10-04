@@ -1020,10 +1020,10 @@
 								<div class="list_table">
 									<div class="h_wrap flex">
 	<!-- 									<div class="checkBox all" ></div> -->
-										<div class="preview">PREVIEW</div>
+										<div class="preview">미리보기</div>
 										<div class="id">ID</div>
 										<div class="path">FILE NAME</div>
-										<div class="label_cnt">LABELS</div>
+										<div class="label_cnt">라벨S</div>
 									</div>
 									<ul class="c_wrap">
 									</ul>
@@ -1044,7 +1044,7 @@
 								</div>
 								<div class="input_wrap flex">
 									<label>Annotation</label> 
-									<input type="text" name="annotation_name" data-length="100" placeholder="Please enter the annotation name" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
+									<input type="text" name="annotation_name" data-length="100" placeholder="데이터세트 패키지명을 입력해주세요." onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
 								</div>
 								<div class="input_wrap flex">
 									<label>Project</label> <select id="project_result"
@@ -1054,13 +1054,13 @@
 								</div>
 								<div class="input_wrap flex"> 
 									<label>Task</label> <input type="text" name="task_name"
-										placeholder="Please enter the task name" data-length="100" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
+										placeholder="태스크명을 입력해주세요." data-length="100" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
 								</div>
 								<div class="input_wrap flex">
 									<label>Description</label> <input type="text"
 										name="task_contents"
 										data-length="200" 
-										placeholder="Please enter the task description">
+										placeholder="설명을 입력해주세요.">
 								</div>
 								<div class="input_wrap flex">
 									<label>Inheritance</label> <select id="task_result"
@@ -1076,7 +1076,7 @@
 									</select> <span class="training_config_btn">+</span>
 								</div>
 								<div class="quick_btn_wrap">
-									<div class="quick_training_btn">Start Training</div>
+									<div class="quick_training_btn">학습 시작</div>
 								</div>
 								<div id="add_project" class="add_project">
 									<div class="quick_title">
@@ -1084,10 +1084,10 @@
 										<!-- 								<span class="project_close fr"></span>							 -->
 									</div>
 									<input type="text" name="title"
-										placeholder="Please enter the title" data-length="100" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
+										placeholder="제목을 입력해주세요." data-length="100" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'>
 									<textarea class="contents_area" name="contents"
 										data-length="200" 
-										placeholder="Please enter the description"></textarea>
+										placeholder="설명을 입력해주세요."></textarea>
 									<div class="side_btn_wrap flex">
 										<div class="cancel_btn">Cancel</div>
 										<div class="add_btn">Create</div>
@@ -1155,7 +1155,7 @@
 								<div class="csv_name_input_wrap">
 									<!-- 							<span>output file name</span> -->
 									<input type="text" name="csv_title"
-										placeholder="Please enter the output file name" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'/>
+										placeholder="추론 결과 파일명을 입력해주세요." onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'/>
 								</div>
 								<div class="quick_task_list">
 									<div class="list_wrap">
@@ -1188,7 +1188,7 @@
 									</div>
 								</div>
 								<div class="quick_btn_wrap">
-									<div class="quick_inference_btn">Start Inference</div>
+									<div class="quick_inference_btn">추론 시작</div>
 								</div>
 								<div id="inference_config" class="inference_config">
 									<div class="quick_title">
@@ -1238,7 +1238,7 @@
                   	<section class="label_tag">
 	                    <section class="tag">
 	                   			<div class="btn_wrap flex sb">
-	               					<div class="label_title">Tag (<span></span>)</div>
+	               					<div class="label_title">태그(색인목록) (<span></span>)</div>
 <!-- 	               					<div class="tag_total">Total <span>0</span></div> -->
 	                   			</div>	  
                					<div class="tag_wrap">
@@ -1257,7 +1257,7 @@
 	                   			<div class="category_wrap flex fs"></div>
 	                   		</div><!-- label area end -->   
 			                <div class="save_btn_wrap flex">
-	                 			<button type="button" class="btn btn-primary save filter_color">Save</button>
+	                 			<button type="button" class="btn btn-primary save filter_color">저장하기</button>
 	                 		</div>                   		               	
 	                  	</section>                  	
                   	</section>
@@ -3066,13 +3066,13 @@
 					
                     resetView : function(){
                         const that = imgLine;
-                        var no_label = '<div class="no_label"><div></div><div>No Label</div><div>Please Add Label</div></div>';
+                        var no_label = '<div class="no_label"><div></div><div>생성된 라벨이 없습니다.</div><div>라벨을 추가해주세요.</div></div>';
 						$("#imgLine .category_wrap").html(no_label);                           
 //                         $("#imgLine .category_wrap").html("");
                         $("#imgLine .img_list_wrap .name_wrap .file_name").html("");
                         $("#imgLine .total_count span").html("")
                         $("#imgLine .empty_wrap").remove();
-                        const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">No Data</div><div class="kor_text">you have not selected any data yet</div></div>';
+                        const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">선택된 데이터가 없습니다.</div><div class="kor_text">데이터를 선택해주세요.</div></div>';
                         that.pt.find("section.enrichment .canvas-container").hide();
                         that.pt.find("section.enrichment .video_wrap").append(html);
                     },					
@@ -3724,7 +3724,7 @@
 							if(result.length > 0){
 								that.render.initMetaFromData(result);
 							} else {
-								var no_label = '<div class="no_label"><div></div><div>No Label</div><div>Please Add Label</div></div>';
+								var no_label = '<div class="no_label"><div></div><div>생성된 라벨이 없습니다.</div><div>라벨을 추가해주세요.</div></div>';
 								$("#imgLine .category_wrap").html(no_label); 	
 								$("#loader").hide();
 								$("#imgLine .label_wrap .btn_wrap .add").show();
@@ -4220,7 +4220,7 @@
 						
 						// jh.sa 210122
 						if($("#imgLine .category_wrap .cate_wp").length == 0){
-							var no_label = '<div class="no_label"><div></div><div>No Label</div><div>Please Add Label</div></div>';
+							var no_label = '<div class="no_label"><div></div><div>생성된 라벨이 없습니다.</div><div>라벨을 추가해주세요.</div></div>';
 							$("#imgLine .label_wrap .category_wrap ").html(no_label);
 							that.data.canvasObj.isModified = 0;
 						}							
@@ -4891,7 +4891,7 @@
 // 						html += '		<button  class="start_frm btn btn-info">첫점</button>';
 // 						html += '		<button class="end_frm btn btn-info">끝점</button>';
 // 						html += '       <div class="visible on"></div>';							// jh.sa
-						html += '		<button class="delete btn btn-danger ">Delete</button>';
+						html += '		<button class="delete btn btn-danger ">삭제</button>';
 						html += '	</div>';
 						html += '	<div class="w-100"></div>';
 						html += '	<div class="col-12 text-center p-1">';
@@ -6167,7 +6167,7 @@
 						let selectTarget = $("#imgLine .quick_training .project_result");
 						$(selectTarget).html("");
 						
-						let html = "<option value=''>Please select the project</option>"; 
+						let html = "<option value=''>프로젝트를 선택해주세요.</option>";
 						for(let i=0, len = data.length; i<len; i++){
 							html += "<option data-id='"+data[i]["id"]+"' value='"+data[i]["title"]+"'>";
 							html += data[i]["title"];
@@ -6190,7 +6190,7 @@
 						let selectTarget = $("#imgLine .quick_training .task_result");
 						$(selectTarget).html("");
 						
-						let html = "<option value=''>Please select the task</option>"; 
+						let html = "<option value=''>태스크를 선택해주세요.</option>";
 						for(let i=0; i < task_list_data.length; i++){
 							for(let j=0; j < project_data.length; j++){
 								if(task_list_data[i].label_type == "IMAGE_SEGMENTATION"){
@@ -6638,7 +6638,7 @@
 						
 						let taskName_data = data;
 						let target_title = $("#imgLine .checkpoint_list .selected_task_name");
-						let select_task_name = "( Selected Task : " + taskName_data + " )";
+						let select_task_name = "( 선택된 태스크 : " + taskName_data + " )";
 						$(target_title).html(select_task_name);
 						console.log("taskName_data : ", taskName_data);
 

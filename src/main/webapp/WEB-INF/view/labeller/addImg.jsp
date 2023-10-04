@@ -66,13 +66,13 @@
 		<div class="border_box">
 			<form id="fileForm" enctype="multipart/form-data">
 				<div class="title_wrap flex">
-					<div>Add File</div>
+					<div>데이터 추가</div>
 					<label class="comment">
 						 <span>JPG JPEG PNG</span> 형식의 이미지 파일만 업로드 가능합니다.
 					</label>
 				</div>
 				<div class="fileTab_wrap flex">
-					<div class="img_file tab active">ImageFile</div>
+					<div class="img_file tab active">이미지</div>
 					<div class="video_file tab">VideoFile</div>
 					<div class="zip_file tab">ZIPFile</div>
 					<div class="blank"></div>
@@ -80,11 +80,11 @@
 				<div class="file_wrap">
 					<div class="h_wrap flex">
 						<div>
-							<div>Total file count:</div>
+							<div>파일 총개수:</div>
 							<div class="total_file_count"></div>
 						</div>
 						<div>
-							<div>Total file size: </div>
+							<div>파일 총 개수: </div>
 							<div class="total_file_size"></div>
 						</div>
 						<!-- <div class="checkBox all"></div> -->
@@ -93,7 +93,7 @@
 					<ul class="c_wrap">
 						<li class="file_drop_info flex">
 							<div class="info_wrap">
-								<div class="img"></div><div>Please drag&drop the file.</div>
+								<div class="img"></div><div>등록할 파일을 이 영역으로 옮겨주세요.</div>
 							</div>
 						</li>
 					</ul>
@@ -102,15 +102,15 @@
 					<input type="file" id="files" name="addImg_files" class="file" accept="image/jpg, image/jpeg, image/png" multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
-						<div class="delete">Delete</div>
-						<div class="append">Attach</div>
+						<div class="delete">삭제</div>
+						<div class="append">파일 첨부</div>
 					</div>
 					<div class="fps_wrap">
 						<label for="fps">FPS : </label>
 						<input id="fps" class="fps" type="number" onKeyPress="return checkNum2(event);"/>
 					</div>					
 					<div class="btn_wrap fr">
-						<div class="save filter_color">Save</div>
+						<div class="save filter_color">저장하기</div>
 					</div>
 				</div>
 			</form>
@@ -159,8 +159,8 @@
 			
 			var html = "<li class='file_drop_info flex'>"
 				+ "<div class='info_wrap'>"
-// 				+ "<div class='img'></div><div>Please drag&drop the file.</div><span>Maximum Number of files : 2000</span>"
-				+ "<div class='img'></div><div>Please drag&drop the file.</div>"
+// 				+ "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div><span>Maximum Number of files : 2000</span>"
+				+ "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div>"
 				+ "</div>"
 				+ "</li>";
 			
@@ -348,7 +348,7 @@
 				var html = "";
 					html += "<li class='file_drop_info flex'>"
 					html += "<div class='info_wrap'>"
-					html += "<div class='img'></div><div>Please drag&drop the file.</div>"
+					html += "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div>"
 // 					if($(this).hasClass("img_file")){
 // 						html += "<span>Maximum Number of files : 2000</span>"
 // 					} else if($(this).hasClass("video_file")){

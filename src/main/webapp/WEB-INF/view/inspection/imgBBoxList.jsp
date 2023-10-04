@@ -303,7 +303,7 @@
                      <section class="enrichment">
 	                  	<div class="header_wrap flex sb">
 		                  	<div class="page_title_wrap">
-		                  		<span>Label List</span> <span>|</span> Image Bounding Box
+		                  		<span>라벨 목록</span> <span>|</span>바운딩박스
 	                  		</div>
 	                  	</div>                     
                    		<div class="video_wrap flex tab-pane active" id="imgBBoxList-labeller" role="tabpanel" >
@@ -341,10 +341,10 @@
 <!-- 								<div class="list_table"> -->
 <!-- 									<div class="h_wrap flex"> -->
  	<!-- 									<div class="checkBox all" ></div> --> 
-<!-- 										<div class="preview">PREVIEW</div> -->
+<!-- 										<div class="preview">미리보기</div> -->
 <!-- 										<div class="id">ID</div> -->
 <!-- 										<div class="path">PATH</div> -->
-<!-- 										<div class="label_cnt">LABELS</div> -->
+<!-- 										<div class="label_cnt">라벨S</div> -->
 <!-- 									</div> -->
 <!-- 									<ul class="c_wrap"> -->
 <!-- 									</ul> -->
@@ -355,7 +355,7 @@
 <!-- 	                 		</div>  -->
                  		</div>              <!-- Image Slide area end -->    						
 		                <div class="save_btn_wrap flex">
-                 			<button type="button" class="btn btn-primary save btn btn-primary">Save</button>
+                 			<button type="button" class="btn btn-primary save btn btn-primary">저장하기</button>
                 		</div>						
                      </section>
                      <section class="label">
@@ -1556,7 +1556,7 @@
                         $("#imgBBoxList .category_wrap").html("");
                         $("#imgBBoxList .img_list_wrap .name_wrap .file_name").html("");
                         $("#imgBBoxList .empty_wrap").remove();
-                        const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">No Data</div><div class="kor_text">you have not selected any data yet</div></div>';
+                        const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">선택된 데이터가 없습니다.</div><div class="kor_text">데이터를 선택해주세요.</div></div>';
                         that.pt.find("section.enrichment .canvas-container").hide();
                         that.pt.find("section.enrichment .video_wrap").append(html);
                     },					
@@ -1566,7 +1566,7 @@
                     	
                         $("#imgBBoxList .img_list_wrap .name_wrap .file_name").html("");
                         $("#imgBBoxList .empty_wrap").remove();
-                        const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">No Data</div><div class="kor_text">you have not selected any data yet</div></div>';
+                        const html = '<div class="empty_wrap"><div class="no_image"></div><div class="eng_text">선택된 데이터가 없습니다.</div><div class="kor_text">데이터를 선택해주세요.</div></div>';
                         that.pt.find("section.enrichment .canvas-container").hide();
                         that.pt.find("section.enrichment .video_wrap").append(html);                    	
                     },
@@ -2516,7 +2516,7 @@
 							html += '	<div class="cate_header col-12 flex sb p-1">';
 							html += '		<div class="color  "></div>';
 //	 						html += '       <div class="visible on"></div>';							// jh.sa
-							html += '		<button class="delete btn btn-danger ">Delete</button>';
+							html += '		<button class="delete btn btn-danger ">삭제</button>';
 							html += '	</div>';
 							html += '	<div class="w-100"></div>';
 							html += '	<div class="col-12 text-center p-1">';
@@ -2530,7 +2530,7 @@
 							html += '	<div class="cate_header col-12 flex sb p-1">';
 							html += '		<div class="color  "></div>';
 //	 						html += '       <div class="visible on"></div>';							// jh.sa
-							html += '		<button class="delete btn btn-danger ">Delete</button>';
+							html += '		<button class="delete btn btn-danger ">삭제</button>';
 							html += '	</div>';
 							html += '	<div class="w-100"></div>';
 							html += '	<div class="col-12 text-center p-1">';

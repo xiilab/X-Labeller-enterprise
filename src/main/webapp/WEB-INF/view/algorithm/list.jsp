@@ -7,7 +7,7 @@
 </jsp:include>
 <head>
 
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		#main { height: 100%; width: 100%;  position: relative;}

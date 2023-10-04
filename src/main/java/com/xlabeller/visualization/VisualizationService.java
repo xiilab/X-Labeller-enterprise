@@ -99,7 +99,10 @@ public class VisualizationService {
         );
 
         // JSON List 2차원 배열로 변환
-        double[][] resultArray = listTo2dDoubleArray(VisualLabelResultTypeEnum.SIZE.getResultType(), resultList);
+        double[][] resultArray = new double[0][0];
+        if (resultList.size() > 0) {
+            resultArray = listTo2dDoubleArray(VisualLabelResultTypeEnum.SIZE.getResultType(), resultList);
+        }
         return Output.JsonOutput("200", resultArray);
     }
 
@@ -226,7 +229,10 @@ public class VisualizationService {
         );
 
         // JSON List 2차원 배열로 변환
-        double[][] resultArray = listTo2dDoubleArray(VisualLabelResultTypeEnum.CENTER_POSITION.getResultType(), resultList);
+        double[][] resultArray = new double[0][0];
+        if (resultList.size() > 0) {
+            resultArray = listTo2dDoubleArray(VisualLabelResultTypeEnum.CENTER_POSITION.getResultType(), resultList);
+        }
         return Output.JsonOutput("200", resultArray);
     }
 

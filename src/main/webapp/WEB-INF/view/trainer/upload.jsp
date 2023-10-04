@@ -4,7 +4,7 @@
 
 
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		#trainer_upload { width: 100%; height: 100%;  background-color: #f5f5f5; overflow: overlay;}
@@ -32,19 +32,19 @@
 	<div class="container" id="trainer_upload">
 		<div class="border_box">
 				<div class="title_wrap flex">
-					<div>Create Project</div>
+					<div>프로젝트 생성</div>
 				</div>
 				<div class="input_wrap flex ">
-					<input class="title_area" type="text" name="title" data-length="100" placeholder="Please enter the title" onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
+					<input class="title_area" type="text" name="title" data-length="100" placeholder="제목을 입력해주세요." onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
 				</div>
 							
 				<div class="input_wrap flex ">
-					<textarea class="contents_area" name="contents" data-length="200" placeholder="Please enter the description"></textarea>
+					<textarea class="contents_area" name="contents" data-length="200" placeholder="설명을 입력해주세요."></textarea>
 				</div>
 
 				<div class="input_wrap">
 					<div class="btn_wrap fr ">
-						<div class="save filter_color">Save</div>
+						<div class="save filter_color">저장하기</div>
 					</div>
 				</div>
 		</div>

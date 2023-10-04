@@ -75,46 +75,46 @@
 		<div class="border_box">
 			<form id="fileForm" enctype="multipart/form-data">
 				<div class="title_wrap flex">
-					<div>New</div>
+					<div>새 데이터셋 업로드</div>
 				</div>
 				<div class="input_wrap flex">
-					<input class="" type="text" name="title" data-length="100" placeholder="Please enter the title" onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
+					<input class="" type="text" name="title" data-length="100" placeholder="제목을 입력해주세요." onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
 				</div>
 							
 				<div class="input_wrap flex">
-					<textarea class="" name="contents" data-length="200" placeholder="Please enter the description"></textarea>
+					<textarea class="" name="contents" data-length="200" placeholder="설명을 입력해주세요."></textarea>
 				</div>
 				<div class="title_wrap flex">
-					<div>Media Type :</div>
+					<div>미디어 타입 :</div>
 					<div class="media_type_wrap filter_color">
 						<span class="radioBtn selected" data-value="image"></span>
-						<span class="radio_label">Image</span>
+						<span class="radio_label">이미지</span>
 						<!-- military 20221125 : 비디오타입 임시 삭제 -->
 <!--  						<span class="radioBtn" data-value="video"></span> -->
 <!-- 						<span class="radio_label">Video</span> -->
 					</div>
 				</div>				
 				<div class="title_wrap flex">
-					<div>Label Type :</div>
+					<div>라벨 타입 :</div>
 					<div class="label_type_wrap filter_color">
 						<span class="radioBtn selected" data-value="box"></span>
-						<span class="radio_label">Bounding Box</span>
+						<span class="radio_label">바운딩박스</span>
 						
 						<span class="radioBtn" data-value="polygon"></span>
-						<span class="radio_label">Segmentation</span>
+						<span class="radio_label">세그멘테이션</span>
 						
 						<!-- <span class="radioBtn" data-value="polyLine"></span>
 						<span class="radio_label">Poly Line</span> -->
 					</div>
 				</div>					
 				<div class="title_wrap flex">
-					<div>Add File</div>
+					<div>데이터 추가</div>
 					<label class="comment">
 						 <span>JPG JPEG PNG</span> 형식의 이미지 파일만 업로드 가능합니다.
 					</label>
 				</div>
 				<div class="fileTab_wrap flex">
-					<div class="img_file tab active">ImageFile</div>
+					<div class="img_file tab active">이미지</div>
  					<div class="video_file tab">VideoFile</div> 
 					<!-- <div class="zip_file tab">ZIPFile</div> -->
 					<div class="blank"></div>
@@ -122,11 +122,11 @@
 				<div class="file_wrap">
 					<div class="h_wrap flex">
 						<div class="flex">
-							<div>Total file count: </div>
+							<div>파일 총 개수: </div>
 							<div class="total_file_count"></div>
 						</div>
 						<div class="flex">
-							<div>Total file size: </div>
+							<div>파일 총 개수: </div>
 							<div class="total_file_size"></div>
 						</div>
 					</div>
@@ -134,7 +134,7 @@
 					<ul class="c_wrap">
 						<li class="file_drop_info flex">
 							<div class="info_wrap">
-								<div class="img"></div><div>Please drag&drop the file.</div>
+								<div class="img"></div><div>등록할 파일을 이 영역으로 옮겨주세요.</div>
 							</div>
 						</li>
 					</ul>
@@ -144,15 +144,15 @@
 					<input type="file" id="files" name="files" class="file" accept="image/jpg, image/jpeg, image/png"  multiple />
 					<input type="file" id="bigFiles" name="files" class="file" accept="application/zip" />
 					<div class="btn_wrap fl">
-						<div class="delete">Delete</div>
-						<div class="append">Attach</div>
+						<div class="delete">삭제</div>
+						<div class="append">파일 첨부</div>
 					</div>
 <!-- 					<div class="fps_wrap"> -->
 <!-- 						<label for="fps">FPS : </label> -->
 <!-- 						<input id="fps" class="fps" type="number" onKeyPress="return checkNum2(event);"/> -->
 <!-- 					</div> -->
 					<div class="btn_wrap fr">
-						<div class="save filter_color">Save</div>
+						<div class="save filter_color">저장하기</div>
 					</div>
 				</div>
 			</form>
@@ -198,8 +198,8 @@
 
 			var html = "<li class='file_drop_info flex'>"
 				+ "<div class='info_wrap'>"
-// 				+ "<div class='img'></div><div>Please drag&drop the file.</div><span>Maximum Number of files : 2000</span>"
-				+ "<div class='img'></div><div>Please drag&drop the file.</div>"
+// 				+ "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div><span>Maximum Number of files : 2000</span>"
+				+ "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div>"
 				+ "</div>"
 				+ "</li>";
 			
@@ -412,7 +412,7 @@
 				var html = ""; 
 					html += "<li class='file_drop_info flex'>"
 					html += "<div class='info_wrap'>"
-					html += "<div class='img'></div><div>Please drag&drop the file.</div>"
+					html += "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div>"
 // 					if($(this).hasClass("img_file")){
 // 						html += "<span>Maximum Number of files : 2000</span>"
 // 					} else if($(this).hasClass("video_file")){

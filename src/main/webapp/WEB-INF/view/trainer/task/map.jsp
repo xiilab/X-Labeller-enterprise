@@ -6,7 +6,7 @@
 <head>
 
 
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -158,7 +158,7 @@
 					<div class="ms_wrap">
 						<div class="title_wrap">
 							<span>Compute Score</span>
-							<span class="list_total">Total 0</span>
+							<span class="list_total">총개수 0</span>
 						</div>
 						<div class="table_header">
 							<table class="anno_table">
@@ -174,12 +174,12 @@
 								<thead>
 									<tr>
 										<th></th>
-										<th>No.</th>
-										<th>USER_ID</th>
-										<th>TITLE</th>
-										<th>CONTENTS</th>
-										<th>LABEL_TYPE</th>
-										<th>CREATED_DATE</th>
+										<th>번호.</th>
+										<th>유저ID</th>
+										<th>제목</th>
+										<th>설명</th>
+										<th>라벨 타입</th>
+										<th>생성 시간</th>
 									</tr>
 								</thead>
 							</table>
@@ -228,7 +228,7 @@
 <%-- 										</colgroup> --%>
 <!-- 										<thead> -->
 <!-- 											<tr> -->
-<!-- 												<th>PREVIEW</th> -->
+<!-- 												<th>미리보기</th> -->
 <!-- 												<th class="th_path">PATH</th> -->
 <!-- 											</tr> -->
 <!-- 										</thead> -->
@@ -284,10 +284,10 @@
 <!-- 						</div> -->
 						<div class="title_wrap">
                         	<span>Select GPU Node</span>	
-              				<div class="gpu_reset">Refresh</div>					
+              				<div class="gpu_reset" style="width:8.5rem;">새로고침(GPU 목록 갱신)</div>
 						</div>
 
-                 <!--        <span class="list_total">Total 0</span> -->
+                 <!--        <span class="list_total">총개수 0</span> -->
                         <div class="list_wrap">
                             <div class="table_header">
                                 <table class="gpu_table">
@@ -300,8 +300,8 @@
                                     <thead>
                                         <tr>
                                             <th>GPU NODE</th>
-                                            <th>DRIVER</th>
-                                            <th>STATUS</th>
+                                            <th>GPU 번호</th>
+                                            <th>상태</th>
                                             <th><div class="checkBtn"></div></th>
                                         </tr>
                                     </thead>
@@ -322,7 +322,7 @@
                             </div>
                         </div>							
 <!-- 						<span class="model_download_btn">Download Model</span> -->
-						<span class="list_total">Total 0</span>
+						<span class="list_total">총개수 0</span>
 						<div class="list_wrap">
 							<div class="table_header">
 								<table class="anno_table">
@@ -433,7 +433,7 @@
 			that.resetView();
 			that.setDefaultListener();
 			that.pt.find(".submit_btn").hide();
-			that.addEmptyData(that.pt.find(".list_container .table_body.run_area "), "No Data", "you have not added any data yet");
+			that.addEmptyData(that.pt.find(".list_container .table_body.run_area "), "데이터가 없습니다.", "you have not added any data yet");
 			console.log("map_id:::::", map_id);
 		},
 		
@@ -578,7 +578,7 @@
 				annotation_arr.push(data[i]);
 			} 
 			
-			that.pt.find(".main_wrap .list_total").text("Total " + annotation_arr.length);
+			that.pt.find(".main_wrap .list_total").text("총 개수 " + annotation_arr.length);
 			that.initAnnotationList();
 		},
 		
@@ -986,14 +986,14 @@
 			that.resetModelListData();
 			
 			if(data.length == 0){
-				that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "No Model", "please train your task first");
+				that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "모델이 없습니다.", "모델 생성을 위해 학습을 먼저 진행해주세요.");
 			}
 			
 			for(let i = 0, len = data.length; i<len; i++){
 				csv_arr.push(data[i]);
 			}
 			
-			that.pt.find(".sub_wrap .list_total").text("Total " + csv_arr.length);
+			that.pt.find(".sub_wrap .list_total").text("총 개수 " + csv_arr.length);
 			
 			that.initModelList();
 		},
@@ -1211,7 +1211,7 @@
  			target.empty();
  			$(target).html("");
 			that.pt.find(".empty_wrap").remove();
-			that.pt.find(".list_total").text("Total 0");
+			that.pt.find(".list_total").text("총 개수 0");
 			that.pt.find(".checkBox").off("click");	
 			that.pt.find(".checkBox").addClass("selected");
 
@@ -1254,11 +1254,11 @@
 // 					let img_path = data[i].path;
 // 					that.modifyImageData(img_path);
 // 				}
-// 				that.pt.find(".main_wrap .list_total").text("Total " + linked_list.length);
+// 				that.pt.find(".main_wrap .list_total").text("총개수 " + linked_list.length);
 // 				that.appendNewPath(i);	
 // 			} else {
 // 				alert("사용 가능한 데이터가 없습니다.");
-// 				that.addEmptyData(that.pt.find(".list_container .table_body.run_area "), "No Data", "you have not added any data yet");
+// 				that.addEmptyData(that.pt.find(".list_container .table_body.run_area "), "데이터가 없습니다.", "you have not added any data yet");
 // 				return false
 // 			}
 
@@ -1372,7 +1372,7 @@
 			if(linked_list == null){
 				alert("사용 가능한 데이터가 없습니다");
 				that.pt.find(".submit_btn").hide();
-				that.addEmptyData(that.pt.find(".list_container .table_body.run_area"), "No Data", "you have not added any data yet");
+				that.addEmptyData(that.pt.find(".list_container .table_body.run_area"), "데이터가 없습니다.", "you have not added any data yet");
 				hideLoading("#task_map .main_wrap .list_container"); 
 				return;
 			}

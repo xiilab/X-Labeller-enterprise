@@ -3,14 +3,13 @@ FROM tomcat:8.5-jre8-openjdk
 RUN apt-get update -y
 RUN apt-get install -y sshpass vim tree openssh-server
 
-
 RUN mkdir /usr/local/uploadFile
 
 ADD server.xml /usr/local/tomcat/conf/
 RUN chmod 755 /usr/local/tomcat/conf/server.xml
 
 ADD uploadFile.xml /usr/local/tomcat/conf/Catalina/localhost/
-RUN chmod -R 777 /usr/local/tomcat/conf/Catalina/localhost/
+RUN chmod -R 777 /usr/local/tomcat/conf/Catalina/localhost/e
 RUN chmod 755 /usr/local/tomcat/conf/Catalina/localhost/uploadFile.xml
 
 RUN chmod -R 777 /usr/local/uploadFile

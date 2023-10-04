@@ -25,7 +25,7 @@ public class GstUtil
 	public GstUtil() {
 	}
 
-	public void convertVideotoJPG(String videoPath, String imagePath, String baseName,String currentDate,String datasetId, int fps) {
+	public void convertVideotoJPG(String videoPath, String imagePath, String baseName,String currentDate, String datasetId, int fps) {
 		
 //		if(!Gst.isInitialized()) {
 //			Gst.init();

@@ -4,7 +4,7 @@
 
 
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		#algorithmDetail { width: 100%; height: 100%; background-color:#f5f5f5; overflow: overlay; }
@@ -507,7 +507,7 @@
 				html += "<select name='label_type_d'>";
 				html += "<option value='' data-value=''>유형을 선택해 주세요.</option>";
 				html += "<option value='IMAGE_BBOX' data-value='IMAGE_BBOX'>Image Bounding Box</option>";
-				html += "<option value='IMAGE_SEGMENTATION' data-value='IMAGE_SEGMENTATION'>Image Segmentation</option>";
+				html += "<option value='IMAGE_SEGMENTATION' data-value='IMAGE_SEGMENTATION'>세그멘테이션</option>";
 				html += "<option value='VIDEO_BBOX' data-value='VIDEO_BBOX'>Video Bounding Box</option>";	
 // 				html += "<option value='box'>Bounding Box</option>";
 // 				html += "<option value='polygon'>Segmentation</option>";

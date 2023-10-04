@@ -75,13 +75,13 @@
 	<div class="container" id="exports">
 		<div class="border_box">
 			<div class="title_wrap">
-				<label>Export</label>
+				<label>데이터 추출</label>
 			</div>
 			
 			<div class="half_wrapper">
 				<div class="half_wrap left">
 					<div class="title_wrap">
-						<label>STEP 1. Select Dataset</label>
+						<label>STEP 1. 데이터셋 선택</label>
 					</div>
 					<div class="table_header">
 						<table class="anno_table">
@@ -93,11 +93,11 @@
 								<tr>
 									<th><input class="checkAll" type="checkbox" value=""/></th>
 									<th>ID</th>
-									<th>Dataset Name</th>
-									<th>Description</th>
-									<th>Media Type</th>
-									<th>Label Type</th>
-									<th>Created Date</th>
+									<th>데이터셋명</th>
+									<th>설명</th>
+									<th>미디어 타입</th>
+									<th>라벨 타입</th>
+									<th>생성 시간</th>
 								</tr>
 							</thead>
 						</table>
@@ -117,7 +117,7 @@
 				<div class="half_wrap right">
 				
 					<div class="title_wrap">
-						<label>STEP2. Select Type</label>
+						<label>STEP2. 추출형식 선택</label>
 					</div>
 					<div class="label_type_wrap">
 						<!-- <div class="wrap">
@@ -135,11 +135,11 @@
 					</div>
 					
 					<div class="title_wrap">
-						<label>STEP3. Export start & Download File</label>
+						<label>STEP3. 추출 시작 & 파일 다운로드</label>
 					</div>
 					
 					<div class="download btn_wrap">
-						<button class="save">Export Start</button>
+						<button class="save">추출 시작</button>
 						<label class="loading hide">Generate export file...</label>
 						<!-- <a class="download_link hide">export.zip</a> -->
 					</div>

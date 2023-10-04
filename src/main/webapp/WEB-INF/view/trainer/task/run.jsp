@@ -4,7 +4,7 @@
 
 <head>
 
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -154,9 +154,9 @@
 				<div class="ms">
 					<div class="ms_wrap ">
 						<div class="title_wrap">
-							<span>Inference</span>
+							<span>추론 태스크 정보</span>
 							<span class="task_name"></span>
-							<span class="list_total">Total 0</span>
+							<span class="list_total">총개수 0</span>
 						</div>
 
 						<div class="drop_wrap flex">
@@ -168,7 +168,7 @@
 										</colgroup>
 										<thead>
 											<tr>
-												<th>DATASET LIST</th>
+												<th>데이터 패키징 목록</th>
 											</tr>
 										</thead>
 									</table>
@@ -189,8 +189,8 @@
 										</colgroup>
 										<thead>
 											<tr>
-												<th class="pre">PREVIEW</th>
-												<th class="th_path">PATH</th>
+												<th class="pre">미리보기</th>
+												<th class="th_path">파일 경로</th>
 											</tr>
 										</thead>
 									</table>
@@ -213,7 +213,7 @@
 				<div class="margin">
 					<div class="ms_wrap filter_color">
 						<div class="title_wrap">
-							<span>Inference Parameter</span>
+							<span>추론 파라미터 설정 값</span>
 							<span class="algorithm_name"></span>
 						</div>
 
@@ -236,19 +236,19 @@
 							</div> -->
 						</div>
 						<div class="title_wrap">
-							<span>CSV File Name</span>
+							<span>추론 결과 파일(.csv) 이름</span>
 						</div>
 						<div class="file_name_wrap border">
 							<div class="input_wrap flex">
-								<label>output file name</label><input id="file_name" type="text" name="file" placeholder="Please Enter the Filename" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'/>
+								<label>파일 저장명</label><input id="file_name" type="text" name="file" placeholder="Please Enter the Filename" onkeyup='noSpaceForm(this);' onchange='noSpaceForm(this);'/>
 							</div>
 						</div>
 						<div class="title_wrap">
-                        	<span>Select GPU Node</span>	
-              				<div class="gpu_reset">Refresh</div>					
+                        	<span>계산 GPU 선택</span>
+              				<div class="gpu_reset" style="width:8.5rem;">새로고침(GPU 목록 갱신)</div>
 						</div>
 
-                 <!--        <span class="list_total">Total 0</span> -->
+                 <!--        <span class="list_total">총개수 0</span> -->
                         <div class="list_wrap">
                             <div class="table_header">
                                 <table class="gpu_table">
@@ -261,8 +261,8 @@
                                     <thead>
                                         <tr>
                                             <th>GPU NODE</th>
-                                            <th>DRIVER</th>
-                                            <th>STATUS</th>
+                                            <th>GPU 번호</th>
+                                            <th>상태</th>
                                             <th><div class="checkBtn"></div></th>
                                         </tr>
                                     </thead>
@@ -282,8 +282,8 @@
                                 </table>
                             </div>
                         </div>							
-						<span class="model_download_btn">Download Model</span>
-						<span class="list_total">Total 0</span>
+						<span class="model_download_btn">모델 다운로드</span>
+						<span class="list_total">총개수 0</span>
 						<div class="list_wrap">
 							<div class="table_header">
 								<table class="anno_table">
@@ -292,7 +292,7 @@
 									</colgroup>
 									<thead>
 										<tr>
-											<th>MODEL</th>
+											<th>식별모델 선택</th>
 										</tr>
 									</thead>
 								</table>
@@ -309,7 +309,7 @@
 					</div>
 				</div>
 				<div class="btn_wrap">
-					<button class="submit_btn">Start Inference</button>
+					<button class="submit_btn">추론 시작</button>
 				</div>
 			</div>
 		</div>
@@ -412,7 +412,7 @@
 			that.data.colorHash = new ColorHash();
 			that.setDefaultListener();
 			that.pt.find(".submit_btn").hide();
-			that.addEmptyData(that.pt.find(".list_container .table_body.run_area "), "No Data", "you have not added any data yet");
+			that.addEmptyData(that.pt.find(".list_container .table_body.run_area "), "데이터가 없습니다.", "you have not added any data yet");
 			console.log("현재 inference 대상 task ID:::::", that.data.taskId);
 		},
 		
@@ -632,7 +632,7 @@
 						alert(res.result.data);
 						that.emptyModelListData();
 						// that.removeEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table"));
-						// that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "No Model", "please train your task first");
+						// that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "모델이 없습니다.", "모델 생성을 위해 학습을 먼저 진행해주세요.");
 					} else {
 						alert(res.result.data);
 						that.emptyModelListData();
@@ -668,7 +668,7 @@
 			//console.log("data::", data);
 			
 			if(!data || data.length == 0){
-				that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "No Model", "please train your task first");
+				that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "모델이 없습니다.", "모델 생성을 위해 학습을 먼저 진행해주세요.");
 			}
 			
 			for(let i = 0, len = data.length; i<len; i++){
@@ -678,7 +678,7 @@
 			}
 			// ㅌㅍ
 			//console.log("that.data.csv_arr.length::", that.data.csv_arr.length);
-			that.pt.find(".sub_wrap .list_total").text("Total " + that.data.csvArr.length);
+			that.pt.find(".sub_wrap .list_total").text("총 개수 " + that.data.csvArr.length);
 			
 			that.initModelList();
 		},
@@ -689,7 +689,7 @@
 			//console.log("data::", data);
 			
 			//if(!data || data.length == 0){
-				that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "No Model", "please train your task first");
+				that.addEmptyData(that.pt.find(".sub_wrap .list_wrap .table_body .anno_table "), "모델이 없습니다.", "모델 생성을 위해 학습을 먼저 진행해주세요.");
 			//}
 			
 			/*for(let i = 0, len = data.length; i<len; i++){
@@ -699,7 +699,7 @@
 			} */
 			// ㅌㅍ
 			//console.log("that.data.csv_arr.length::", that.data.csv_arr.length);
-			that.pt.find(".sub_wrap .list_total").text("Total " + that.data.csvArr.length);
+			that.pt.find(".sub_wrap .list_total").text("총 개수 " + that.data.csvArr.length);
 			
 			that.initModelList();
 		},
@@ -915,7 +915,7 @@
  			target.empty();
  			$(target).html("");
 			that.pt.find(".empty_wrap").remove();
-			that.pt.find(".list_total").text("Total 0");
+			that.pt.find(".list_total").text("총 개수 0");
 			that.pt.find(".checkBox").off("click");	
 			that.pt.find(".checkBox").addClass("selected");
 
@@ -963,11 +963,11 @@
 					that.modifyImageData(img_path);
 				}
 				var linked_list = that.data.imgScrollObj.linked_list;
-				$("#task_run .main_wrap .list_total").text("Total " + linked_list.length);
+				$("#task_run .main_wrap .list_total").text("총 개수 " + linked_list.length);
 				that.appendNewPath(i);	
 			} else {
 				alert("사용 가능한 데이터가 없습니다.");
-				that.addEmptyData($("#task_run .table_body.run_area "), "No Data", "you have not added any data yet");
+				that.addEmptyData($("#task_run .table_body.run_area "), "데이터가 없습니다.", "you have not added any data yet");
 				return false
 			}
 
@@ -1100,7 +1100,7 @@
 			if(linked_list == null){
 				alert("사용 가능한 데이터가 없습니다");
 				that.pt.fnd(".submit_btn").hide();
-				that.addEmptyData(that.pt.find(".list_container .table_body.run_area"), "No Data", "you have not added any data yet");
+				that.addEmptyData(that.pt.find(".list_container .table_body.run_area"), "데이터가 없습니다.", "you have not added any data yet");
 				hideLoading("#task_run .main_wrap .list_container"); 
 				return;
 			}
@@ -1147,7 +1147,7 @@
 				html += " <tr data-id='"+cur_id+"'> ";
 				if(label_type == "IMAGE_BBOX" || label_type == "IMAGE_SEGMENTATION"){
 					html += "   <td class='preview'><div class='img_preview'><div class='normal_img'><div class='frame_container'></div></div></div></td>";
-					that.pt.find("th.pre").html("PREVIEW");
+					that.pt.find("th.pre").html("미리보기");
 				} else if(label_type == "VIDEO_BBOX"){
 					html += "   <td class='preview'></td>";
 					that.pt.find("th.pre").html("");
@@ -1808,7 +1808,7 @@
 			
 			let taskName_data = data;
 			let target_title = $("#task_run").find(".task_name");
-			let select_task_name = "( Selected Task : " + taskName_data.title + " )";
+			let select_task_name = "( 선택된 태스크: " + taskName_data.title + " )";
 			$(target_title).html(select_task_name);
 			console.log("taskName_data : ", taskName_data);
 

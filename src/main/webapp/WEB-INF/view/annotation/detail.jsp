@@ -5,7 +5,7 @@
 
 <head>
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -219,11 +219,11 @@
 			<div class="main_wrap ">
 				<div class="title_wrap ms">
 					<div class="ms_wrap">
-						<span class="main_title">Modify Annotation</span>
+						<span class="main_title">데이터세트 패키지 수정</span>
 						<div class="flex">
 							<div class="anno_wrap">
-								<input class="anno_title" data-length="100" placeholder="Please enter the title"  onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);"> 
-								<input class="anno_contents" data-length="200" placeholder="Please enter the description">
+								<input class="anno_title" data-length="100" placeholder="제목을 입력해주세요."  onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
+								<input class="anno_contents" data-length="200" placeholder="설명을 입력해주세요.">
 							</div>
 							<button class="create_btn"></button>
 						</div>
@@ -233,8 +233,8 @@
 
 				<div class="list_wrap ms">
 
-					<span class="list_title">Label List</span>
-					<span class="list_total">Total 0</span>
+					<span class="list_title">색인(라벨링) 목록</span>
+					<span class="list_total">총개수 0</span>
 					<div class="table_header">
 						<table class="anno_table">
 							<colgroup>
@@ -250,13 +250,13 @@
 							<thead>
 								<tr>
 									<th><div class="checkBox"></div></th>
-									<th class="pre">PREVIEW</th>
-									<th>PATH</th>
+									<th class="pre">미리보기</th>
+									<th>파일경로</th>
 									<th>X</th>
 									<th>Y</th>
 									<th>W</th>
 									<th>H</th>
-									<th>LABEL</th>
+									<th>라벨</th>
 								</tr>
 							</thead>
 						</table>
@@ -283,10 +283,10 @@
 					</div>
 
 					<div class="btn_wrap del">
-						<button class="del_btn filter_color">Delete</button>
+						<button class="del_btn filter_color">삭제</button>
 					</div>
 					<div class="btn_wrap save">
-						<button class="save_btn filter_color">Save</button>
+						<button class="save_btn ">저장하기</button>
 					</div>
 				</div>
 			</div>
@@ -295,27 +295,27 @@
 				<div class="first_wrap">
 					<div class="ms">
 						<div class="ms_wrap">
-							<span class="search_title">Search label Image by name</span>
-							<span class="list_total">Total 0</span>
+							<span class="search_title">이미지 이름으로 검색</span>
+							<span class="list_total">총개수 0</span>
 							<div class="image_search">
 								<select name="label_type">
 									<!-- <option value="Image" selected>Bounding Box</option>
 									<option value="polygon">Segmentation</option> -->
-									<option value="IMAGE_BBOX">Image Bounding Box</option>
-									<option value="IMAGE_SEGMENTATION">Image Segmentation</option>
-									<option value="VIDEO_BBOX">Video Bounding Box</option>									
+									<option value="IMAGE_BBOX">바운딩 박스</option>
+									<option value="IMAGE_SEGMENTATION">세그멘테이션</option>
+									<%--									<option value="VIDEO_BBOX">Video Bounding Box</option>									--%>
 								</select>							
-								<input placeholder="Please enter the keyword" name="images">
+								<input placeholder="키워드를 입력해주세요." name="images">
 								<button class="detail_btn"></button>
 								<div class="detail_tooltip filter_color">
 									<div class="info_wrap">
 										<div class="filter_wrap flex">
 											<div class="checkBox"></div>
-											<span>Filter List</span>
+											<span>필터 목록</span>
 										</div>
 										<div class="select_wrap"></div>
 										<div class="set_wrap">
-											<button>Confirm</button>
+											<button>확인하기</button>
 										</div>
 										<button class="close_tooltip_btn"></button>
 									</div>
@@ -487,8 +487,8 @@
 			$(img_box).html("");
 			that.data.tag_text = "";
 			that.pt.find(".empty_wrap").remove();
-			that.addEmptyData(that.pt.find(".second_wrap"), "No Result","you may now proceed to search");
-			that.pt.find(".list_total").text("Total 0")
+			that.addEmptyData(that.pt.find(".second_wrap"), "검색결과가 없습니다.","찾고자 하는 라벨을 검색해주세요.");
+			that.pt.find(".list_total").text("총개수 0")
 			
 			that.defaultListener();
 		},
@@ -711,7 +711,7 @@
 				}
     		}
     		
-    		that.pt.find(".main_wrap .list_total").text("Total " + that.data.imgScrollObj.linked_list.length);
+    		that.pt.find(".main_wrap .list_total").text("총개수 " + that.data.imgScrollObj.linked_list.length);
     		that.showOrHide();
     		
     		if(isDup){
@@ -733,7 +733,7 @@
 			if(linked_list.length == 0){
     			that.pt.find(".del_btn").hide();
     			that.pt.find(".save_btn").hide();
-  				that.addEmptyData(that.pt.find(".list_wrap"),"No Label", "please add any label");
+  				that.addEmptyData(that.pt.find(".list_wrap"),"생성된 라벨이 없습니다.", "라벨을 추가해주세요.");
   			} else {
   				that.pt.find(".del_btn").show();
   				that.pt.find(".save_btn").show();
@@ -897,7 +897,7 @@
 				html += " 	<td>" + h + "</td> ";
 				html += " 	<td>" + label + "</td>";
 				html += " </tr>";					
-				that.pt.find("th.pre").html("PREVIEW");
+				that.pt.find("th.pre").html("미리보기");
 			} else if(label_type == "#VIDEO_BBOX"){
 				html += " <tr data-id='"+cur_id+"'> ";
 				if(image_box_obj[cur_id] != undefined){
@@ -1278,8 +1278,8 @@
 					that.data.imgScrollObj.image_box_obj = [];
 					that.pt.find(".del_btn").hide();
 					that.pt.find(".save_btn").hide();
-		  			that.addEmptyData(that.pt.find(".list_wrap"), "No Label", "please add any label");
-		  			that.pt.find(".main_wrap .list_total").text("Total 0");
+		  			that.addEmptyData(that.pt.find(".list_wrap"), "생성된 라벨이 없습니다.", "라벨을 추가해주세요.");
+		  			that.pt.find(".main_wrap .list_total").text("총개수 0");
 		  			that.selectboxListener();
 				} else if(Object.keys(image_box_obj).length > 0){
 					let keys = Object.keys(image_box_obj);
@@ -1297,7 +1297,7 @@
 		  			if(linked_list.length == 0){
 		  				that.pt.find(".del_btn").hide();
 		  				that.pt.find(".save_btn").hide();
-		  				that.addEmptyData(that.pt.find(".list_wrap"), "No Label", "please add any label");
+		  				that.addEmptyData(that.pt.find(".list_wrap"), "생성된 라벨이 없습니다.", "라벨을 추가해주세요.");
 		  			}
 		  			
 		  			that.data.imgScrollObj.image_box_obj = [];
@@ -1334,9 +1334,9 @@
   				/* console.log(isImageScroll_top, linked_list.length, that.pt.find("tbody tr").length, image_remain_size); */	
   				
   				if(linked_list == null){
-  					that.pt.find(".main_wrap .list_total").text("Total 0");
+  					that.pt.find(".main_wrap .list_total").text("총개수 0");
   				} else {
-  					that.pt.find(".main_wrap .list_total").text("Total " + linked_list.length);	
+  					that.pt.find(".main_wrap .list_total").text("총개수 " + linked_list.length);
   				}
   				
   				that.annotationListener();
@@ -1649,7 +1649,7 @@
 					if (res.result.code == "200") {
 						if(res.result.data.length == 0){
 							alert("사용 가능한 데이터가 없습니다");
-							that.addEmptyData(that.pt.find(".second_wrap"), "No Result", "you may now proceed to search");
+							that.addEmptyData(that.pt.find(".second_wrap"), "검색결과가 없습니다.", "찾고자 하는 라벨을 검색해주세요.");
 						} else {
 							that.modifySearchData(res.result.data);	
 						}
@@ -1761,7 +1761,7 @@
 			console.log("seg_cur_id::",seg_cur_id); */
 			that.data.fixed_arr = that.data.search_arr;
 			
-			that.pt.find(".search_wrap .list_total").text("Total " + that.data.search_arr.length);
+			that.pt.find(".search_wrap .list_total").text("총 개수 " + that.data.search_arr.length);
 			that.initSearchList();
 		},
 		
@@ -1792,13 +1792,13 @@
 				target = that.pt.find(".second_wrap");
 				$(target).html("");
 				
-				html +=	"<div class='tag_txt_wrap'><div class='ms'><span>Tag</span></div></div>";
+				html +=	"<div class='tag_txt_wrap'><div class='ms'><span>태그(색인목록)</span></div></div>";
 				html += "<div class ='tagtp'><div class='tag_wrap'><div class='tag_margin'></div></div></div>"
 				html += "<div class='search_result_wrap'>";
 				html += "<div class='all_margin'><div class='select_all_wrap flex'>";
 				html += "<div class='checkBox'></div>"; 
-				html += "<span>Select All</span>"; 
-				html += "<button class='add_btn'>Add List</button>";
+				html += "<span>전체 선택</span>";
+				html += "<button class='add_btn'>라벨 추가</button>";
 				html += "</div></div>";
 				html += "<div class='media_wrap'>";
 				html += "<div class='search_result'>";	
@@ -2167,7 +2167,7 @@
 				that.setScrollListener();
 			}
 			
-			that.pt.find(".search_wrap .list_total").text("Total " + that.data.search_arr.length);
+			that.pt.find(".search_wrap .list_total").text("총 개수 " + that.data.search_arr.length);
 		},
 		
 		removeTagList : function(text){
@@ -2506,13 +2506,13 @@
 			// jh.sa 추가
 			that.pt.find("select[name='label_type']").off("change").on("change", function(){
 				that.pt.find(".second_wrap").html("");
-				that.pt.find(".list_total").text("Total 0");
+				that.pt.find(".list_total").text("총 개수 0");
 				that.data.filter_arr = [];
 				that.data.fixed_arr = [];
 				that.data.search_Arr = [];
 				that.data.init_label_type = $("#annotation_detail select[name='label_type'] option:selected").val();
 				that.getDatasetList();
-				that.addEmptyData(that.pt.find(".second_wrap"), "No Result","you may now proceed to search");				
+				that.addEmptyData(that.pt.find(".second_wrap"), "검색결과가 없습니다.","찾고자 하는 라벨을 검색해주세요.");
 			});			
 	/* 		let value = label_select_option.data("value");
 				for(let i = 0, len=label_select.length; i < len; i++) {

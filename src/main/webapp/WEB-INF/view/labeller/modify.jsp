@@ -31,18 +31,18 @@
 		<div class="border_box">
 			<form id="fileForm" enctype="multipart/form-data">
 				<div class="title_wrap flex">
-					<div>Modify</div>
+					<div>작업 데이터셋 수정</div>
 				</div>
 				<div class="input_wrap flex">
-					<input class="" type="text" name="title" data-length="100" placeholder="Please enter the title" onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
+					<input class="" type="text" name="title" data-length="100" placeholder="제목을 입력해주세요." onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
 				</div>
 							
 				<div class="input_wrap flex">
-					<textarea class="" name="contents" data-length="200" placeholder="Please enter the description"></textarea>
+					<textarea class="" name="contents" data-length="200" placeholder="설명을 입력해주세요."></textarea>
 				</div>							
 				<div class="input_wrap">
 					<div class="btn_wrap fr">
-						<div class="save filter_color">Save</div>
+						<div class="save filter_color">저장하기</div>
 					</div>
 				</div>
 			</form>

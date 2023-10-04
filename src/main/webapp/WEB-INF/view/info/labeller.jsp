@@ -3,7 +3,7 @@
 
 
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		.wa { width: auto; }
@@ -184,10 +184,10 @@
 							</div>
 							
 							<div class="info-section">
-								<div class="step">Step 4 : Label List</div>
+								<div class="step">Step 4 : 라벨 목록</div>
 								<img class="border" src='<c:url value='/images/labeller/labelList_dataset_labeller2.png' />' alt="addImg">
 								<div class="text">
-									<p><span class="bold">1. Label List : </span> DataSet 우클릭, [Label List] 메뉴 클릭</p>
+									<p><span class="bold">1. 라벨 목록 : </span> DataSet 우클릭, [라벨 목록] 메뉴 클릭</p>
 									<p><span class="bold">2. Tag : </span> 원하는 Label 클릭, 특정 Label 검색</p>
 									<p><span class="bold">3. Label선택 : </span> 수정 할 Label 클릭</p>
 <!-- 									<p><span class="bold">4. Label수정 : </span> Label 수정</p> -->
@@ -323,7 +323,7 @@
 										<p><span class="bold">8. Inheritance Model 선택 : </span>이전의 학습된 모델 선택</p>
 										<p><span class="bold">9. Algorithm : </span>학습을 진행 할 알고리즘 선택</p>
 										<p><span class="bold">10. Algorithm 설정 : </span>알고리즘 학습 파라미터 설정</p>
-										<p><span class="bold">11. Start Training : </span>학습 시작</p>
+										<p><span class="bold">11. 학습 시작 : </span>학습 시작</p>
 										<br/>
 										<p><span class="bold">Create New Project : </span>새롭게 생성 할 Project의 이름과 설명을 입력 후 새로운 Project를 생성하는 기능</p>
 										<img class="border" src='<c:url value='/images/labeller/enrichment_quicktraining_project.png' />' alt="upload">
@@ -331,7 +331,7 @@
 										<img class="border" src='<c:url value='/images/labeller/enrichment_quicktraining_checkpoint.png' />' alt="upload">
 										<p><span class="bold">Training Config : </span>알고리즘의 학습 파라미터를 설정 하는 기능</p>
 										<img class="border" src='<c:url value='/images/labeller/enrichment_quicktraining_config.png' />' alt="upload">
-										<p><span class="bold"></span>- 설정 확인 후 Start Training 버튼 클릭으로 Quick Training 시작</p>										
+										<p><span class="bold"></span>- 설정 확인 후 학습 시작 버튼 클릭으로 Quick Training 시작</p>
 									</div>								
 								</div>
 							</div>
@@ -343,12 +343,12 @@
 										<p><span class="bold">1. Output Filename : </span>추론 결과를 저장할 CSV 파일 이름을 설정</p>
 										<p><span class="bold">2. Select Task : </span>추론에 사용 할 모델이 있는 Task 선택</p>
 										<p><span class="bold">3. Inference Model : </span>추론에 사용 할 모델 선택</p>
-										<p><span class="bold">4. Start Inference : </span>추론 시작</p>
+										<p><span class="bold">4. 추론 시작 : </span>추론 시작</p>
 										<br/>
 										<p><span class="bold">Inference Config & Select Checkpoint : </span></p>
 										<p><span class="bold"></span>알고리즘의 추론 파라미터를 설정 하는 기능 및 추론에 사용 할 모델을 선택 하는 기능</p>
 										<img class="border" src='<c:url value='/images/labeller/enrichment_quickinference_config.png' />' alt="upload">
-										<p><span class="bold"></span>- 설정 확인 후 Start Inference 버튼 클릭으로 Quick Inference 시작</p>
+										<p><span class="bold"></span>- 설정 확인 후 추론 시작 버튼 클릭으로 Quick Inference 시작</p>
 										<br/>
 										<p><span class="bold">Inference 결과 확인 : </span></p>	
 										<img class="border" src='<c:url value='/images/labeller/enrichment_quick_inference_result.png' />' alt="upload">	

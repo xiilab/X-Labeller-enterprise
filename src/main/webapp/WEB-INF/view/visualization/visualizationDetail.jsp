@@ -123,11 +123,11 @@
         <div class="main_wrap">
             <div class="head">
             	<div class="wrap">
-	                <label>Dataset id : <span id="datasetId">-</span></label>
-	                <label>Dataset name : <span id="datasetName">-</span></label>
+	                <label>데이터셋 ID : <span id="datasetId">-</span></label>
+	                <label>데이터셋명 : <span id="datasetName">-</span></label>
             	</div>
             	<div class="wrap">            	
-	                <label>Label</label>
+	                <label style="width: 2rem;">라벨</label>
 	            	<select id="label_id">
 	            		<option selected>전체</option>
 	            	</select>

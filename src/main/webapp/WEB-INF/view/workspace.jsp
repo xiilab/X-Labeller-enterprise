@@ -4,7 +4,7 @@
 
 
 <head>
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <link rel="stylesheet" href="<c:url value="/css/zTreeStyle.css" />">
 
@@ -31,7 +31,7 @@
 				</ul>
 			</div>
 			<div class="btn_wrap flex">
-				<div class="new_btn filter_color">New +</div>
+				<div class="new_btn filter_color">새 프로젝트 업로드</div>
 			</div>
 		</div>
 	</div>

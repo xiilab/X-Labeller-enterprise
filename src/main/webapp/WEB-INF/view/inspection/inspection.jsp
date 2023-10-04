@@ -7,7 +7,7 @@
 	<jsp:param name= "cur_page" value="labeller"/>
 </jsp:include>
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		.ztree .level0 span.button[id$=ico] { background: url("images/icon_tree_dataset_selected.png") !important; }
@@ -83,8 +83,8 @@
 				create : inspection.event.upload,
 				info : [
 					{expandNode : inspection.getDatasetList, drop : { area : "drop_area", onDrop : inspection.event.labelling, }, 
-// 						rMenu : { "Labelling TEST" : inspection.event.labelling, "DataList TEST" : inspection.event.list2, "LabelList TEST": inspection.event.labelList2, "Enrichment" : inspection.event.openNode,  "Data List": inspection.event.list, "Label List": inspection.event.labelList, "Modify" : inspection.event.modify, "Add File" : inspection.event.addImg, "Replicate︎" : {"Only Data" : inspection.event.replicate, "With Label" : inspection.event.replicateWith, }, "Delete︎" : {"Dataset": inspection.event.deleteNode, "Data": inspection.event.deleteDataList, "Label" : inspection.event.deleteMetaList}, }, },
-						rMenu : { "Enrichment" : inspection.event.labelling, /* "Data List" : inspection.event.list2, "Label List": inspection.event.labelList2,*/ /* "Modify" : inspection.event.modify, */ /* "Add File" : inspection.event.addImg, */ "Replicate︎" : {"Only Data" : inspection.event.replicate, "With Label" : inspection.event.replicateWith, }, "Delete︎" : {"Dataset": inspection.event.deleteNode, "Data": inspection.event.deleteDataList, "Label" : inspection.event.deleteMetaList},}, },
+// 						rMenu : { "Labelling TEST" : inspection.event.labelling, "DataList TEST" : inspection.event.list2, "LabelList TEST": inspection.event.labelList2, "Enrichment" : inspection.event.openNode,  "Data List": inspection.event.list, "라벨 목록": inspection.event.labelList, "Modify" : inspection.event.modify, "Add File" : inspection.event.addImg, "Replicate︎" : {"Only Data" : inspection.event.replicate, "With Label" : inspection.event.replicateWith, }, "Delete︎" : {"Dataset": inspection.event.deleteNode, "Data": inspection.event.deleteDataList, "Label" : inspection.event.deleteMetaList}, }, },
+						rMenu : { "Enrichment" : inspection.event.labelling, /* "Data List" : inspection.event.list2, "라벨 목록": inspection.event.labelList2,*/ /* "Modify" : inspection.event.modify, */ /* "Add File" : inspection.event.addImg, */ "Replicate︎" : {"Only Data" : inspection.event.replicate, "With Label" : inspection.event.replicateWith, }, "Delete︎" : {"Dataset": inspection.event.deleteNode, "Data": inspection.event.deleteDataList, "Label" : inspection.event.deleteMetaList},}, },
 				], 
 			};
 			workspace(setting);	//트리 그리기
@@ -1058,7 +1058,7 @@
 		nodata : function() {
 			var that = this;
 
-			var html = "<div class='nodata-wrap flex'><div><img class='' src='<c:url value='/images/icon_nodata_dataset.png' />'><div>No Dataset</div><div>Please add dataset.</div></div></div>"
+			var html = "<div class='nodata-wrap flex'><div><img class='' src='<c:url value='/images/icon_nodata_dataset.png' />'><div>데이터가 없습니다.set</div><div>Please add dataset.</div></div></div>"
 			that.pt.find(".ztree").append(html);
 		},
 

@@ -135,8 +135,8 @@
 								<tr>
 									<th></th>
 									<th>ID</th>
-									<th>TITLE</th>
-									<th>STATUS</th>
+									<th>제목</th>
+									<th>상태</th>
 									<th>DATE</th>
 								</tr>
 							</thead>
@@ -163,8 +163,8 @@
 <!-- 								<tr> -->
 <!-- 									<th></th> -->
 <!-- 									<th>ID</th> -->
-<!-- 									<th>TITLE</th> -->
-<!-- 									<th>STATUS</th> -->
+<!-- 									<th>제목</th> -->
+<!-- 									<th>상태</th> -->
 <!-- 									<th>DATE</th> -->
 <!-- 								</tr> -->
 <!-- 							</thead> -->

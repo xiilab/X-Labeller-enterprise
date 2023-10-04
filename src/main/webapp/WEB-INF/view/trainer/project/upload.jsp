@@ -5,7 +5,7 @@
 
 <head>
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -135,13 +135,12 @@
 			<div class="main_wrap filter_color">
 				<div class="title_wrap ms">
 					<div class="ms_wrap">
-						<span class="main_title">Create Task</span>
+						<div class="save">태스크 업로드</div>
 						<div class="flex">
 							<div class="anno_wrap">
-								<input class="detail_title" data-length="100" placeholder="Please enter the title" onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);"> 
-								<input class="detail_contents" data-length="200" placeholder="Please enter the description">
+								<input class="detail_title" data-length="100" placeholder="제목을 입력해주세요." onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
+								<input class="detail_contents" data-length="200" placeholder="설명을 입력해주세요.">
 							</div>
-
 						</div>
 					</div>
 				</div>
@@ -150,16 +149,16 @@
 
 				<div class="list_wrap ms">
 					<div class="list_header flex sb">
-						<div class="list_title">Annotation List</div>
-						<div class="list_total">Total <span></span></div>
+						<div class="list_title">데이터세트 패키지 목록</div>
+						<div class="list_total">총 개수 <span></span></div>
 					</div>
 					
 					<span class="label_type_wrap">
 						<select id="label_type" class="label_type" name="label_type">
 							<option value="">ALL</option>
-							<option value="IMAGE_BBOX">Image Bounding Box</option>
-							<option value="IMAGE_SEGMENTATION">Image Segmentation</option>
-							<option value="VIDEO_BBOX">Video Bounding Box</option>
+							<option value="IMAGE_BBOX">바운딩 박스</option>
+							<option value="IMAGE_SEGMENTATION">세그멘테이션</option>
+							<%--									<option value="VIDEO_BBOX">Video Bounding Box</option>									--%>
 							<!-- <option value="">ALL</option> -->
 							<!-- <option value="box">Bounding Box</option>
 							<option value="polygon">Segmentation</option> -->
@@ -180,12 +179,12 @@
 							<thead>
 								<tr>
 									<th></th>
-									<th>No.</th>
-									<th>USER_ID</th>
-									<th>TITLE</th>
-									<th>CONTENTS</th>
-									<th>LABEL_TYPE</th>
-									<th>CREATED_DATE</th>
+									<th>번호.</th>
+									<th>유저ID</th>
+									<th>제목</th>
+									<th>설명</th>
+									<th>라벨 타입</th>
+									<th>생성 시간</th>
 								</tr>
 							</thead>
 						</table>
@@ -213,7 +212,7 @@
 			<div class="sub_wrap">
 				<div class="margin">
 					<div class="ms_wrap filter_color">
-						<span class="sub_title">Config</span>
+						<span class="sub_title">파라미터 설정 값</span>
 						<select id="algorithm_list" class="algorithm_list" name="algorithm_list">
 							<option value=''>Please select algorithm</option>
 						</select>
@@ -225,7 +224,7 @@
 						</div>
 
 						<div class="btn_wrap">
-							<button class="submit_btn">Save</button>
+							<button class="submit_btn">저장하기</button>
 						</div>
 					</div>
 				</div>

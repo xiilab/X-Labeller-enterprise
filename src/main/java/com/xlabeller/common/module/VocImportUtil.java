@@ -122,7 +122,7 @@ public class VocImportUtil {
                 }
             }
         } catch (IOException e) {
-            throw new HandlerCustomException("500", "Import하는 과정에서 에러가 발생했습니다.\nzip파일을 다시 확인해주세요.", e);
+            throw new HandlerCustomException("500", "ZIP 파일 내에 잘못된 형식의 파일이 포함되어 있습니다.\nzip파일을 확인해주세요.", e);
         } catch (HandlerCustomException e) {
             throw new HandlerCustomException(e.getCode(), e.getMessage(), e);
         }
@@ -423,18 +423,20 @@ public class VocImportUtil {
 
     // VOC 디렉토리 구조인지 검사, VOC, VOC/Annotations, VOC/ImageSets, VOC/ImageSets/main/, VOC/ImageSets/Segmentation, VOC/JPEGImages, VOC/SegmentationObject 폴더 중 하나라도 없으면 false
     private void isVocStructureExists() {
+        String errorMsg = "";
         boolean isAnnotations = false;
-        boolean isImageSets = false;
-        boolean isMain = false;
-        boolean isSegmentation = false;
+//        boolean isImageSets = false;
+//        boolean isMain = false;
+//        boolean isSegmentation = false;
         boolean isJpegImage = false;
         boolean isSegmentationObject = false;
         try (ZipInputStream zis = new ZipInputStream(this.vocZipFile.getInputStream())) {
-            ZipEntry entry = zis.getNextEntry();
-            if (!entry.getName().equals("VOC/")) {
-                throw new HandlerCustomException("500", "IMPORT 가능한 VOC 디렉토리 구조가 아닙니다.\nzip파일을 다시 확인해주세요.");
-            }
+//            ZipEntry entry = zis.getNextEntry();
+//            if (!entry.getName().contains("VOC/")) {
+//                throw new HandlerCustomException("500", "IMPORT 가능한 VOC 디렉토리 구조가 아닙니다.\nzip파일을 다시 확인해주세요.");
+//            }
 
+            ZipEntry entry = null;
             while ((entry = zis.getNextEntry()) != null) {
                 if (entryValidate(entry, false)) continue;
                 if (entry.isDirectory()) {
@@ -442,15 +444,15 @@ public class VocImportUtil {
                         case "VOC/ANNOTATIONS/":
                             isAnnotations = true;
                             break;
-                        case "VOC/IMAGESETS/":
-                            isImageSets = true;
-                            break;
-                        case "VOC/IMAGESETS/MAIN/":
-                            isMain = true;
-                            break;
-                        case "VOC/IMAGESETS/SEGMENTATION/":
-                            isSegmentation = true;
-                            break;
+//                        case "VOC/IMAGESETS/":
+//                            isImageSets = true;
+//                            break;
+//                        case "VOC/IMAGESETS/MAIN/":
+//                            isMain = true;
+//                            break;
+//                        case "VOC/IMAGESETS/SEGMENTATION/":
+//                            isSegmentation = true;
+//                            break;
                         case "VOC/JPEGIMAGES/":
                             isJpegImage = true;
                             break;
@@ -459,15 +461,23 @@ public class VocImportUtil {
                             break;
                     }
                 } else {
-                    break;
+                    continue;
                 }
             }
 
-            if (!isAnnotations || !isImageSets || !isMain || !isSegmentation || !isJpegImage || !isSegmentationObject) {
-                throw new HandlerCustomException("500", "IMPORT 가능한 VOC 디렉토리 구조가 아닙니다.\nzip파일을 다시 확인해주세요.");
+            if (!isAnnotations) {
+                errorMsg = "압축된 파일에 \"Annotations\" 디렉토리가 존재하지 않습니다.\n압축된 파일을 확인해주세요.";
+                //throw new HandlerCustomException("500", "압축된 파일에 \"Annotations\" 디렉토리가 존재하지 않습니다.\n압축된 파일을 확인해주세요.");
+            }
+            if (!isJpegImage) {
+                errorMsg = "압축된 파일에 \"JpegImages\" 디렉토리가 존재하지 않습니다.\n압축된 파일을 확인해주세요.";
+            }
+            if (!isSegmentationObject) {
+                errorMsg = "압축된 파일에 \"SegmentationObject\" 디렉토리가 존재하지 않습니다.\n압축된 파일을 확인해주세요.";
+                // throw new HandlerCustomException("500", "IMPORT 가능한 VOC 디렉토리 구조가 아닙니다.\nzip파일을 다시 확인해주세요.");
             }
         } catch (IOException e) {
-            throw new HandlerCustomException("500", "IMPORT 가능한 VOC 디렉토리 구조가 아닙니다.\nzip파일을 다시 확인해주세요.", e);
+            throw new HandlerCustomException("500", errorMsg, e);
         }
     }
 

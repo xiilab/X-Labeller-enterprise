@@ -6,7 +6,7 @@
 	<jsp:param name= "cur_page" value="monitor"/>
 </jsp:include>
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 		
 	<style>
 		#monitor {width: 100%; height: calc(100% - 64px); position: relative;}
@@ -32,7 +32,7 @@
 			<div class="contents">
 				
 				<div class="list_wrap ms">
-					<span class="list_title">GPU monitor</span>
+					<span class="list_title">GPU 모니터</span>
 					<div class="table_header">
 						<table class="anno_table">
 							<colgroup>
@@ -48,11 +48,11 @@
 								<tr>
 <!-- 									<th>PROJECT</th> -->
 <!-- 									<th>TASK</th> -->
-									<th>PROJECT TITLE</th>
-									<th>TASK TITLE</th>
-									<th>TYPE</th>
-									<th>STATUS</th>
-									<th>KILL</th>
+									<th>프로젝트 제목</th>
+									<th>태스크 제목</th>
+									<th>타입</th>
+									<th>상태</th>
+									<th>종료</th>
 								</tr>
 							</thead>
 						</table>
@@ -152,7 +152,7 @@
 						
 						if (res.result.code == "200") {
 							if(res.result.data.length == 0){
-								that.addEmptyData(that.pt.find(".list_wrap"), "No Work","No work currently in progress");
+								that.addEmptyData(that.pt.find(".list_wrap"), "동작 중인 GPU가 존재하지 않습니다.","학습 또는 추론시 해당 영역에 표시됩니다.");
 							} else {
 								that.modifyServiceListData(res.result.data);	
 							}

@@ -5,7 +5,7 @@
 
 <head>
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -159,9 +159,9 @@
 	
 									</select>	
 								</span> 
-								<input class="detail_title" data-length="100" placeholder="Please enter the title" onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
+								<input class="detail_title" data-length="100" placeholder="제목을 입력해주세요." onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);">
 
-								<input class="detail_contents" data-length="200" placeholder="Please enter the description">
+								<input class="detail_contents" data-length="200" placeholder="설명을 입력해주세요.">
 							</div>
 
 						</div>
@@ -172,7 +172,7 @@
 
 				<div class="list_wrap ms filter_color">
 					<span class="list_title">Annotation List</span>
-					<span class="list_total">Total 0</span>
+					<span class="list_total">총개수 0</span>
 					<div class="table_header">
 						<table class="anno_table">
 							<colgroup>
@@ -186,11 +186,11 @@
 							<thead>
 								<tr>
 									<th></th>
-									<th>No.</th>
-									<th>USER_ID</th>
-									<th>TITLE</th>
-									<th>CONTENTS</th>
-									<th>CREATED_DATE</th>
+									<th>번호.</th>
+									<th>유저ID</th>
+									<th>제목</th>
+									<th>설명</th>
+									<th>생성 시간</th>
 								</tr>
 							</thead>
 						</table>
@@ -250,7 +250,7 @@
                             </div>
                         </div>							
 						<div class="btn_wrap">
-							<button class="submit_btn">Save</button>
+							<button class="submit_btn">저장하기</button>
 						</div>
 					</div>
 				</div>
@@ -346,7 +346,7 @@
 			that.pt.find(".sub_wrap .description_wrap").removeClass("border");
 			that.pt.find(".check_box_wrap").html("");
 			that.pt.find(".table_body tbody").html("");
-			that.pt.find(".list_total").text("Total 0");
+			that.pt.find(".list_total").text("총 개수 0");
 			that.pt.find(".table_body").scrollTop(0);
 			that.addEmptyData(that.pt.find(".sub_wrap .list_wrap"), "No Model", "please train your task first");
 			/* that.getAnnotationList(); */
@@ -478,7 +478,7 @@
 				annotation_arr.push(data[i]);
 			} 
 			
-			that.pt.find(".list_total").text("Total " + annotation_arr.length);
+			that.pt.find(".list_total").text("총 개수 " + annotation_arr.length);
 			that.initAnnotationList();
 		},
 		
@@ -1023,7 +1023,7 @@
 			
 	
 			
-			let html = "<option value=''>Please select the project</option>"; 
+			let html = "<option value=''>프로젝트를 선택해주세요.</option>";
 			for(let i=0, len = project_data.length; i<len; i++){
 				html += "<option data-id='"+data[i]["project_id"]+"' value='"+data[i]["title"]+"'>";
 				html += data[i]["title"];

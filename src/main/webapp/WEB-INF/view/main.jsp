@@ -8,7 +8,7 @@
 <script src="<c:url value="/js/slick.min.js" />"></script>
 		
 <head>
-	<title>X-labeller</title>
+	<title>밀리터리 이미지넷 객체 라벨기</title>
 	
 	<style>
 		 .m_txt { font-size: 42px; }

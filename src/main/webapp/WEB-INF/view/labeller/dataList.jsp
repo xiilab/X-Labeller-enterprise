@@ -71,7 +71,7 @@
 <body>
 	<div class="container" id="dataList">
 		<div class="info_wrap">
-			<div class="main_title">Dataset Information</div>
+			<div class="main_title">데이터셋 정보</div>
 			<div class="dataset_title"></div>
 			<div class="dataset_contents"></div>
 		</div>
@@ -80,7 +80,7 @@
 			<div class="list_table">
 				<div class="h_wrap flex">
 					<div class="checkBox all" ></div>
-					<div class="preview">PREVIEW</div>
+					<div class="preview">미리보기</div>
 					<div class="id">ID</div>
 					<div class="path">PATH</div>
 				</div>
@@ -96,11 +96,11 @@
 			<div class="copy_wrap flex">
 				<div class="wrap">
 					<div class="list_wrap">
-						<div>Select a Dataset to move your data</div>
+						<div>데이터를 이동할 데이터셋을 선택해주세요.</div>
 						<ul></ul>
 					</div>
 					<div class="select_wrap">
-						<div>*Please select a condition</div>
+						<div>*조건을 선택해주세요.</div>
 						<div class="flex">
 							<input class="" type="radio" name="type" id="a" value="0" checked="checked">
 							<label for="a" class="flex">Only data</label>
@@ -109,8 +109,8 @@
 						</div>
 					</div>
 					<div class="btn_wrap flex">
-						<button class="cancel_btn">cancel</button>
-						<button class="confirm_btn">confirm</button>
+						<button class="cancel_btn">취소</button>
+						<button class="confirm_btn">이동</button>
 					</div>
 				</div>
 			</div>

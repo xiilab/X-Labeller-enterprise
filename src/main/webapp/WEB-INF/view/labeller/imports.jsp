@@ -64,18 +64,18 @@
 		<div class="border_box">
 			<form id="fileForm" enctype="multipart/form-data">
 				<div class="title_wrap flex">
-					<div>Import</div>
+					<div>추출형식 업로드</div>
 				</div>
 				<div class="input_wrap flex">
-					<input class="" type="text" name="title" data-length="100" placeholder="Please enter the title" onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);"/>
+					<input class="" type="text" name="title" data-length="100" placeholder="제목을 입력해주세요." onkeyup="noSpaceForm(this);" onchange="noSpaceForm(this);"/>
 				</div>
 							
 				<div class="input_wrap flex">
-					<textarea class="" name="contents" data-length="200" placeholder="Please enter the description"></textarea>
+					<textarea class="" name="contents" data-length="200" placeholder="설명을 입력해주세요."></textarea>
 				</div>
 				
  				<div class="title_wrap flex">
-					<div>Dataset Type :</div>
+					<div>데이터셋 종류 :</div>
 					<div class="label_type_wrap">
 						<input id="dataset-virtual" class="radioBtn" name="dataset-type" type="radio" value="virtual" checked/>
 						<label for="dataset-virtual" class="radio_label">virtual</label>
@@ -90,12 +90,12 @@
 				</div>		
 							 
  				<div class="title_wrap flex">
-					<div>Label Type :</div>
+					<div>라벨 타입 :</div>
 					<div class="label_type_wrap">
  						<input id="label-type-box" class="radioBtn" name="lable-type" type="radio" value="box" checked/>
- 						<label for="label-type-box" class="radio_label">Bounding Box</label>
+ 						<label for="label-type-box" class="radio_label">바운딩 박스</label>
  						<input id="label-type-polygon" class="radioBtn" name="lable-type" type="radio" value="polygon"/>
- 						<label for="label-type-polygon" class="radio_label">Segmentation</label>
+ 						<label for="label-type-polygon" class="radio_label">세그멘테이션</label>
  						<!-- <input id="label-type-polygon" class="radioBtn hide" name="lable-type" type="radio" value="polygon"/> --> 						
  						<!-- <label for="label-type-polygon" class="radio_label hide">Segmentation</label> -->
 						<!-- <span class="radioBtn selected" data-value="box"></span>
@@ -107,19 +107,19 @@
 								 
 					
 				<div class="title_wrap flex">
-					<div>Add File</div>
+					<div>데이터 추가</div>
 				</div>
 				<div class="file_wrap">
 					<div class="h_wrap flex">
 						<div class="checkBox all"></div>
 						<div></div>
-						<div>File</div>
-						<div>Size</div>
+						<div>파일</div>
+						<div>크기</div>
 					</div>
 					<ul class="c_wrap">
 						<li class="file_drop_info flex">
 							<div class="info_wrap">
-								<div class="img"></div><div>Please drag&drop the file.</div>
+								<div class="img"></div><div>등록할 파일을 이 영역으로 옮겨주세요.</div>
 							</div>
 						</li>
 					</ul>
@@ -135,10 +135,10 @@
 <!-- 						<label for="true" class="">Create File</label> -->
 <!-- 						<input class="" type="radio" name="is_new" id="false" value="1" > -->
 <!-- 						<label for="false" class="">Copy Link</label> -->
-						<div class="append">Attach</div>
+						<div class="append">파일 첨부</div>
 					</div>
 					<div class="btn_wrap fr">
-						<div class="save">Save</div>
+						<div class="save">저장하기</div>
 					</div>
 				</div>
 			</form>
@@ -168,7 +168,7 @@
 			
 			var html = "<li class='file_drop_info flex'>"
 				+ "<div class='info_wrap'>"
-				+ "<div class='img'></div><div>Please drag&drop the file.</div>"
+				+ "<div class='img'></div><div>파일을 이 영역으로 옮겨주세요.</div>"
 				+ "</div>"
 				+ "</li>";
 			

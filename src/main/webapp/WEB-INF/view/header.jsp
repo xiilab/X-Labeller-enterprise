@@ -1,4 +1,4 @@
-<%-- <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> --%>
+﻿<%-- <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> --%>
 <%@ page import="java.util.*"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <% request.setCharacterEncoding("UTF-8"); %>
@@ -8,6 +8,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta charset="utf-8">
 		
 		<!-- Import CSS	-->
 <%-- 		<link rel="shortcut icon" href="<c:url value="/images/favicon2.ico" />"> --%>
@@ -114,9 +115,9 @@
 				
 				<div class="nav_wrap nav_depth1">
 					<ul class="filter_color left_side ">
-						<li menu="menu_1"><a href="<c:url value="/labeller" />" >Labeller</a></li>
-						<li menu="menu_2"><a href="<c:url value="/annotation" />" >Annotation</a></li>
-						<li menu="menu_3"><a href="<c:url value="/trainer" />">Trainer</a></li>
+						<li menu="menu_1" style="width: 120px;"><a href="<c:url value="/labeller" />" >라벨링(색인) 하기</a></li>
+						<li menu="menu_2" style="width: 130px;"><a href="<c:url value="/annotation" />" >데이터세트 패키징</a></li>
+						<li menu="menu_3"><a href="<c:url value="/trainer" />">모델 학습하기</a></li>
 <%-- 						<li menu="menu_4"><a href="<c:url value="/comparison" />">Comparison</a></li> --%>
 						<!-- military 20221125 -->
 <%-- 						<li menu="menu_5"><a href="<c:url value="/setup" />">Setup</a></li> --%>

@@ -10,7 +10,7 @@
 
 
 
-<title>X-labeller</title>
+<title>밀리터리 이미지넷 객체 라벨기</title>
 
 <style>
 
@@ -821,10 +821,10 @@
 		}
 		
 		arr["rMenu"] = {
-			"Create Task" : that.upload,
-			"Modify" : that.detail,
-			"View List" : that.list,
-			"Delete" : that.del
+			"태스크 업로드" : that.upload,
+			"프로젝트 수정" : that.detail,
+			"태스크 목록" : that.list,
+			"삭제" : that.del
 		}
 
 		arr2["expandNode"] = that.getTaskList			
@@ -835,10 +835,10 @@
 		}
 		
 		arr2["rMenu"] = {
-			"Training" : that.detail,
-			"Start Inference" : that.run,
-			"Inference List" : that.list,
-			"Delete" : that.del,
+			"학습" : that.detail,
+			"추론" : that.run,
+			"추론 결과" : that.list,
+			"삭제" : that.del,
 			// "Inheritance" : that.inherit,
 //  			"Compute Score" : that.map
 		}
