@@ -203,8 +203,6 @@ public class ChatHandler extends TextWebSocketHandler {
                     webSocketSession.sendMessage(new TextMessage(msgVO.toJSONString()));
                 }
             }
-
-    		
     	}
     	
  

@@ -123,8 +123,8 @@
 <%-- 						<li menu="menu_5"><a href="<c:url value="/setup" />">Setup</a></li> --%>
 						<!-- military 20221125 -->
 <%-- 						<li menu="menu_6"><a href="<c:url value="/monitor" />">Monitor</a></li> --%>
-						<li menu="menu_6"><a href="<c:url value="/monitor" />">GPU Monitor</a></li>
-						<li menu="menu_7"><a href="<c:url value="/visualization" />">Visualization</a></li>
+						<li menu="menu_6"><a href="<c:url value="/monitor" />">GPU 모니터</a></li>
+						<li menu="menu_7"><a href="<c:url value="/visualization" />">데이터 분포확인</a></li>
 <%-- 						<li menu="menu_7"><a href="<c:url value="/algorithm/list" />">Algorithm</a></li> --%>
 						<!-- mAP 임시 -->
 <%-- 						<li menu="menu_8"><a href="<c:url value="/map/comparison"/>">Score</a></li>					 --%>

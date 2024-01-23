@@ -4,7 +4,7 @@
   <artifactId>xlabeller</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  
+
   <build>
   	<finalName>xlabeller</finalName>
   	<plugins>
@@ -17,35 +17,35 @@
 	      <target>11</target>
 	    </configuration>
 	  </plugin>
-	  
-	  
-	  
-	  
+
+
+
+
   	</plugins>
-  	
-  	
+
+
   </build>
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
   <name>xlabeller</name>
-  
+
     <properties>
 
 		<!-- Generic properties -->
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		
+
 		<!-- Web -->
 		<jsp.version>2.2</jsp.version>
 		<jstl.version>1.2</jstl.version>
 		<servlet.version>3.0.1</servlet.version>
-		
+
 
 		<!-- Spring -->
 		<spring-framework.version>4.3.13.RELEASE</spring-framework.version>
@@ -62,16 +62,16 @@
 		<junit.version>4.11</junit.version>
 
 	</properties>
-	
+
 	<dependencies>
-	
+
 		<!-- Spring MVC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring-framework.version}</version>
 		</dependency>
-		
+
 		<!-- Other Web dependencies -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -90,7 +90,7 @@
 			<version>${jsp.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- Spring and Transactions -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -104,23 +104,23 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 			<scope>compile</scope>
-		</dependency>	
-		<dependency> 
-			<groupId>org.slf4j</groupId> 
-			<artifactId>jcl-over-slf4j</artifactId> 
-			<version>${slf4j.version}</version> 
-			<scope>runtime</scope> 
-		</dependency> 
-		<dependency> 
-			<groupId>org.slf4j</groupId> 
-			<artifactId>slf4j-log4j12</artifactId> 
-			<version>${slf4j.version}</version> 
-			<scope>runtime</scope> 
 		</dependency>
-		<dependency> 
-			<groupId>org.apache.logging.log4j</groupId> 
-			<artifactId>log4j-core</artifactId> 
-			<version>${log4j.version}</version> 
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
 		<dependency>
     	<groupId>log4j</groupId>
@@ -141,7 +141,7 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 
-		
+
 		<!-- Test Artifacts -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -157,20 +157,20 @@
 		</dependency>
 
 
-		 <!-- mybatis --> 
+		 <!-- mybatis -->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
             <version>3.0.6</version>
         </dependency>
-        
+
 <!--         mybatis spring -->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
             <version>1.0.2</version>
         </dependency>
-        
+
 <!--         apache commons dbcp -->
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -183,13 +183,13 @@
 		<artifactId>mysql-connector-java</artifactId>
 		<version>8.0.27</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.8.5</version>
 		</dependency>
-		  
+
         <dependency>
 			<groupId>org.vert-x</groupId>
 			<artifactId>vertx-core</artifactId>
@@ -202,25 +202,25 @@
 			<version>1.6.0</version>
 <!-- 			<version>1.3.4</version> -->
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpclient</artifactId>
 		    <version>4.4.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
 		</dependency>
-		
+
 		<dependency>
 	  		<groupId>com.googlecode.json-simple</groupId>
 	  		<artifactId>json-simple</artifactId>
 	  		<version>1.1</version>
 	  	</dependency>
-	  	
+
 <!-- 		<dependency> -->
 <!-- 			<groupId>org.json</groupId> -->
 <!-- 			<artifactId>json</artifactId> -->
@@ -232,39 +232,39 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.0</version>
 		</dependency>
-		
-		
+
+
 		<!--  아파치 poi -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.11</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.12</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
 			<version>3.12</version>
 		</dependency>
-				
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
 			<version>3.12</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-excelant</artifactId>
 			<version>3.12</version>
 		</dependency>
-				
+
 		<!-- Java Mail API -->
 <!-- 	    <dependency> -->
 <!-- 			<groupId>org.springframework</groupId> -->
@@ -285,23 +285,23 @@
 	        <version>${spring-framework.version}</version>
 <!-- 	        <version>4.0.0.RELEASE</version> -->
 	    </dependency>
-	 
+
 	    <dependency>
 	        <groupId>org.springframework</groupId>
 	        <artifactId>spring-context-support</artifactId>
 	        <version>${spring-framework.version}</version>
 <!-- 	        <version>4.0.0.RELEASE</version> -->
 	    </dependency>
-	 
+
 	    <dependency>
 	        <groupId>org.quartz-scheduler</groupId>
 	        <artifactId>quartz</artifactId>
 	        <version>2.3.0</version>
-	    </dependency>				
+	    </dependency>
 
- 
+
 		<!-- aspectj -->
-					
+
 		<dependency>
 		    <groupId>org.aspectj</groupId>
 		    <artifactId>aspectjweaver</artifactId>
@@ -312,18 +312,18 @@
 		    <artifactId>cglib-nodep</artifactId>
 		    <version>3.1</version>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-websocket</artifactId>
 		    <version>${spring-framework.version}</version>
 		</dependency>
-		
-		<dependency>
-		    <groupId>com.google.code.gson</groupId>
-		    <artifactId>gson</artifactId>
-		    <version>2.8.2</version>
-		</dependency>
+
+<!--		<dependency>-->
+<!--		    <groupId>com.google.code.gson</groupId>-->
+<!--		    <artifactId>gson</artifactId>-->
+<!--		    <version>2.8.2</version>-->
+<!--		</dependency>-->
 		<!-- j.seo 추가 -->
 		<dependency>
     		<groupId>com.jcraft</groupId>
@@ -331,8 +331,8 @@
     		<version>0.1.54</version>
 		</dependency>
 		<!-- j.seo 추가 -->
-		
-		
+
+
 		<dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -347,9 +347,9 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.5.1</version>
-        </dependency>        
-		
-	
+        </dependency>
+
+
 		<!-- fileupload -->
 		<dependency>
 		    <groupId>commons-fileupload</groupId>
@@ -361,17 +361,17 @@
 		    <artifactId>commons-io</artifactId>
 		    <version>2.6</version>
 		</dependency>
-		
-		
+
+
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-compress</artifactId>
 		    <version>1.1</version>
 		</dependency>
-		
-		
-		<!-- grpc -->		
+
+
+		<!-- grpc -->
 		<dependency>
 		  <groupId>io.grpc</groupId>
 		  <artifactId>grpc-netty-shaded</artifactId>
@@ -396,51 +396,51 @@
 			<scope>compile</scope>
 		</dependency>
 
-		
+
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-csv</artifactId>
 		    <version>1.5</version>
 		</dependency>
-		
-		<dependency>  
+
+		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-exec</artifactId>
 		    <version>1.3</version>
-		</dependency>  
-		
-		
+		</dependency>
+
+
 <!-- 		<dependency> -->
 <!-- 		    <groupId>org.bytedeco</groupId> -->
 <!-- 		    <artifactId>javacv-platform</artifactId> -->
 <!-- 		    <version>1.4.4</version> -->
 <!-- 		</dependency>  -->
-		
+
 		<dependency>
 		  <groupId>net.coobird</groupId>
 		  <artifactId>thumbnailator</artifactId>
 		  <version>[0.4, 0.5)</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
 		<dependency>
 		    <groupId>net.lingala.zip4j</groupId>
 		    <artifactId>zip4j</artifactId>
 		    <version>2.5.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.bgee.log4jdbc-log4j2</groupId>
 			<artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
 			<version>1.16</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.twelvemonkeys.imageio</groupId>
 			<artifactId>imageio-jpeg</artifactId>
 			<version>3.3.1</version>
 		</dependency>
-		
+
 		<!-- Gstreamer -->
 		<dependency>
     		<groupId>org.freedesktop.gstreamer</groupId>
@@ -461,12 +461,12 @@
 		<dependency>
 		    <groupId>org.jcodec</groupId>
 		    <artifactId>jcodec</artifactId>
-		    <version>0.2.3</version>
+		    <version>0.2.5</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.jcodec</groupId>
 		    <artifactId>jcodec-javase</artifactId>
-		    <version>0.2.3</version>
+		    <version>0.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
@@ -484,11 +484,11 @@
 			<artifactId>opencv</artifactId>
 			<version>4.6.0-0</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.bytedeco</groupId>-->
-<!--			<artifactId>javacv-platform</artifactId>-->
-<!--			<version>1.5.3</version>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv-platform</artifactId>
+			<version>1.5.9</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -496,5 +496,5 @@
 			<scope>compile</scope>
 		</dependency>
 
-	</dependencies>	
+	</dependencies>
 </project>

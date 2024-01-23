@@ -90,8 +90,8 @@
 						<span class="radioBtn selected" data-value="image"></span>
 						<span class="radio_label">이미지</span>
 						<!-- military 20221125 : 비디오타입 임시 삭제 -->
-<!--  						<span class="radioBtn" data-value="video"></span> -->
-<!-- 						<span class="radio_label">Video</span> -->
+						<span class="radioBtn" data-value="video"></span>
+						<span class="radio_label">Video</span>
 					</div>
 				</div>				
 				<div class="title_wrap flex">
@@ -262,6 +262,8 @@
 				} else if (selected_media_type.data("value") == "video" && selected_type.data("value") == "box"){
 					label_type = "VIDEO_BBOX";
 // 					label_type = "IMAGE_BBOX";
+				} else if (selected_media_type.data("value") == "video" && selected_type.data("value") == "polygon") {
+					label_type = "VIDEO_SEGMENTATION";
 				}
 				
 				if(that.pt.find("input[name='title']").val()==""){
@@ -564,8 +566,8 @@
 					$('.fileTab_wrap .zip_file .tab').removeClass('active');
 					files.setAttribute('accept','video/mp4');
 
-					$(".label_type_wrap .radioBtn[data-value='polygon']").hide();
-					$(".label_type_wrap .radioBtn[data-value='polygon']").next().hide();
+					// $(".label_type_wrap .radioBtn[data-value='polygon']").hide();
+					// $(".label_type_wrap .radioBtn[data-value='polygon']").next().hide();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").hide();
 					$(".label_type_wrap .radioBtn[data-value='polyLine']").next().hide();
 				} else {

@@ -34,13 +34,13 @@ public class DataService {
 
 	@Autowired
 	private MetaDao metaDao;
-	
+
 	@Autowired
 	private TaskDao taskDao;
 
 	private String XLABELLER_ROOT_PATH = "/usr/local/uploadFile/xlabeller/";
 	private String WORKSPACE_PATH = "/usr/local/uploadFile/xlabeller/workspace/";
-	
+
 	private String MID_PATH = "dataset/";
 	private String TEMP_PATH = "dataset_temp/";
 
@@ -52,7 +52,7 @@ public class DataService {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 		}
 //		datasetVO.setStatus("1");
-		
+
 		// 페이징
 		int count = dataDao.getDatasetTotalCount(datasetVO);
 		int size = 9999;
@@ -333,13 +333,8 @@ public class DataService {
 
 	}
 	*/
-	
+
 	public Object insertDataset(DatasetVO datasetVO) throws Exception {
-		UserVO userInfo = SessionUtil.getUserInfo();
-//		if(userInfo == 9null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
-//			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
-//		}
-		
 		// 유효성검사.
 		if(datasetVO.getTitle() == null || datasetVO.getTitle().length() <= 0) {
 			return Output.JsonOutput("4061","타이틀(제목)을 입력해주세요.");
@@ -356,21 +351,28 @@ public class DataService {
 		if(datasetVO.getLabel_type() == null || datasetVO.getLabel_type().length() <= 0) {
 			return Output.JsonOutput("4061","라벨 타입을 선택해주세요.");
 		}
-		
+
 		String mediaType = datasetVO.getMedia_type();
 		String labelType = datasetVO.getLabel_type();
-		
+
 		if(!mediaType.equals("IMAGE") && !mediaType.equals("VIDEO")) {
 			return Output.JsonOutput("4061","미디어 타입의 값이 유효하지 않습니다.");
 		}
-		if(!labelType.equals("IMAGE_BBOX") && !labelType.equals("IMAGE_SEGMENTATION") && !labelType.equals("VIDEO_BBOX") && !labelType.equals("IMAGE_LINE")) {
+		if(!labelType.equals("IMAGE_BBOX") && !labelType.equals("IMAGE_SEGMENTATION") && !labelType.equals("VIDEO_BBOX") && !labelType.equals("IMAGE_LINE") && !labelType.equals("VIDEO_SEGMENTATION")) {
 			return Output.JsonOutput("4061","라벨의 값이 유효하지 않습니다.");
 		}
 		if(!labelType.split("_")[0].equals(mediaType)) {
 			return Output.JsonOutput("4061","미디어 타입과 라벨 타입이 일치하지 않습니다.");
 		}
-		
-		DatasetVO insertDatasetVO = new DatasetVO(); 
+
+		if (labelType.equals("VIDEO_BBOX")) {
+			datasetVO.setLabel_type("IMAGE_BBOX");
+		} else if (labelType.equals("VIDEO_SEGMENTATION")) {
+			datasetVO.setLabel_type("IMAGE_SEGMENTATION");
+		}
+
+
+		DatasetVO insertDatasetVO = new DatasetVO();
 		insertDatasetVO.setTitle(datasetVO.getTitle());
 		insertDatasetVO.setContents(datasetVO.getContents());
 //		insertDatasetVO.setMedia_type(datasetVO.getMedia_type());
@@ -380,7 +382,7 @@ public class DataService {
 		insertDatasetVO.setLabel_type(datasetVO.getLabel_type());
 //		insertDatasetVO.setUser_id(userInfo.getUser_id());
 		insertDatasetVO.setStatus("1");
-		
+
 		// 파일 체크
 		MultipartFile[] mfArr = datasetVO.getFiles();
 		if(mfArr == null || mfArr.length == 0) {
@@ -393,7 +395,7 @@ public class DataService {
 
 		List<MultipartFile> mfList = new ArrayList<MultipartFile>();
 		// 파일 유효성 체크
-		for(int i = 0 ; i < mfArr.length ; i++) {			
+		for(int i = 0 ; i < mfArr.length ; i++) {
 			String format = mfArr[i].getOriginalFilename().split("\\.")[mfArr[i].getOriginalFilename().split("\\.").length-1];
 			if ( format == null || format.length() <= 0 ) {
 				continue;
@@ -405,7 +407,7 @@ public class DataService {
 				return Output.JsonOutput("4061","지원하지 않는 형식의 데이터 포맷이 포함되어 있습니다.");
 			}
 		}
-		
+
 		// 데이터셋 생성
 		// 데이터셋 DB에 insert
 		int cnt = dataDao.insertDataset(insertDatasetVO);
@@ -427,10 +429,10 @@ public class DataService {
 
 //		// 임시 폴더 삭제
 //		FileUtils.delete(XLABELLER_ROOT_PATH + TEMP_PATH + datasetId);
-		
+
 		// 폴더 생성
 		FileUtils.mkdir(XLABELLER_ROOT_PATH + TEMP_PATH + datasetId);
-		
+
 		// 파일 이동
 		for(int i = 0 ; i < mfList.size() ; i++) {
 			try {
@@ -482,10 +484,10 @@ public class DataService {
 //		if(cnt != 1){
 //			throw new CustomException("4001#등록이 올바르지 않습니다.");
 //		}
-		
+
 		String msg = "업로드 요청 데이터 "+ String.valueOf(mfArr.length) + "건 중에 정상 포맷 데이터인 " +
 				String.valueOf(mfList.size()) +"건 업로드를 백그라운드에서 수행합니다.";
-		
+
 		return Output.JsonOutput("200", msg);
 	}
 
@@ -518,9 +520,9 @@ public class DataService {
 		if (!isMoved) {
 			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
 		}
-		
+
 //		filename.transferTo(new File(tempDir));
-		
+
 //		for (int j = 0; j < pathList.size(); j++) {
 //			DataVO dataVO = new DataVO();
 //			dataVO.setDataset_id(datasetVO.getDataset_id());
@@ -535,19 +537,19 @@ public class DataService {
 //			dataVO.setFrame(null);
 //			dataVO.setDuration(null);
 //			dataList.add(dataVO);
-//			
+//
 //			if(dataList != null && !dataList.isEmpty() ) {
 //				insertDataInner(dataList);
 //				dataList.clear();
 //			}
 //		}
-		
+
 //		File fileToMove = new File(tempDir+"/"+filename);
 //		boolean isMoved = fileToMove.renameTo(convFile);
 //		if (!isMoved) {
 //			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
 //		}
-		
+
 
 
 
@@ -557,7 +559,7 @@ public class DataService {
 			throw new Exception("4072#지원하는 동영상 포맷이 아닙니다.");
 		}
 		int frames = vmu.getTotalFrame();
-		
+
 		for (int j=0; j<frames; j++) {
 			int frm = j*5;
 			if(frm > frames) {
@@ -566,8 +568,8 @@ public class DataService {
 			Picture img = FrameGrab.getFrameFromFile(convFile, frm);
 			BufferedImage bi = AWTUtil.toBufferedImage(img);
 			String newImgName = fileName.split(".mp4")[0]+"_"+frm+".png";
-			ImageIO.write(bi,"png",new File(XLABELLER_ROOT_PATH+MID_PATH+newImgName));	
-			
+			ImageIO.write(bi,"png",new File(XLABELLER_ROOT_PATH+MID_PATH+newImgName));
+
 			DataVO dataVO = new DataVO();
 			dataVO.setDataset_id(datasetVO.getDataset_id());
 			dataVO.setPath(MID_PATH+newImgName);
@@ -580,12 +582,12 @@ public class DataService {
 			dataVO.setFrame("1");
 			dataVO.setDuration("0");
 			dataVO.setUser_id(datasetVO.getUser_id());
-			
+
 			dataList.add(dataVO);
 		}
-		
-		
-		
+
+
+
 //
 //
 //		DataVO dataVO = new DataVO();
@@ -607,6 +609,7 @@ public class DataService {
 			insertDataInner(dataList);
 			dataList.clear();
 		}
+
 		return;
 	}
 
@@ -638,11 +641,6 @@ public class DataService {
 					// dataList 널처리 필요
 				}catch(Exception e){
 					logger.error("videoUpolad : "+tempDirPath +"/"+ fileList.get(i),e);
-//					insertDatasetLog("비디오 처리 불가능 포맷("+filename+")");
-					//로그 컬럼에 추가
-					//파일 여러개 이기 때문에 컬럼에 상태를 단순하게 넣는건 무의미
-					//				updateDatasetStatus(datasetVO.getDataset_id(),"4");
-					//				throw new Exception("4072#등록이 올바르지 않습니다.");
 				}
 			}else {
 				// 포맷이 불명확할때
@@ -803,9 +801,9 @@ public class DataService {
 		}
 		return pathList;
 	}
-	
-	
-	
+
+
+
 
 //	public Object insertData(DatasetVO datasetVO) throws Exception {
 //		UserVO userInfo = SessionUtil.getUserInfo();
@@ -987,13 +985,13 @@ public class DataService {
 		if(datasetVO.getFiles() == null || datasetVO.getFiles().length <= 0) {
 			return Output.JsonOutput("4061","데이터셋에 추가할 데이터를 업로드해주세요.");
 		}
-		
+
 		// 데이터셋 가져옴
 		// 데이터셋 등록한 사용자만 데이터 추가 가능 (나중에 삭제해야 됨)
 		DatasetVO selectDatasetVO = new DatasetVO();
 		selectDatasetVO.setDataset_id(datasetVO.getDataset_id());
 		//selectDatasetVO.setUser_id(userInfo.getUser_id());
-		
+
 		DatasetVO myDatasetVO = dataDao.getMyDatasetById(selectDatasetVO);
 
 		//hc.park
@@ -1014,7 +1012,7 @@ public class DataService {
 		if(myDatasetVO == null || myDatasetVO.getDataset_id() == null || myDatasetVO.getDataset_id().isEmpty() ) {
 			return Output.JsonOutput("4071","본인이 등록한 데이터셋에만 데이터를 추가할 수 있습니다.");
 		}
-		
+
 		if(myDatasetVO.getStatus() == null ) {
 			return Output.JsonOutput("4071","데이터셋 상태정보가 누락되었습니다. 운영자에게 문의부탁드립니다.");
 		}else if(myDatasetVO.getStatus().equals("2")) {
@@ -1022,21 +1020,21 @@ public class DataService {
 		}else if(myDatasetVO.getStatus().equals("3")) {
 			return Output.JsonOutput("4071","이미 해당 데이터셋에 적재 프로세스가 진행중입니다. 적재 완료후 다시 시도 부탁드립니다.");
 		}
-				
+
 		String mediaType = myDatasetVO.getMedia_type();
 		String labelType = myDatasetVO.getLabel_type();
-		
+
 		if(!mediaType.equals("IMAGE") && !mediaType.equals("VIDEO")) {
 			return Output.JsonOutput("4071","미디어 타입 선택이 올바르지 않습니다");
 		}
 //		if(!labelType.equals("IMAGE_BBOX") && !labelType.equals("IMAGE_SEGMENTATION") && !labelType.equals("VIDEO_BBOX")) {
 //			return Output.JsonOutput("4071","라벨링 타입 선택이 올바르지 않습니다");
 //		}
-	
+
 		if(!labelType.split("_")[0].equals(mediaType)) {
 			return Output.JsonOutput("4071","미디어 타입과 라벨링 타입 조합이 잘못되었습니다");
 		}
-		
+
 		// 파일 체크
 		MultipartFile[] mfArr = datasetVO.getFiles();
 		if(mfArr == null || mfArr.length == 0) {
@@ -1046,11 +1044,11 @@ public class DataService {
 		if(mfArr.length > 100) {
 			return Output.JsonOutput("4061","한번에 등록 가능한 영상 데이터의 최대 개수는 100개입니다.");
 		}
-		
+
 		List<MultipartFile> mfList = new ArrayList<>();
-		
+
 		// 파일 유효성 체크
-		for(int i = 0 ; i < mfArr.length ; i++) {			
+		for(int i = 0 ; i < mfArr.length ; i++) {
 			String format = mfArr[i].getOriginalFilename().split("\\.")[mfArr[i].getOriginalFilename().split("\\.").length-1];
 			if( format == null || format.length() <= 0 ) {
 				continue;
@@ -1064,7 +1062,7 @@ public class DataService {
 			}
 
 		}
-		
+
 		String datasetId = selectDatasetVO.getDataset_id();
 		if(datasetId == null || datasetId.length() <= 0) {
 			return Output.JsonOutput("4061","데이터셋의 아이디가 올바르지 않습니다.\n운영자에게 문의 부탁드립니다.");
@@ -1072,7 +1070,7 @@ public class DataService {
 
 		// 임시 폴더 삭제
 		FileUtils.delete(XLABELLER_ROOT_PATH + TEMP_PATH + datasetId);
-		
+
 		// 폴더 생성
 		FileUtils.mkdir(XLABELLER_ROOT_PATH + TEMP_PATH + datasetId);
 
@@ -1133,13 +1131,13 @@ public class DataService {
 //
 //		String msg = "업로드 요청 데이터 "+ String.valueOf(mfArr.length) + "건 중에 정상 포맷 데이터인 " +
 //				String.valueOf(mfList.size()) +"건 업로드를 백그라운드에서 수행합니다.";
-		
+
 		mfList.clear();
 		mfList = null;
 
 		return Output.JsonOutput("200", msg);
 	}
-	
+
 
 //	public Object insertReplicaData(DataVO dataVO) throws Exception {
 //		UserVO userInfo = SessionUtil.getUserInfo();
@@ -1170,9 +1168,9 @@ public class DataService {
 ////		if (cnt != 1) {
 ////			return Output.JsonOutput("300", "등록이 올바르지 않습니다.");
 ////		}
-//		
+//
 //		String[] splitDataSetID = dataVO.getDataset_id().split(",");
-//		// 복사할 이미지 
+//		// 복사할 이미지
 //		String[] splitDataID = dataVO.getData_id().split(",");
 //
 //		if (splitDataSetID == null || splitDataSetID.length <= 0) {
@@ -1257,9 +1255,9 @@ public class DataService {
 //		if (dataVO.getDataset_id() == null || dataVO.getDataset_id().length() <= 0) {
 //			return Output.JsonOutput("505", "복사할 Dataset을 선택해주세요.");
 //		}
-//		
+//
 //		String[] splitDataSetID = dataVO.getDataset_id().split(",");
-//		// 복사할 이미지 
+//		// 복사할 이미지
 //		String[] splitDataID = dataVO.getData_id().split(",");
 //
 //		if (splitDataSetID == null || splitDataSetID.length <= 0) {
@@ -1275,7 +1273,7 @@ public class DataService {
 //		Map<Integer, String> originalImagePath = new LinkedHashMap<Integer, String>();
 //		// 복사할 원본 데이터 ID, 복사할 ID의 정보를 IN절로 가져와 복사
 //		Map<Integer, String> originalImageId = new LinkedHashMap<Integer, String>();
-//		// 타겟 데이터셋의 데이터, 동일한 path를 가지면 복사 제외 
+//		// 타겟 데이터셋의 데이터, 동일한 path를 가지면 복사 제외
 //		Map<String, String> copyImagePath = new LinkedHashMap<String, String>();
 //
 //		if (dataList == null || dataList.isEmpty() || dataList.size() <= 0) {
@@ -1291,20 +1289,20 @@ public class DataService {
 //			copyData.setPage_num("0");
 //			copyData.setPage_size("99999");
 //			List<DataVO> copyDataList = dataDao.getDataList(copyData);
-//			
+//
 //			// data_id 삽입
 //			StringBuffer sb = new StringBuffer();
 //			// 타겟 데이터셋 path Map 생성, 중복되는 데이터 제외하기 위함
 //			for (int j = 0; j < copyDataList.size(); j++) {
 //				copyImagePath.put(copyDataList.get(j).getPath(), copyDataList.get(j).getData_id());
-//				
+//
 //			}
 //
 //			for (int k = 0; k < originalImagePath.size(); k++) {
 //				if (copyImagePath.containsKey(originalImagePath.get(k))) {
 //					continue;
 //				}
-//				
+//
 //				if(sb.length() <= 0) {
 //					sb.append(originalImageId.get(k));
 //				} else {
@@ -1312,7 +1310,7 @@ public class DataService {
 //					sb.append(originalImageId.get(k));
 //				}
 //			}
-//			
+//
 //			if(sb.length() <= 0) {
 //				continue;
 //			}
@@ -1338,23 +1336,23 @@ public class DataService {
 		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 		}
-		
+
 		if(dataVO.getDataset_id() == null || dataVO.getDataset_id().length() <= 0) {
 			return Output.JsonOutput("4061", "유효하지 않은 접근입니다. 새로 고침 후 다시 시도해주시길 바랍니다.");
 		}
-		
+
 		if(dataVO.getDataset_ids() == null || dataVO.getDataset_ids().length() <= 0) {
 			return Output.JsonOutput("4061", "복제할 데이터셋을 선택해주세요.");
 		}
-		
+
 		String[] splitDatasetID = dataVO.getDataset_ids().split(",");
 		if(splitDatasetID.length <= 0) {
 			return Output.JsonOutput("4061", "복제할 데이터셋을 선택해주세요.");
 		}
-		
+
 		DatasetVO datasetVO = new DatasetVO();
 		datasetVO.setDataset_id(dataVO.getDataset_id());
-		
+
 		// 데이터셋 id로 검색
 		DatasetVO sourceDataset = dataDao.getDatasetById(datasetVO);
 		if (sourceDataset == null) {
@@ -1375,7 +1373,7 @@ public class DataService {
 		if(sourceDataset.getDataset_id() == null || sourceDataset.getDataset_id().length() <= 0) {
 			return Output.JsonOutput("4071", "복사할 데이터셋이 손상되었습니다.");
 		}
-		
+
 		DataVO selectDataVO = new DataVO();
 		selectDataVO.setDataset_id(sourceDataset.getDataset_id());
 		selectDataVO.setStatus("1");
@@ -1385,7 +1383,7 @@ public class DataService {
 		if (sourceDataList == null || sourceDataList.isEmpty() || sourceDataList.size() <= 0) {
 			throw new CustomException("4001#복사할 데이터가 존재하지 않습니다.");
 		}
-		
+
 		StringBuffer sb = new StringBuffer();
 		for(int i = 0; i < sourceDataList.size(); i++) {
 			if(i == 0) {
@@ -1395,8 +1393,8 @@ public class DataService {
 				sb.append(sourceDataList.get(i).getData_id());
 			}
 		}
-		
-		
+
+
 		for(int i = 0; i < splitDatasetID.length; i++) {
 			DataVO insertDataVO = new DataVO();
 			insertDataVO.setDataset_id(splitDatasetID[i]);
@@ -1408,14 +1406,14 @@ public class DataService {
 		return Output.JsonOutput("200", "등록이 완료되었습니다");
 
 	}
-	
+
 	//(복제)
 	public Object insertReplicaData(DataVO dataVO) throws CustomException {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 		}
-		
+
 		if(dataVO.getDataset_id() == null || dataVO.getDataset_id().length() <= 0) {
 			return Output.JsonOutput("4061", "유효하지 않은 접근입니다. 새로 고침 후 다시 시도해주시길 바랍니다.");
 		}
@@ -1438,7 +1436,7 @@ public class DataService {
 		if(sourceDataset.getMedia_type() == null || sourceDataset.getMedia_type().length() <= 0) {
 			return Output.JsonOutput("4071", "복사할 데이터셋이 손상되었습니다.");
 		}
-		
+
 		// 복제 데이터셋 생성
 		DatasetVO targetDataset = new DatasetVO();
 		targetDataset.setTitle(sourceDataset.getTitle() + "_replica");
@@ -1463,7 +1461,7 @@ public class DataService {
 		if (sourceDataList == null || sourceDataList.isEmpty() || sourceDataList.size() <= 0) {
 			throw new CustomException("4001#복사할 데이터가 존재하지 않습니다.");
 		}
-		
+
 		StringBuffer sb = new StringBuffer();
 		for(int i = 0; i < sourceDataList.size(); i++) {
 			if(i == 0) {
@@ -1473,7 +1471,7 @@ public class DataService {
 				sb.append(sourceDataList.get(i).getData_id());
 			}
 		}
-		
+
 		DataVO insertDataVO = new DataVO();
 		insertDataVO.setDataset_id(targetDatasetId);
 		insertDataVO.setData_id(sb.toString());
@@ -1485,7 +1483,7 @@ public class DataService {
 	}
 	// dataset_ids
 	// 수정됨
-	
+
 
 //	public Object insertReplicaPartDataWithMeta(DataVO dataVO) throws Exception {
 //		UserVO userInfo = SessionUtil.getUserInfo();
@@ -1664,7 +1662,7 @@ public class DataService {
 //			logger.error("dataList Error! DB Select result null");
 //			return Output.JsonOutput("505", "복사할 데이터가 없습니다.");
 //		}
-//		// 첫번째 데이터의 라벨타입을 확인해 두 개 데이터셋의 라벨타입이 같은지 확인, 같으면 라벨도 같이 복사, 다르면 데이터만 복사 
+//		// 첫번째 데이터의 라벨타입을 확인해 두 개 데이터셋의 라벨타입이 같은지 확인, 같으면 라벨도 같이 복사, 다르면 데이터만 복사
 //		DatasetVO findDatasetVO = new DatasetVO();
 //		findDatasetVO.setDataset_id(dataList.get(0).getDataset_id());
 //		// Data의 Dataset ID를 가져옴, Label_type을 비교해 동일할 경우, meta 복사 아니면 이미지만 복사하기 위함
@@ -1783,7 +1781,7 @@ public class DataService {
 		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 		}
-		
+
 		if(datasetVO.getDataset_ids() == null || datasetVO.getDataset_ids().length() <= 0) {
 			return Output.JsonOutput("4061", "복사할 데이터셋을 선택해주세요.");
 		}
@@ -1800,7 +1798,7 @@ public class DataService {
 		if(sourceDataset.getLabel_type() == null || sourceDataset.getLabel_type().length() <= 0) {
 			return Output.JsonOutput("4071", "복사할 데이터셋이 손상되었습니다.");
 		}
-		
+
 		DataVO selectDataVO = new DataVO();
 		selectDataVO.setDataset_id(sourceDataset.getDataset_id());
 		selectDataVO.setStatus("1");
@@ -1810,7 +1808,7 @@ public class DataService {
 		if (sourceDataList == null || sourceDataList.isEmpty() || sourceDataList.size() <= 0) {
 			throw new CustomException("4001#등록이 올바르지 않습니다.");
 		}
-		
+
 		// 타겟 데이터셋들 라벨타입 같은지 확인
 		for(int i = 0; i < splitDatasetID.length; i++) {
 			DatasetVO findDatasetVO = new DatasetVO();
@@ -1823,7 +1821,7 @@ public class DataService {
 				return Output.JsonOutput("4071", "라벨 타입이 같지 않은 데이터셋이 포함되어 있어 복사할 수 없습니다.");
 			}
 		}
-		
+
 		//DataVO insertDataVO = new DataVO();
 		//ReplicaMetaVO replicaMetaVO = new ReplicaMetaVO();
 		for (int i = 0; i < splitDatasetID.length; i++) {
@@ -1884,7 +1882,7 @@ public class DataService {
 		if(sourceDataset.getMedia_type() == null || sourceDataset.getMedia_type().length() <= 0) {
 			return Output.JsonOutput("4061", "복사할 데이터셋이 손상되었습니다.");
 		}
-		
+
 		// 복제 데이터셋 생성
 		DatasetVO targetDataset = new DatasetVO();
 		targetDataset.setTitle(sourceDataset.getTitle() + "_replica");
@@ -1926,7 +1924,7 @@ public class DataService {
 			insertDataVO.setFilename(findDataVO.getFilename());
 			insertDataVO.setFrame(findDataVO.getFrame());
 			insertDataVO.setDuration(findDataVO.getDuration());
-			
+
 			cnt = dataDao.insertDataOne(insertDataVO);
 			if (cnt != 1) {
 				throw new CustomException("4001#등록이 올바르지 않습니다.");
@@ -1941,7 +1939,7 @@ public class DataService {
 	}
 
 
-	
+
 	public Object deleteDataset(DatasetVO datasetVO) {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
@@ -1963,7 +1961,7 @@ public class DataService {
 //		inputDatasetVO.setStatus("0");
 //		inputDatasetVO.setDataset_id(datasetVO.getDataset_id());
 		datasetVO.setStatus("0");
-		
+
 		// Dataset Status 0으로 업데이트
 		dataDao.updateDataset(datasetVO);
 
@@ -2021,7 +2019,7 @@ public class DataService {
 			return Output.JsonOutput("4071", "삭제할 데이터가 없습니다.");
 		}
 		StringBuffer sb = new StringBuffer();
-		
+
 		for(int i = 0; i < dataList.size(); i++) {
 			if(i == 0) {
 				sb.append(dataList.get(i).getData_id());
@@ -2030,7 +2028,7 @@ public class DataService {
 				sb.append(dataList.get(i).getData_id());
 			}
 		}
-		
+
 		dataVO.setData_id(sb.toString());
 		int meta_cnt = dataDao.deleteMetaInDataId(dataVO);
 		if (meta_cnt == 0) {
@@ -2044,7 +2042,7 @@ public class DataService {
 		return Output.JsonOutput("200", "삭제가 완료되었습니다");
 	}
 
-	
+
 	public Object deleteMetaByDatasetId(DataVO dataVO) {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
@@ -2053,16 +2051,16 @@ public class DataService {
 		if (dataVO.getDataset_id() == null || dataVO.getDataset_id().length() <= 0) {
 			return Output.JsonOutput("4061", "삭제할 데이터셋이 존재하지 않습니다.");
 		}
-		
+
 		int meta_cnt = dataDao.deleteMetaByDatasetId(dataVO);
 		if (meta_cnt == 0) {
 			return Output.JsonOutput("300", "삭제할 라벨이 존재하지 않습니다.");
 		}
 		return Output.JsonOutput("200", "삭제가 완료되었습니다");
 	}
-	
-	
-	
+
+
+
 	public Object deleteDataInDatasetId(DatasetVO datasetVO) throws Exception {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
@@ -2126,7 +2124,7 @@ public class DataService {
 //		Object result = dataDao.getDataList(dataVO);
 //		return Output.JsonOutput("200", result);
 //	}
-	
+
 	public Object getDataList(DataVO dataVO) {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
@@ -2135,11 +2133,11 @@ public class DataService {
 
 		String datasetId = dataVO.getDataset_id();
 		if(datasetId == null || datasetId.isEmpty()) {
-			return Output.JsonOutput("4061","데이터셋 파라미터가 존재하지 않습니다");		
+			return Output.JsonOutput("4061","데이터셋 파라미터가 존재하지 않습니다");
 		}
-		
+
 		String userId = userInfo.getUser_id();
-		
+
 		//소유권에 대한 부분이 Xlabeller에서는 존재하지 않음. 만약 필요하게 되면 쓸것임.
 //		DatasetVO selectDatasetVO = new DatasetVO();
 //		selectDatasetVO.setDataset_id(datasetId);
@@ -2147,11 +2145,11 @@ public class DataService {
 //		if(resultDatasetVO == null || resultDatasetVO.getUser_id() == null || !userId.equals(resultDatasetVO.getUser_id())) {
 //			return Output.JsonOutput("4611","해당 데이터의 접근 권한이 없습니다.");
 //		}
-		
+
 		DataVO selectDataVO = new DataVO();
 		selectDataVO.setStatus("1");
 		selectDataVO.setDataset_id(datasetId);
-		
+
 		//페이징
 		int count = dataDao.getDataTotalCount(selectDataVO);
 		int size = 50;
@@ -2164,21 +2162,21 @@ public class DataService {
 				pageStart = 0;
 			}
 		}
-		
-		
+
+
 		selectDataVO.setPage_num(String.valueOf(pageStart * size));
 		selectDataVO.setPage_size(String.valueOf(size));
 		selectDataVO.setTotal_size(String.valueOf(count));
-		
+
 		dataVO.setPage_num(String.valueOf(pageStart * size));
 		dataVO.setPage_size(String.valueOf(size));
 		dataVO.setTotal_size(String.valueOf(count));
-		
+
 		Object result = dataDao.getDataList(selectDataVO);
 //		dataVO = selectDataVO;
 		return Output.JsonOutput("200", result);
 	}
-	
+
 	public Object getPageNoLimitDataList(DataVO dataVO) {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
@@ -2187,11 +2185,11 @@ public class DataService {
 
 		String datasetId = dataVO.getDataset_id();
 		if(datasetId == null || datasetId.isEmpty()) {
-			return Output.JsonOutput("4061", "데이터셋 ID 파라미터 값이 유효하지 않습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");		
+			return Output.JsonOutput("4061", "데이터셋 ID 파라미터 값이 유효하지 않습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
-		
+
 		String userId = userInfo.getUser_id();
-		
+
 		//소유권에 대한 부분이 Xlabeller에서는 존재하지 않음. 만약 필요하게 되면 쓸것임.
 //		DatasetVO selectDatasetVO = new DatasetVO();
 //		selectDatasetVO.setDataset_id(datasetId);
@@ -2199,7 +2197,7 @@ public class DataService {
 //		if(resultDatasetVO == null || resultDatasetVO.getUser_id() == null || !userId.equals(resultDatasetVO.getUser_id())) {
 //			return Output.JsonOutput("4611","해당 데이터의 접근 권한이 없습니다.");
 //		}
-		
+
 		DataVO selectDataVO = new DataVO();
 		selectDataVO.setStatus("1");
 		selectDataVO.setDataset_id(datasetId);
@@ -2211,24 +2209,24 @@ public class DataService {
 		Object result = dataDao.getDataList(selectDataVO);
 		return Output.JsonOutput("200", result);
 	}
-	
-	
+
+
 
 	public Object getDataByNum(DataVO dataVO) {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
-		}		
-		
+		}
+
 		if(dataVO.getDataset_id() == null || dataVO.getDataset_id().isEmpty()) {
 			return Output.JsonOutput("4061", "데이터셋 ID 파라미터 값이 유효하지 않습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 			//return Output.JsonOutput("4061","데이터셋 파라미터가 존재하지 않습니다");	
-			
+
 		}
 		if(dataVO.getData_num() == null || dataVO.getData_num().isEmpty()) {
-			return Output.JsonOutput("4061","데이터 넘버링 파라미터 값이 유효하지 않습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");	
+			return Output.JsonOutput("4061","데이터 넘버링 파라미터 값이 유효하지 않습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
-		
+
 		//권한 체크
 //		String userId = userInfo.getUser_id();
 //		String datasetId = dataVO.getDataset_id();
@@ -2238,16 +2236,16 @@ public class DataService {
 //		if(resultDatasetVO == null || resultDatasetVO.getUser_id() == null || !userId.equals(resultDatasetVO.getUser_id())) {
 //			return Output.JsonOutput("4611","해당 데이터의 접근 권한이 없습니다.");
 //		}
-		
+
 		dataVO.setStatus("1");
-		
+
 		Object result = dataDao.getDataByNum(dataVO);
 		return Output.JsonOutput("200", result);
 	}
-	
-	
-	
-	
+
+
+
+
 
 //	public Object updateDataInId(DataVO dataVO) throws Exception {
 //		UserVO userInfo = SessionUtil.getUserInfo();
@@ -2330,7 +2328,7 @@ public class DataService {
 ////		for(int i = 0; i < splitDataID.length; i++) {
 ////			DataVO newDataVO = new DataVO();
 ////			newDataVO.setId(splitDataID[i]);
-////			dataDao.deleteData(newDataVO);	
+////			dataDao.deleteData(newDataVO);
 ////		}
 //		int deleteCnt = dataDao.deleteDataInId(dataVO);
 //		if (splitDataID.length != deleteCnt) {
@@ -2340,7 +2338,7 @@ public class DataService {
 //		return Output.JsonOutput("200", "이동에 성공하였습니다.");
 //
 //	}
-	
+
 	// 데이터 이동
 	public Object updateDataInId(DataVO dataVO) throws Exception {
 		UserVO userInfo = SessionUtil.getUserInfo();
@@ -2356,11 +2354,11 @@ public class DataService {
 
 		String datasetId = dataVO.getDataset_id();
 		String targetDatasetId= dataVO.getTarget_dataset_id();
-		
+
 		DataVO moveDataVO = new DataVO();
 		moveDataVO.setDataset_id(datasetId);
 		moveDataVO.setTarget_dataset_id(targetDatasetId);
-		
+
 		dataDao.updateDataByDatasetId(moveDataVO);
 
 		return Output.JsonOutput("200", "이동에 성공하였습니다.");
@@ -2393,17 +2391,17 @@ public class DataService {
 		}
 
 		List<MetaVO> metaList = null;
-		
+
 		try {
 			metaList = parseMetaInfo(jArr);
 		} catch (Exception e) {
 			throw new CustomException("4091#유효하지 않은 접근입니다.\n새로고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의 해주시길 바랍니다.");
 		}
-		
+
 		if(metaList == null || metaList.isEmpty() || metaList.size() <= 0) {
 			throw new CustomException("4091#유효하지 않은 접근입니다.\n새로고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의 해주시길 바랍니다.");
 		}
-	
+
 		if (metaVO.getStay_flag() != null && metaVO.getStay_flag().equals("1")) {
 			HashMap<String, Object> hm = new HashMap<String, Object>();
 			hm.put("metaList", metaList);
@@ -2442,7 +2440,7 @@ public class DataService {
 
 		return Output.JsonOutput("200", "등록이 완료되었습니다");
 	}
-	
+
 	private List<MetaVO> parseMetaInfo(JSONArray jArr) throws IOException {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if (userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
@@ -2453,10 +2451,10 @@ public class DataService {
 		if (jArr == null || jArr.size() <= 0 || jArr.isEmpty()) {
 			return null;
 		}
-		
+
 		List<MetaVO> metaList = new ArrayList<MetaVO>();
 		String gDataId = null;
-		
+
 		for (int i = 0; i < jArr.size(); i++) {
 			JSONObject json = (JSONObject) jArr.get(i);
 			if (json == null) {
@@ -2468,7 +2466,7 @@ public class DataService {
 			}
 
 			String lDataId = (String) json.get("data_id");
-			
+
 			if (gDataId == null || !lDataId.equals(gDataId)) {
 				DataVO dataVO = new DataVO();
 				dataVO.setData_id(lDataId);
@@ -2480,7 +2478,7 @@ public class DataService {
 				logger.error("parseMetaInfo meta_id is null!");
 				continue;
 			}
-			
+
 			if (jObj.get("label") == null || ((String)jObj.get("label")).length() <= 0) {
 				logger.error("parseMetaInfo label is null! meta_id : " + (String)jObj.get("meta_id"));
 				continue;
@@ -2489,20 +2487,20 @@ public class DataService {
 				logger.error("parseMetaInfo label_type is null! meta_id : " + (String)jObj.get("meta_id"));
 				continue;
 			}
-			
-			String metaId = (String) jObj.get("meta_id"); 
-			String dataId = (String) jObj.get("data_id");    
-			String label = (String) jObj.get("label"); 
+
+			String metaId = (String) jObj.get("meta_id");
+			String dataId = (String) jObj.get("data_id");
+			String label = (String) jObj.get("label");
 			String label_type = (String) jObj.get("label_type");
 			String segmentation = null;
-					
+
 			MetaVO metaTempVO = new MetaVO();
 			metaTempVO.setMeta_id(metaId);
 			metaTempVO.setData_id(dataId);
 			metaTempVO.setLabel(label);
 			metaTempVO.setLabel_type(label_type);
 			metaTempVO.setUser_id(userInfo.getUser_id());
-			
+
 			if(label_type.equals("IMAGE_BBOX")) {
 				if (jObj.get("width") == null || ((String)jObj.get("width")).length() <= 0) {
 					logger.error("parseMetaInfo width is null Error! meta_id : " + (String)jObj.get("meta_id"));
@@ -2520,11 +2518,11 @@ public class DataService {
 					logger.error("parseMetaInfo top is null Error! meta_id : " + (String)jObj.get("meta_id"));
 					continue;
 				}
-				
-				String w = ((String) jObj.get("width")).split("\\.")[0];   
-				String h = ((String) jObj.get("height")).split("\\.")[0];  
-				String x = ((String) jObj.get("left")).split("\\.")[0];    
-				String y = ((String) jObj.get("top")).split("\\.")[0];  
+
+				String w = ((String) jObj.get("width")).split("\\.")[0];
+				String h = ((String) jObj.get("height")).split("\\.")[0];
+				String x = ((String) jObj.get("left")).split("\\.")[0];
+				String y = ((String) jObj.get("top")).split("\\.")[0];
 				metaTempVO.setInfo(x + "," + y + "," + w + "," + h);
 				metaList.add(metaTempVO);
 			} else if(label_type.equals("IMAGE_SEGMENTATION")) {
@@ -2535,13 +2533,13 @@ public class DataService {
 					logger.error("parseMetaInfo box is null Error! meta_id : " + (String)jObj.get("meta_id"));
 					continue;
 				}
-		
+
 //				segmentation = (String)jObj.get("segmentation");
 //				segmentation = segmentation.substring(1, segmentation.length() - 1);
 				//segmentation = segmentation.replace("\"", "");
 //				System.out.println("jsonObj : " + jsonObj.toJSONString());
 //				segmentation = jObj.get("segmentation").toString();
-				
+
 				jsonObj.put("segmentation",(String)jObj.get("segmentation"));
 				jsonObj.put("box", (String)jObj.get("box"));
 				jArray.add(jsonObj);
@@ -2557,9 +2555,9 @@ public class DataService {
 				jArrayString = jArrayString.replace("\\", "");
 				metaTempVO.setInfo(jArrayString);
 //				metaTempVO.setUser_id(userInfo.getUser_id());
-				metaList.add(metaTempVO);	
+				metaList.add(metaTempVO);
 			} else if(label_type.equals("VIDEO_BBOX")) {
-				
+
 			}
 
 		}
@@ -2567,7 +2565,7 @@ public class DataService {
 	}
 
 	//////
-//	
+//
 //	public Object updateMeta(MetaVO metaVO) throws Exception {
 //		UserVO userInfo = SessionUtil.getUserInfo();
 //		JSONParser jp = new JSONParser();
@@ -2578,7 +2576,7 @@ public class DataService {
 //			return Output.JsonOutput("200", "등록이 완료되었습니다");
 ////			throw new Exception("4007#등록이 올바르지 않습니다.");
 //		}
-//		
+//
 //		String path = XLABELLER_ROOT_PATH;
 //
 //		// 메타정보의 data_id를 통해 이미지 path가져옴
@@ -2588,9 +2586,9 @@ public class DataService {
 //		String imgPath = path + rDataVO.getPath();
 //		String metaId = null;
 //		BufferedImage originalImgage = ImageIO.read(new File(imgPath));
-//				
+//
 //		for(int i = 0 ; i < jArr.size() ; i++) {
-//			
+//
 //			JSONObject jObj = (JSONObject)jArr.get(i);
 //			metaId = (String)jObj.get("meta_id");
 //			String dataId = (String)jObj.get("data_id");
@@ -2603,13 +2601,13 @@ public class DataService {
 //			if(jObj.get("segmentation") != null) {
 //				segmentation = (String)jObj.get("segmentation");
 //			}
-//			
-//			
+//
+//
 //			//크롭 base64
 //			String b64 = cropImageToBase64(originalImgage,Integer.valueOf(x).intValue(), Integer.valueOf(y).intValue(), Integer.valueOf(w).intValue(), Integer.valueOf(h).intValue() );
-//			
+//
 //			metaVO.setData_id(dataId);
-//			
+//
 //			MetaVO metaTempVO = new MetaVO();
 //			metaTempVO.setData_id(dataId);
 //			metaTempVO.setLabel(label);
@@ -2617,20 +2615,20 @@ public class DataService {
 //			metaTempVO.setCrop_img(b64);
 //			metaTempVO.setSegmentation(segmentation);
 //			metaList.add(metaTempVO);
-//			
+//
 //		}
-//		
+//
 //		if(metaVO.getStay_flag() == null || metaVO.getStay_flag().equals("0") || metaVO.getStay_flag().equals("")   ) {
 //			dataDao.deleteMetaList(metaVO);
 //		}
-//		
+//
 //		HashMap<String, Object> hm = new HashMap<String, Object>();
 //		hm.put("metaList", metaList);
 //		if(metaList.size() <= 0) {
 //			return Output.JsonOutput("200", "등록이 완료되었습니다");
 ////			throw new Exception("4005#등록이 올바르지 않습니다.");
 //		}
-//		
+//
 //		if(metaVO.getStay_flag() != null && metaVO.getStay_flag().equals("2")) {
 //			MetaVO updateMetaVO = new MetaVO();
 //			updateMetaVO.setId(metaId);
@@ -2642,20 +2640,20 @@ public class DataService {
 //			if(cnt != 1) {
 //				throw new Exception("4004#등록이 올바르지 않습니다.");
 //			}
-//			
+//
 //		}else {
 //			int cnt = dataDao.insertMeta(hm);
 //			if(cnt != metaList.size()) {
 //				throw new Exception("4003#등록이 올바르지 않습니다.");
 //			}
 //		}
-//		
-//		
+//
+//
 //		return Output.JsonOutput("200", "등록이 완료되었습니다");
 //
-//		
-//		
-//		
+//
+//
+//
 //	}
 
 	/////
@@ -2729,27 +2727,27 @@ public class DataService {
 		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 		}
-		
+
 		Object result = dataDao.getSearchAnnotationVisionList(metaVO);
 		return Output.JsonOutput("200", result);
 	}
-	
+
 	public Object getSearchVideoAnnotationVisionList(MetaVO metaVO) {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 		}
-		
+
 		Object result = dataDao.getSearchVideoAnnotationVisionList(metaVO);
 		return Output.JsonOutput("200", result);
 	}
-	
+
 	public Object getSearchVisionList(MetaVO metaVO) {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 		}
-		
+
 		//페이징
 		int count = dataDao.getSearchVisionListTotalCount(metaVO);
 		int size = 50;
@@ -2763,12 +2761,12 @@ public class DataService {
 				pageStart = 0;
 			}
 		}
-		
-		
+
+
 		metaVO.setPage_num(String.valueOf(pageStart * size));
 		metaVO.setPage_size(String.valueOf(size));
 		metaVO.setTotal_size(String.valueOf(count));
-		
+
 		Object result = dataDao.getSearchVisionList(metaVO);
 		return Output.JsonOutput("200", result);
 	}
@@ -2784,25 +2782,25 @@ public class DataService {
 		if (metaVO == null || metaVO.getTask_id() == null || metaVO.getTask_id().length() <= 0) {
 			return Output.JsonOutput("4061", "Task ID 파라미터 값이 유효하지 않습니다.\n새로 고침 후 다시 시도해주시고 지속적으로 발생할 경우 관리자에게 문의해주시길 바랍니다.");
 		}
-		
+
 		DatasetVO datasetVO = new DatasetVO();
 		datasetVO.setDataset_id(metaVO.getDataset_id());
 		DatasetVO findDatasetVO = dataDao.getDatasetById(datasetVO);
-		
+
 		if(findDatasetVO == null || findDatasetVO.getLabel_type() == null || findDatasetVO.getLabel_type().length() <= 0) {
 			logger.error("label_type is null! dataset_id : " + metaVO.getDataset_id());
 			return Output.JsonOutput("4071", "복제하려는 데이터셋이 손상되었습니다.");
 		}
-		
+
 		if(!(findDatasetVO.getLabel_type().equals("IMAGE_SEGMENTATION") || findDatasetVO.getLabel_type().equals("IMAGE_BBOX") || findDatasetVO.getLabel_type().equals("VIDEO_BBOX"))) {
 			logger.error("label_type error! dataset_id : " + metaVO.getDataset_id() + " label_type : " + metaVO.getLabel_type());
 			return Output.JsonOutput("4071", "유효하지 않은 접근입니다.\n새로 고침 후 다시 시도해주시길 바랍니다.");
 		}
-		
+
 		HashMap<String, String> pathMap = new HashMap<String, String>();
 		List<MetaVO> metaList = new ArrayList<MetaVO>();
 		boolean check = false;
-		
+
 		JSONParser jp = new JSONParser();
 		JSONArray jArr = null;
 
@@ -2812,7 +2810,7 @@ public class DataService {
 			//logger.error("insertMetaByInference ParseExcepton Error!", e);
 			throw new CustomException("4001#메타데이터가 올바르지 않습니다.");
 		}
-		
+
 		if (jArr.size() <= 0 || jArr.isEmpty()) {
 			throw new CustomException("4001#등록이 올바르지 않습니다.");
 		}
@@ -2826,12 +2824,12 @@ public class DataService {
 		if (originalList == null || originalList.size() <= 0 || originalList.isEmpty()) {
 			throw new CustomException("4001#등록이 올바르지 않습니다.");
 		}
-		
+
 		Map<String, String> dataMap = new HashMap<String, String>();
 		for (int i = 0; i < originalList.size(); i++) {
 			dataMap.put(originalList.get(i).getPath(), "1");
 		}
-		
+
 		if (findDatasetVO.getLabel_type().equals("IMAGE_SEGMENTATION") || findDatasetVO.getLabel_type().equals("IMAGE_BBOX")) {
 			TaskVO taskVO = new TaskVO();
 			taskVO.setTask_id(metaVO.getTask_id());
@@ -2866,7 +2864,7 @@ public class DataService {
 					continue;
 				}
 				if(irVO.getY() == null || irVO.getY().length() <= 0) {
-					continue;				
+					continue;
 				}
 				if(irVO.getW() == null || irVO.getW().length() <= 0) {
 					continue;
@@ -2940,15 +2938,15 @@ public class DataService {
 			if(findTaskVO.getProject_id() == null || findTaskVO.getProject_id().length() <= 0) {
 				return Output.JsonOutput("4071", "유효하지 않은 접근입니다.\n새로 고침 후 다시 시도해주시길 바랍니다.");
 			}
-			
+
 			String projectId = findTaskVO.getProject_id();
 			String taskId = findTaskVO.getTask_id();
-			
+
 			//Map<String, String> inferenceResultMap = null;
 			String WORKSPACE_PATH = "/usr/local/uploadFile/xlabeller/workspace/";
 			JSONReader jReader = new JSONReader(WORKSPACE_PATH + projectId + "/" + taskId + "/result/" + metaVO.getPath());
 			Map<String, String> inferenceResultMap = jReader.videoBoxInferenceRead();
-			
+
 			int i = 0;
 			for (String key : inferenceResultMap.keySet()) {
 				if (!dataMap.containsKey(inferenceResultMap.get(key))) {
@@ -2957,16 +2955,16 @@ public class DataService {
 				}
 
 				String imgPath = inferenceResultMap.get(key);
-				
+
 				String jStr = (String) jArr.get(i++);
 				String[] arr = jStr.split(",");
-				if(arr.length != 7) { // s.kim 210603 수정 6 -> 7, seg정보때문에 info 7개임 path,좌표4,label, seg 정보 
+				if(arr.length != 7) { // s.kim 210603 수정 6 -> 7, seg정보때문에 info 7개임 path,좌표4,label, seg 정보
 					continue;
 				}
 				if(arr[5] == null || arr[5].length() <= 0) {
 					continue;
 				}
-				
+
 				pathMap.put(imgPath, "1");
 
 				MetaVO metaTempVO = new MetaVO();
@@ -2978,14 +2976,14 @@ public class DataService {
 				metaList.add(metaTempVO);
 			}
 		}
-		
+
 		/////// 패스로 아이디 가져와서 매핑
 		List<String> pathList = new ArrayList<String>(pathMap.keySet());
 		if (pathList == null || pathList.size() <= 0 || pathList.isEmpty()) {
 			throw new CustomException("4001#일치하는 데이터가 없어 Inference할 수 없습니다.");
 		}
 		StringBuffer sb = new StringBuffer();
-		
+
 		for (int i = 0; i < pathList.size(); i++) {
 			if (i == 0) {
 				sb.append("'" + pathList.get(i) + "'");
@@ -2993,7 +2991,7 @@ public class DataService {
 				sb.append(",'" + pathList.get(i) + "'");
 			}
 		}
-		
+
 		DataVO inputDataVO = new DataVO();
 		inputDataVO.setPath(sb.toString());
 		inputDataVO.setDataset_id(metaVO.getDataset_id());
@@ -3001,7 +2999,7 @@ public class DataService {
 		if (dataList == null || dataList.isEmpty() || dataList.size() <= 0) {
 			throw new CustomException("4001#일치하는 데이터가 없어 Inference할 수 없습니다.");
 		}
-		
+
 		DataVO tempDataVO = null;
 		for (int i = 0; i < dataList.size(); i++) {
 			tempDataVO = dataList.get(i);
@@ -3028,7 +3026,7 @@ public class DataService {
 		if (check == true) {
 			return Output.JsonOutput("200", "삭제된 Data를 제외하고 등록이 완료되었습니다.\nDataset을 다시 확인해주세요.");
 		}
-		
+
 		return Output.JsonOutput("200", "등록이 완료되었습니다.");
 
 	}
@@ -3173,7 +3171,7 @@ public class DataService {
 ////			String imgPath = path + dataPath;
 //
 ////			BufferedImage originalImgage = ImageIO.read(new File(imgPath));
-//			
+//
 //			String w = (String) jObj.get("w");
 //			if(w == null || w.length() <= 0) {
 //				continue;
@@ -3685,24 +3683,24 @@ public class DataService {
 		metaDao.insertMetaList(insertMetaVO);
 	}
 
-//	
+//
 //	FileDecompress fd = new FileDecompress();
-//	
+//
 //	fd.open(importDatasetVO.getFiles()[0].getInputStream(), XLABELLER_ROOT_PATH+"dataset/","dataset/", importDatasetVO.getIs_new());
 //	fd.proc();
 //	List<String> pathList = fd.getPath();
 //	JSONArray jArr = fd.getMeta();
-//	
+//
 
-//	
+//
 //	public Object test() {
 //		AsyncProcess ap = new AsyncProcess();
 //		ap.start();
 //		System.out.println("TEST");
-//		
+//
 //		return null;
 //	}
-//	
+//
 
 	public String encodingText(String text) {
 		if (!Normalizer.isNormalized(text, Normalizer.Form.NFC)) {
@@ -3777,16 +3775,16 @@ public class DataService {
 		Object result = dataDao.getDatasetById(datasetVO);
 		return Output.JsonOutput("200", result);
 	}
-	
-	
-	
+
+
+
 	// 데이터셋 로그 관련	
 	public Object getDatasetLogList(DatasetLogVO datasetLogVO) {
 		UserVO userInfo = SessionUtil.getUserInfo();
 		if(userInfo == null || userInfo.getUser_id() == null || userInfo.getUser_id().length() <= 0) {
 			return Output.JsonOutput("2001","로그인 세션이 만료 되었습니다");
 		}
-		
+
 		//페이징
 		int count = dataDao.getDatasetLogTotalCount(datasetLogVO);
 		int size = 50;
@@ -3800,16 +3798,16 @@ public class DataService {
 				pageStart = 0;
 			}
 		}
-		
-		
+
+
 		datasetLogVO.setPage_num(String.valueOf(pageStart * size));
 		datasetLogVO.setPage_size(String.valueOf(size));
 		datasetLogVO.setTotal_size(String.valueOf(count));
-		
-		
+
+
 		Object result = dataDao.getDatasetLogList(datasetLogVO);
 		return Output.JsonOutput("200", result);
 	}
-	
-	
+
+
 }

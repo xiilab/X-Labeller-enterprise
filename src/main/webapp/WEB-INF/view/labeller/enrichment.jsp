@@ -4604,7 +4604,7 @@
 					
 					description = "<div class='description'>"+data.description+"</div>";
 					$(description_target).append(description);	
-					algorithm_name = "Selected algorithm : " + data.title;
+					algorithm_name = "선택된 알고리즘 : " + data.title;
 					$(algorithm_target).html(algorithm_name);
 					
 					for(let i=0; i < configData.length; i++){

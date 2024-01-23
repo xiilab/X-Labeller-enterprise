@@ -895,7 +895,7 @@
 			let target = that.pt.find(".box_wrap");
 			let target_title = $("#task_inherit").find(".sub_wrap .ms_wrap .algorithm_name");
 			let description_target = that.pt.find(".description_wrap");
-			let algorithm_name = "( Selected algorithm : " + algorithmData.title + " )";
+			let algorithm_name = "( 선택된 알고리즘 : " + algorithmData.title + " )";
 			console.log("algorithmData.title: ", algorithmData);
 			console.log("taskData: ", taskData);
 			$(target_title).html(algorithm_name);

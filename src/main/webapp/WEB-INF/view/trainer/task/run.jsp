@@ -1858,7 +1858,7 @@
 			let inference_param_data = JSON.parse(data.inference_param);
 			let target = $("#task_run").find(".box_wrap");
 			let target_title = $("#task_run").find(".sub_wrap .title_wrap .algorithm_name");
-			let algorithm_name = "( Selected algorithm : " + data.title + " )";
+			let algorithm_name = "( 선택된 알고리즘 : " + data.title + " )";
 			//console.log("that.data.algorithm_title::", that.data.algorithm_title);
 			$(target).html("");
 			$(target_title).html(algorithm_name);
