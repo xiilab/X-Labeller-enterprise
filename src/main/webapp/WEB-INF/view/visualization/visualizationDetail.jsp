@@ -432,7 +432,7 @@
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#dataQuantityPerResolution .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#dataQuantityPerResolution .chart_wrap .no_result").css("visibility", "hidden");
                 } else {
                     that.pt.find("section#dataQuantityPerResolution .chart_wrap .no_result").css("visibility", "visible");
                 }
@@ -526,9 +526,12 @@
 
                 }
 
+
+
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#dataQuantityPerClass .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#dataQuantityPerClass .chart_wrap .no_result").css("visibility", "hidden");
+
                 } else {
                     that.pt.find("section#dataQuantityPerClass .chart_wrap .no_result").css("visibility", "visible");
                 }
@@ -627,7 +630,7 @@
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#classQuantityPerResolution .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#classQuantityPerResolution .chart_wrap .no_result").css("visibility", "hidden");
                 } else {
                     that.pt.find("section#classQuantityPerResolution .chart_wrap .no_result").css("visibility", "visible");
                 }
@@ -703,7 +706,7 @@
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#distributionByObjectSize .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#distributionByObjectSize .chart_wrap .no_result").css("visibility", "hidden");
                 } else {
                     that.pt.find("section#distributionByObjectSize .chart_wrap .no_result").css("visibility", "visible");
                 }
@@ -771,7 +774,7 @@
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#boundaryRangeCentroidDistribution .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#boundaryRangeCentroidDistribution .chart_wrap .no_result").css("visibility", "hidden");
                 } else {
                     that.pt.find("section#boundaryRangeCentroidDistribution .chart_wrap .no_result").css("visibility", "visible");
                 }
@@ -867,7 +870,7 @@
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#labelCountByWidth .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#labelCountByWidth .chart_wrap .no_result").css("visibility", "hidden");
                 } else {
                     that.pt.find("section#labelCountByWidth .chart_wrap .no_result").css("visibility", "visible");
                 }
@@ -955,7 +958,7 @@
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#labelCountByHeight .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#labelCountByHeight .chart_wrap .no_result").css("visibility", "hidden");
                 } else {
                     that.pt.find("section#labelCountByHeight .chart_wrap .no_result").css("visibility", "visible");
                 }
@@ -1041,7 +1044,7 @@
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#labelCountByCenterY .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#labelCountByCenterY .chart_wrap .no_result").css("visibility", "hidden");
                 } else {
                     that.pt.find("section#labelCountByCenterY .chart_wrap .no_result").css("visibility", "visible");
                 }
@@ -1129,7 +1132,7 @@
 
                 // 조회된 결과가 없을 경우
                 if (result.length > 0) {
-                    that.pt.find("section#labelCountByCenterX .chart_wrap .no_result").css("visibility", "hide");
+                    that.pt.find("section#labelCountByCenterX .chart_wrap .no_result").css("visibility", "hidden");
                 } else {
                     that.pt.find("section#labelCountByCenterX .chart_wrap .no_result").css("visibility", "visible");
                 }
